@@ -2,7 +2,24 @@
   "name": "qq-launchpad-sol",
   "private": true,
   "version": "0.0.0",
+  "description": "Solana launchpad for the QQ Omega token with Meteora Dynamic Bonding Curve",
   "type": "module",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "QQ Omega Labs <info@qqomega.xyz> (https://github.com/qqomega-labs)",
+  "contributors": [
+    {
+      "name": "qqalpha",
+      "url": "https://github.com/qqalpha"
+    },
+    {
+      "name": "qqsigma",
+      "url": "https://github.com/qqsigma"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qqomega-labs/qq-launchpad-sol.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

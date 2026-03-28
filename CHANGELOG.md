@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **LICENSE** file (proprietary, QQ Omega Labs)
+- **README.md** with dev-friendly documentation: tech stack, setup, project structure, design system, build optimizations
+- `package.json`: added `description`, `license`, `author`, `repository` fields
 - **Project scaffolding** with Vite 8, React 19, TypeScript 5, Tailwind CSS 4
   - `@tailwindcss/vite` plugin (Tailwind 4 CSS-first config with `@theme` block)
   - Code-split chunks: `solana`, `wallet`, `chart`, `main`
