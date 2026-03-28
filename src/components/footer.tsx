@@ -38,7 +38,7 @@ const links = [
 
 export function Footer() {
   return (
-    <footer className="h-12 flex items-center justify-between px-4 md:px-6 border-t border-border backdrop-blur-xl text-text-muted text-xs">
+    <footer className="h-12 flex items-center justify-between px-4 md:px-6 border-t border-border backdrop-blur-[64px] backdrop-saturate-[120%] text-text-muted text-xs">
       <span>&copy; 2026 QQ Omega Labs</span>
       <div className="flex items-center gap-4">
         {links.map((link) => (

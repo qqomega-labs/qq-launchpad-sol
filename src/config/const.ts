@@ -63,7 +63,7 @@ export const COLORS = {
     accentGlow: 'shadow-[0_0_20px_rgba(253,1,90,0.08)]',
     accentTabActive: 'bg-[rgba(253,1,90,0.12)]',
     skeletonBg: 'bg-[rgba(253,1,90,0.08)]',
-    headerBg: 'bg-[rgba(4,1,8,0.7)]',
+    headerBg: 'bg-[rgba(4,1,8,0.8)]',
   },
   /** @dev Raw rgba strings for style props and chart config */
   raw: {

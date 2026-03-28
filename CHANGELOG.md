@@ -113,6 +113,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Glassmorphism** upgraded to frosted glass: `backdrop-blur` 40px -> 64px with `saturate(120%)`, denser backgrounds (card 0.35 -> 0.55, input 0.3 -> 0.4, accent 0.4 -> 0.6), subtle top-edge frost gradient, SVG noise grain overlay at 3% opacity, deeper shadows with glass rim highlight
+- Header/Footer backdrop blur matched to 64px + saturate, header bg opacity 0.7 -> 0.8
+- Global `cursor: pointer` on all clickable elements (`button`, `a`, `[role="button"]`, `select`, `summary`) via `@layer base`
 - `SwapInput` now accepts `tokenMint` + optional `onTokenSelect` instead of static `tokenSymbol`/`tokenIcon` props
 - `useSwap` hook signature: `getQuote(amountIn, inputMint, outputMint, slippageBps)` replaces `getQuote(amountIn, isSell, slippageBps)`
 - `SwapPanel` manages `selectedPayMint`/`selectedReceiveMint` state; decimals resolved from token registry
@@ -123,4 +126,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Buffer` externalization error in Jupiter swap path (explicit `import { Buffer } from 'buffer'` polyfill)
 - Duplicate OHLCV timestamps from GeckoTerminal crashing `lightweight-charts` (deduplicate after sort)
 - Jupiter Data API response mapping: `address`/`amount` for holders, `txHash`/`traderAddress`/`usdPrice`/`timestamp` (ISO) for transactions
-- WebSocket cleanup in React StrictMode double-mount (nullify `onclose` before teardown to prevent reconnect loop)
+- WebSocket cleanup in React StrictMode double-mount (deferred 100ms init + nullify `onclose` before teardown)

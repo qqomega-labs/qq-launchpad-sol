@@ -30,7 +30,7 @@ export function Header() {
   };
 
   return (
-    <header className={`sticky top-0 z-40 h-16 flex items-center justify-between px-4 md:px-6 border-b border-border backdrop-blur-xl ${COLORS.tw.headerBg}`}>
+    <header className={`sticky top-0 z-40 h-16 flex items-center justify-between px-4 md:px-6 border-b border-border backdrop-blur-[64px] backdrop-saturate-[120%] ${COLORS.tw.headerBg}`}>
       <div className="flex items-center gap-3">
         <img src="/logo.svg" alt="QQ" className="h-8 w-8" />
         <span className="text-text-muted text-sm font-medium">Launchpad</span>

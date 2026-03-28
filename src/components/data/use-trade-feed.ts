@@ -75,13 +75,15 @@ export function useTradeFeed() {
 
   useEffect(() => {
     shouldReconnect.current = true;
-    connect();
+    // Defer connection to survive React StrictMode double-mount teardown
+    const initTimer = setTimeout(connect, 100);
 
     return () => {
       shouldReconnect.current = false;
+      clearTimeout(initTimer);
       if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
       if (ws.current) {
-        ws.current.onclose = null; // Prevent reconnect on cleanup close
+        ws.current.onclose = null;
         ws.current.close();
         ws.current = null;
       }
