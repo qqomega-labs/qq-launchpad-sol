@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Cloudflare Pages deploy target (`es2020` build)
   - kebab-case file and folder naming convention
   - `@/` path alias for all cross-directory imports
-  - Single `tsconfig.json` (merged app + node configs)
+  - Single `tsconfig.json` (merged app + node configs), `tsBuildInfoFile` in `node_modules/.tmp/`
+  - `.gitignore`: `*.tsbuildinfo` excluded from repo
 - **Glassmorphism design system** ported from qq-omega-landing
   - Deep purple background (`#040108`) with multi-layer radial pink glows
   - Honeycomb filigree SVG pattern at low opacity
