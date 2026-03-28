@@ -9,6 +9,7 @@ import {
   HistogramSeries,
 } from 'lightweight-charts';
 import type { Candle } from '../../lib/gecko';
+import { COLORS } from '../../config/const';
 
 interface TradingChartProps {
   candles: Candle[];
@@ -27,25 +28,25 @@ export function TradingChart({ candles }: TradingChartProps) {
     const chart = createChart(containerRef.current, {
       layout: {
         background: { color: 'transparent' },
-        textColor: 'rgba(240, 232, 240, 0.55)',
+        textColor: COLORS.raw.textSecondary,
         fontFamily: "'Inter', sans-serif",
         fontSize: 12,
       },
       grid: {
-        vertLines: { color: 'rgba(253, 1, 90, 0.06)' },
-        horzLines: { color: 'rgba(253, 1, 90, 0.06)' },
+        vertLines: { color: COLORS.raw.accentGrid },
+        horzLines: { color: COLORS.raw.accentGrid },
       },
       crosshair: {
         mode: CrosshairMode.Normal,
-        vertLine: { color: '#FE246C', width: 1, style: LineStyle.Dashed },
-        horzLine: { color: '#FE246C', width: 1, style: LineStyle.Dashed },
+        vertLine: { color: COLORS.accent, width: 1, style: LineStyle.Dashed },
+        horzLine: { color: COLORS.accent, width: 1, style: LineStyle.Dashed },
       },
       timeScale: {
-        borderColor: 'rgba(253, 1, 90, 0.15)',
+        borderColor: COLORS.raw.accentBorder,
         timeVisible: true,
         secondsVisible: false,
       },
-      rightPriceScale: { borderColor: 'rgba(253, 1, 90, 0.15)' },
+      rightPriceScale: { borderColor: COLORS.raw.accentBorder },
       width: containerRef.current.clientWidth,
       height: 400,
     });
@@ -53,12 +54,12 @@ export function TradingChart({ candles }: TradingChartProps) {
     chartRef.current = chart;
 
     const candleSeries = chart.addSeries(CandlestickSeries, {
-      upColor: '#fd015a',
-      downColor: '#ffffff',
-      borderUpColor: '#fd015a',
-      borderDownColor: '#ffffff',
-      wickUpColor: '#fd015a',
-      wickDownColor: '#ffffff',
+      upColor: COLORS.accent,
+      downColor: COLORS.white,
+      borderUpColor: COLORS.accent,
+      borderDownColor: COLORS.white,
+      wickUpColor: COLORS.accent,
+      wickDownColor: COLORS.white,
     });
 
     const volumeSeries = chart.addSeries(HistogramSeries, {
@@ -85,7 +86,7 @@ export function TradingChart({ candles }: TradingChartProps) {
         candles.map((c) => ({
           time: c.time as UTCTimestamp,
           value: c.volume,
-          color: c.close >= c.open ? 'rgba(253, 1, 90, 0.25)' : 'rgba(255, 255, 255, 0.15)',
+          color: c.close >= c.open ? COLORS.raw.volumeUp : COLORS.raw.volumeDown,
         })),
       );
 

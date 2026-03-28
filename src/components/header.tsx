@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
 import { truncateAddress } from '../lib/format';
+import { COLORS } from '../config/const';
 
 export function Header() {
   const { publicKey, connected, disconnect } = useWallet();
@@ -29,7 +30,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 h-16 flex items-center justify-between px-4 md:px-6 border-b border-border backdrop-blur-xl bg-[rgba(4,1,8,0.7)]">
+    <header className={`sticky top-0 z-40 h-16 flex items-center justify-between px-4 md:px-6 border-b border-border backdrop-blur-xl ${COLORS.tw.headerBg}`}>
       <div className="flex items-center gap-3">
         <img src="/logo.svg" alt="QQ" className="h-8 w-8" />
         <span className="text-text-muted text-sm font-medium">Launchpad</span>
@@ -41,7 +42,7 @@ export function Header() {
           className={`px-4 py-2 rounded-[8px] text-sm font-medium transition-all duration-200 ${
             connected
               ? 'glass-panel hover:border-border-active text-white font-mono'
-              : 'bg-[rgba(253,1,90,0.15)] border border-accent/35 hover:bg-[rgba(253,1,90,0.25)] hover:border-accent/50 text-white shadow-[0_0_20px_rgba(253,1,90,0.08)] active:scale-[0.98]'
+              : `${COLORS.tw.accentBg} border border-accent/35 ${COLORS.tw.accentBgHover} hover:border-accent/50 text-white ${COLORS.tw.accentGlow} active:scale-[0.98]`
           }`}
         >
           {connected && publicKey

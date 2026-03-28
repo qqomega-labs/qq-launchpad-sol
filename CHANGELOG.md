@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Vignette overlay darkening edges
   - `.glass-panel` / `.glass-panel-accent` utility classes: `backdrop-blur: 40px`, translucent bg (`rgba(10,3,18,0.35)`), pink borders, inset highlight, glow shadows
   - Brand tokens: `--color-accent` (`#fd015a`), `--color-bg-primary` (`#040108`), `--color-text-primary` (`#f0e8f0`)
+  - Centralized `COLORS` constant in `config/constants.ts` with `tw` (Tailwind class strings) and `raw` (rgba for style props / chart config) sub-objects, eliminating sparse color strings across components
   - Typography: Inter (headings/body), JetBrains Mono (numbers/addresses/stats)
   - `pulse-edge` keyframe animation for bonding curve progress bar
 - **Wallet integration** via `@jup-ag/wallet-adapter` (Unified Wallet Kit)
@@ -67,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `gecko.ts`: GeckoTerminal OHLCV client with CORS-safe error handling
   - `format.ts`: `formatNumber`, `formatPrice`, `truncateAddress`, `lamportsToSol`, `solToLamports`
   - `solana.ts`: `getTokenSupply` helper
-- **Config** (`src/config/constants.ts`)
+- **Config** (`src/config/const.ts`)
   - Pool address: `FHRTNJD3p3fSyHovubo8oBvRaowVQfLVdzaSota11X1U`
   - Token mint: `76vURLKDqAMhiX2wvoedoWRNvwqSjsZ7EtrJKJiKArDN`
   - Social links (matching qq-omega-landing URLs), timeframe definitions, slippage defaults

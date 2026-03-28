@@ -3,7 +3,7 @@ import { TradingChart } from './trading-chart';
 import { useOhlcv } from './use-ohlcv';
 import { Button } from '../ui/button';
 import { Skeleton } from '../ui/skeleton';
-import { TIMEFRAMES } from '../../config/constants';
+import { TIMEFRAMES } from '../../config/const';
 
 /**
  * @dev Chart panel with timeframe selector and TradingView chart

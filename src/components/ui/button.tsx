@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { COLORS } from '../../config/const';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'accent' | 'ghost' | 'tab';
@@ -21,10 +22,10 @@ export function Button({
 
   const variants: Record<string, string> = {
     accent: [
-      'bg-[rgba(253,1,90,0.15)] hover:bg-[rgba(253,1,90,0.25)]',
+      `${COLORS.tw.accentBg} ${COLORS.tw.accentBgHover}`,
       'text-white rounded-[12px] px-6 py-3 w-full text-base',
       'border border-accent/35 hover:border-accent/50',
-      'shadow-[0_0_20px_rgba(253,1,90,0.08)]',
+      COLORS.tw.accentGlow,
       'active:scale-[0.98]',
     ].join(' '),
     ghost: [
@@ -34,7 +35,7 @@ export function Button({
     tab: [
       'rounded-[8px] px-4 py-2 text-sm',
       active
-        ? 'bg-[rgba(253,1,90,0.12)] text-white shadow-[0_0_20px_rgba(253,1,90,0.08)]'
+        ? `${COLORS.tw.accentTabActive} text-white ${COLORS.tw.accentGlow}`
         : 'bg-transparent text-text-secondary hover:text-white',
     ].join(' '),
   };

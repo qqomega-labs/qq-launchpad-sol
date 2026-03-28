@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Settings } from 'lucide-react';
-import { SLIPPAGE_STORAGE_KEY } from '../../config/constants';
+import { SLIPPAGE_STORAGE_KEY } from '../../config/const';
 
 interface SlippagePopoverProps {
   value: number;

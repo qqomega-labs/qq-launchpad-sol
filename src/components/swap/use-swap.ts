@@ -5,7 +5,7 @@ import {
   DynamicBondingCurveClient,
   getCurrentPoint,
 } from '@meteora-ag/dynamic-bonding-curve-sdk';
-import { POOL_ADDRESS } from '../../config/constants';
+import { POOL_ADDRESS } from '../../config/const';
 
 export interface SwapQuote {
   outputAmount: BN;

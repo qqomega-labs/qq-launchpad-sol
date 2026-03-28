@@ -1,5 +1,5 @@
 import { Globe, BookOpen, Activity, Clock } from 'lucide-react';
-import { SOCIAL_LINKS } from '../config/constants';
+import { SOCIAL_LINKS } from '../config/const';
 
 /**
  * @dev X/Twitter icon (brand icon, not in lucide).

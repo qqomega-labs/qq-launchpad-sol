@@ -1,6 +1,6 @@
 import { usePoolState } from './use-pool-state';
 import { formatNumber } from '../../lib/format';
-import { DBC_SUPPLY } from '../../config/constants';
+import { DBC_SUPPLY, COLORS } from '../../config/const';
 import { Skeleton } from '../ui/skeleton';
 
 /**
@@ -8,6 +8,8 @@ import { Skeleton } from '../ui/skeleton';
  */
 export function BondingProgress() {
   const { tokensSold, progressPct, graduated, loading } = usePoolState();
+
+  const progressGradient = `linear-gradient(90deg, ${COLORS.accentDark}, ${COLORS.accent}, ${COLORS.accentLight})`;
 
   if (loading) {
     return (
@@ -34,9 +36,7 @@ export function BondingProgress() {
           className="h-full rounded-full relative transition-all duration-500"
           style={{
             width: `${progressPct}%`,
-            background: graduated
-              ? '#00dc78'
-              : 'linear-gradient(90deg, #c70046, #fd015a, #ff3d7a)',
+            background: graduated ? COLORS.green : progressGradient,
           }}
         >
           {!graduated && progressPct > 0 && (

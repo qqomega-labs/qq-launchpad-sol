@@ -43,3 +43,34 @@ export const TIMEFRAMES = [
 export const DEFAULT_SLIPPAGE_BPS = 100; // 1%
 
 export const SLIPPAGE_STORAGE_KEY = "qq-slippage";
+
+// PRIVATE - Design tokens (raw values for JS contexts where Tailwind classes aren't usable)
+
+export const COLORS = {
+  accent: '#fd015a',
+  accentDark: '#c70046',
+  accentLight: '#ff3d7a',
+  green: '#00dc78',
+  white: '#ffffff',
+  /** @dev Tailwind arbitrary class strings for glass accent elements */
+  tw: {
+    accentBg: 'bg-[rgba(253,1,90,0.15)]',
+    accentBgHover: 'hover:bg-[rgba(253,1,90,0.25)]',
+    accentGlow: 'shadow-[0_0_20px_rgba(253,1,90,0.08)]',
+    accentTabActive: 'bg-[rgba(253,1,90,0.12)]',
+    skeletonBg: 'bg-[rgba(253,1,90,0.08)]',
+    headerBg: 'bg-[rgba(4,1,8,0.7)]',
+  },
+  /** @dev Raw rgba strings for style props and chart config */
+  raw: {
+    accentBg: 'rgba(253, 1, 90, 0.15)',
+    accentBgHover: 'rgba(253, 1, 90, 0.25)',
+    accentGlow: 'rgba(253, 1, 90, 0.08)',
+    accentTabActive: 'rgba(253, 1, 90, 0.12)',
+    accentGrid: 'rgba(253, 1, 90, 0.06)',
+    accentBorder: 'rgba(253, 1, 90, 0.15)',
+    volumeUp: 'rgba(253, 1, 90, 0.25)',
+    volumeDown: 'rgba(255, 255, 255, 0.15)',
+    textSecondary: 'rgba(240, 232, 240, 0.55)',
+  },
+} as const;

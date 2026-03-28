@@ -11,7 +11,7 @@ import { SlippagePopover } from './slippage-popover';
 import { Button } from '../ui/button';
 import { useToast } from '../ui/toast';
 import { truncateAddress } from '../../lib/format';
-import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY, TOKEN_DECIMALS } from '../../config/constants';
+import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY, TOKEN_DECIMALS } from '../../config/const';
 
 /**
  * @dev Main swap panel with buy/sell tabs, quote fetching, and swap execution
