@@ -26,14 +26,14 @@ export function TradingChart({ candles }: TradingChartProps) {
 
     const chart = createChart(containerRef.current, {
       layout: {
-        background: { color: '#0A0A0A' },
-        textColor: '#888888',
+        background: { color: 'transparent' },
+        textColor: 'rgba(240, 232, 240, 0.55)',
         fontFamily: "'Inter', sans-serif",
         fontSize: 12,
       },
       grid: {
-        vertLines: { color: '#1A1A1A' },
-        horzLines: { color: '#1A1A1A' },
+        vertLines: { color: 'rgba(253, 1, 90, 0.06)' },
+        horzLines: { color: 'rgba(253, 1, 90, 0.06)' },
       },
       crosshair: {
         mode: CrosshairMode.Normal,
@@ -41,11 +41,11 @@ export function TradingChart({ candles }: TradingChartProps) {
         horzLine: { color: '#FE246C', width: 1, style: LineStyle.Dashed },
       },
       timeScale: {
-        borderColor: '#222222',
+        borderColor: 'rgba(253, 1, 90, 0.15)',
         timeVisible: true,
         secondsVisible: false,
       },
-      rightPriceScale: { borderColor: '#222222' },
+      rightPriceScale: { borderColor: 'rgba(253, 1, 90, 0.15)' },
       width: containerRef.current.clientWidth,
       height: 400,
     });
@@ -53,12 +53,12 @@ export function TradingChart({ candles }: TradingChartProps) {
     chartRef.current = chart;
 
     const candleSeries = chart.addSeries(CandlestickSeries, {
-      upColor: '#00E676',
-      downColor: '#FF3D57',
-      borderUpColor: '#00E676',
-      borderDownColor: '#FF3D57',
-      wickUpColor: '#00E676',
-      wickDownColor: '#FF3D57',
+      upColor: '#fd015a',
+      downColor: '#ffffff',
+      borderUpColor: '#fd015a',
+      borderDownColor: '#ffffff',
+      wickUpColor: '#fd015a',
+      wickDownColor: '#ffffff',
     });
 
     const volumeSeries = chart.addSeries(HistogramSeries, {
@@ -85,7 +85,7 @@ export function TradingChart({ candles }: TradingChartProps) {
         candles.map((c) => ({
           time: c.time as UTCTimestamp,
           value: c.volume,
-          color: c.close >= c.open ? 'rgba(0, 230, 118, 0.3)' : 'rgba(255, 61, 87, 0.3)',
+          color: c.close >= c.open ? 'rgba(253, 1, 90, 0.25)' : 'rgba(255, 255, 255, 0.15)',
         })),
       );
 

@@ -1,24 +1,72 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-primary: #0A0A0A;
-  --color-bg-secondary: #111111;
-  --color-bg-card: #141414;
-  --color-bg-input: #1A1A1A;
-  --color-border: #222222;
-  --color-border-active: #333333;
-  --color-accent: #FE246C;
-  --color-accent-hover: #E51F60;
-  --color-accent-glow: rgba(254, 36, 108, 0.15);
-  --color-green: #00E676;
-  --color-green-dim: rgba(0, 230, 118, 0.15);
+  --color-bg-primary: #040108;
+  --color-bg-surface: #0a0312;
+  --color-bg-card: rgba(10, 3, 18, 0.35);
+  --color-bg-input: rgba(10, 3, 18, 0.3);
+  --color-border: rgba(253, 1, 90, 0.15);
+  --color-border-active: rgba(253, 1, 90, 0.35);
+  --color-accent: #fd015a;
+  --color-accent-hover: #c70046;
+  --color-accent-glow: rgba(253, 1, 90, 0.15);
+  --color-green: #00dc78;
+  --color-green-dim: rgba(0, 220, 120, 0.1);
   --color-red: #FF3D57;
-  --color-red-dim: rgba(255, 61, 87, 0.15);
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #888888;
-  --color-text-muted: #555555;
+  --color-red-dim: rgba(255, 61, 87, 0.1);
+  --color-text-primary: #f0e8f0;
+  --color-text-secondary: rgba(240, 232, 240, 0.55);
+  --color-text-muted: rgba(240, 232, 240, 0.35);
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Background layers from qq-omega-landing */
+.bg-radial-deep {
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(253, 1, 90, 0.14) 0%, transparent 42%),
+    radial-gradient(ellipse at 20% 80%, rgba(253, 1, 90, 0.06) 0%, transparent 38%),
+    radial-gradient(ellipse at 80% 20%, rgba(120, 0, 60, 0.07) 0%, transparent 32%),
+    radial-gradient(ellipse at 40% 30%, #120610 0%, #060110 42%, #000 100%);
+}
+
+.bg-filigree {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23fd015a' stroke-width='0.4' opacity='0.06'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23fd015a' stroke-width='0.25' opacity='0.03'/%3E%3C/svg%3E");
+  background-size: 64px 114px;
+}
+
+@media (min-width: 768px) {
+  .bg-filigree {
+    background-size: 84px 150px;
+  }
+}
+
+.bg-vignette {
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+/* Glass panel base */
+.glass-panel {
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  box-shadow:
+    0 0 24px rgba(253, 1, 90, 0.04),
+    0 2px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* Glass panel with accent glow (swap panel) */
+.glass-panel-accent {
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  background: rgba(10, 3, 18, 0.4);
+  border: 1px solid var(--color-border-active);
+  box-shadow:
+    0 0 30px rgba(253, 1, 90, 0.08),
+    0 2px 16px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 body {

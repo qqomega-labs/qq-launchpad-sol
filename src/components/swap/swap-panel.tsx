@@ -3,6 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
 import { Loader2, ArrowUpRight } from 'lucide-react';
 import BN from 'bn.js';
+import { SolanaIcon, QQIcon } from '../icons';
 import { useSwap } from './use-swap';
 import { SwapInput } from './swap-input';
 import { QuickAmounts } from './quick-amounts';
@@ -86,7 +87,7 @@ export function SwapPanel() {
   const ctaDisabled = loading || success || (connected && (!inputAmount || parseFloat(inputAmount) <= 0));
 
   return (
-    <div className="bg-bg-card border border-border rounded-[12px] p-5 shadow-[0_0_30px_rgba(254,36,108,0.15)]">
+    <div className="glass-panel-accent rounded-[12px] p-5">
       {/* Buy / Sell tabs */}
       <div className="flex gap-1 mb-5 bg-bg-input rounded-[8px] p-1">
         <Button variant="tab" active={!isSell} onClick={() => { setIsSell(false); setInputAmount(''); }} className="flex-1">
@@ -103,7 +104,7 @@ export function SwapPanel() {
         value={inputAmount}
         onChange={setInputAmount}
         tokenSymbol={isSell ? 'QQ' : 'SOL'}
-        tokenIcon={isSell ? '\uD83D\uDC8E' : '\u25CE'}
+        tokenIcon={isSell ? <QQIcon /> : <SolanaIcon />}
       />
 
       {/* Quick amounts */}
@@ -122,7 +123,7 @@ export function SwapPanel() {
           readOnly
           loading={quoteLoading}
           tokenSymbol={isSell ? 'SOL' : 'QQ'}
-          tokenIcon={isSell ? '\u25CE' : '\uD83D\uDC8E'}
+          tokenIcon={isSell ? <SolanaIcon /> : <QQIcon />}
         />
       </div>
 

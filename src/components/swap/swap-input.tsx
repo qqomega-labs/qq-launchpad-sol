@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Skeleton } from '../ui/skeleton';
 
 interface SwapInputProps {
@@ -7,7 +8,7 @@ interface SwapInputProps {
   readOnly?: boolean;
   loading?: boolean;
   tokenSymbol: string;
-  tokenIcon: string;
+  tokenIcon: ReactNode;
 }
 
 /**
@@ -40,7 +41,7 @@ export function SwapInput({
           />
         )}
         <span className="flex items-center gap-1.5 text-text-secondary text-sm font-medium shrink-0">
-          <span>{tokenIcon}</span>
+          {tokenIcon}
           <span>{tokenSymbol}</span>
         </span>
       </div>

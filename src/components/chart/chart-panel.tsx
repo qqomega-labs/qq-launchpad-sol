@@ -19,7 +19,7 @@ export function ChartPanel() {
   });
 
   return (
-    <div className="bg-bg-card border border-border rounded-[12px] overflow-hidden">
+    <div className="glass-panel rounded-[12px] overflow-hidden">
       {/* Timeframe selector */}
       <div className="flex gap-1 p-3 border-b border-border">
         {TIMEFRAMES.map((t, i) => (

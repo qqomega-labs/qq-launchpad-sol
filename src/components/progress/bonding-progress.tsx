@@ -11,7 +11,7 @@ export function BondingProgress() {
 
   if (loading) {
     return (
-      <div className="bg-bg-card border border-border rounded-[12px] p-5">
+      <div className="glass-panel rounded-[12px] p-5">
         <Skeleton className="h-4 w-32 mb-3" />
         <Skeleton className="h-6 w-full mb-2" />
         <Skeleton className="h-3 w-48" />
@@ -20,7 +20,7 @@ export function BondingProgress() {
   }
 
   return (
-    <div className="bg-bg-card border border-border rounded-[12px] p-5">
+    <div className="glass-panel rounded-[12px] p-5">
       <div className="flex items-center justify-between mb-3">
         <span className="text-text-secondary text-sm font-medium">Bonding Curve</span>
         <span className="text-text-muted text-xs font-mono">
@@ -35,8 +35,8 @@ export function BondingProgress() {
           style={{
             width: `${progressPct}%`,
             background: graduated
-              ? '#00E676'
-              : 'linear-gradient(90deg, #FE246C, #FF4D8A)',
+              ? '#00dc78'
+              : 'linear-gradient(90deg, #c70046, #fd015a, #ff3d7a)',
           }}
         >
           {!graduated && progressPct > 0 && (

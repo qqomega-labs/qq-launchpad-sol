@@ -18,7 +18,7 @@ export function StatCard({ value, label, loading = false, color = 'default' }: S
   };
 
   return (
-    <div className="bg-bg-card border border-border rounded-[12px] px-4 py-3 flex flex-col items-center justify-center min-h-[80px] flex-1">
+    <div className="glass-panel rounded-[12px] px-4 py-3 flex flex-col items-center justify-center min-h-[80px] flex-1">
       {loading ? (
         <Skeleton className="h-7 w-20 mb-1" />
       ) : (
