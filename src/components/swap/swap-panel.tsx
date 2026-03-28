@@ -3,7 +3,6 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
 import { Loader2, ArrowUpRight } from 'lucide-react';
 import BN from 'bn.js';
-import { SolanaIcon, QQIcon } from '@/components/icons';
 import { useSwap } from './use-swap';
 import { SwapInput } from './swap-input';
 import { QuickAmounts } from './quick-amounts';
@@ -11,10 +10,12 @@ import { SlippagePopover } from './slippage-popover';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/toast';
 import { truncateAddress } from '@/lib/format';
-import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY, TOKEN_DECIMALS } from '@/config/const';
+import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY } from '@/config/const';
+import { SOL_MINT, QQ_MINT, QUICK_AMOUNTS, getToken } from '@/config/tokens';
 
 /**
- * @dev Main swap panel with buy/sell tabs, quote fetching, and swap execution
+ * @dev Main swap panel with buy/sell tabs, token selection, quote fetching, and swap execution.
+ * SOL <-> QQ goes direct via Meteora DBC. Other tokens route via Jupiter API.
  */
 export function SwapPanel() {
   const { connected } = useWallet();
@@ -24,6 +25,8 @@ export function SwapPanel() {
 
   const [isSell, setIsSell] = useState(false);
   const [inputAmount, setInputAmount] = useState('');
+  const [selectedPayMint, setSelectedPayMint] = useState(SOL_MINT);
+  const [selectedReceiveMint, setSelectedReceiveMint] = useState(SOL_MINT);
   const [slippage, setSlippage] = useState(() => {
     const stored = localStorage.getItem(SLIPPAGE_STORAGE_KEY);
     return stored ? Number(stored) : DEFAULT_SLIPPAGE_BPS;
@@ -31,6 +34,14 @@ export function SwapPanel() {
   const [success, setSuccess] = useState(false);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // Resolve input/output mints based on buy/sell mode
+  const inputMint = isSell ? QQ_MINT : selectedPayMint;
+  const outputMint = isSell ? selectedReceiveMint : QQ_MINT;
+  const inputToken = getToken(inputMint);
+  const outputToken = getToken(outputMint);
+  const inputDecimals = inputToken?.decimals ?? 9;
+  const outputDecimals = outputToken?.decimals ?? 6;
 
   // Debounced quote fetch
   useEffect(() => {
@@ -40,19 +51,18 @@ export function SwapPanel() {
     if (isNaN(amount) || amount <= 0) return;
 
     debounceRef.current = setTimeout(() => {
-      const decimals = isSell ? TOKEN_DECIMALS : 9; // QQ decimals or SOL lamports
-      const amountIn = new BN(Math.floor(amount * 10 ** decimals));
-      getQuote(amountIn, isSell, slippage);
+      const amountIn = new BN(Math.floor(amount * 10 ** inputDecimals));
+      getQuote(amountIn, inputMint, outputMint, slippage);
     }, 500);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [inputAmount, isSell, slippage, getQuote]);
+  }, [inputAmount, inputMint, outputMint, slippage, inputDecimals, getQuote]);
 
   const outputAmount = quote
-    ? (Number(quote.outputAmount.toString()) / (isSell ? 1e9 : 10 ** TOKEN_DECIMALS)).toFixed(
-        isSell ? 4 : 2,
+    ? (Number(quote.outputAmount.toString()) / 10 ** outputDecimals).toFixed(
+        outputDecimals > 6 ? 4 : 2,
       )
     : '';
 
@@ -64,9 +74,8 @@ export function SwapPanel() {
     if (!quote || !inputAmount) return;
 
     try {
-      const decimals = isSell ? TOKEN_DECIMALS : 9;
-      const amountIn = new BN(Math.floor(parseFloat(inputAmount) * 10 ** decimals));
-      const sig = await executeSwap(amountIn, quote.minimumAmountOut, isSell);
+      const amountIn = new BN(Math.floor(parseFloat(inputAmount) * 10 ** inputDecimals));
+      const sig = await executeSwap(amountIn, inputMint, outputMint, quote);
       showToast('success', `Transaction confirmed: ${truncateAddress(sig, 8)}`);
       setSuccess(true);
       setInputAmount('');
@@ -74,7 +83,7 @@ export function SwapPanel() {
     } catch {
       showToast('error', error || 'Transaction failed');
     }
-  }, [connected, quote, inputAmount, isSell, executeSwap, setShowModal, showToast, error]);
+  }, [connected, quote, inputAmount, inputMint, outputMint, inputDecimals, executeSwap, setShowModal, showToast, error]);
 
   const ctaText = () => {
     if (!connected) return 'Connect Wallet';
@@ -85,6 +94,25 @@ export function SwapPanel() {
   };
 
   const ctaDisabled = loading || success || (connected && (!inputAmount || parseFloat(inputAmount) <= 0));
+
+  // Quick amounts for the selected pay token
+  const quickAmounts = !isSell ? (QUICK_AMOUNTS[selectedPayMint] ?? []) : [];
+
+  // Fee / route info
+  const feeInfo = () => {
+    if (!quote) return '';
+    if (quote.route === 'dbc') {
+      return `Fee: ${Number(quote.tradingFee.toString()) / 1e9} SOL`;
+    }
+    const impact = quote.priceImpactPct ? `${parseFloat(quote.priceImpactPct).toFixed(2)}%` : 'N/A';
+    return `Price Impact: ${impact}`;
+  };
+
+  const routeLabel = () => {
+    if (!quote) return null;
+    if (quote.route === 'dbc') return 'via Meteora DBC';
+    return 'via Jupiter';
+  };
 
   return (
     <div className="glass-panel-accent rounded-[12px] p-5">
@@ -103,14 +131,15 @@ export function SwapPanel() {
         label="You pay"
         value={inputAmount}
         onChange={setInputAmount}
-        tokenSymbol={isSell ? 'QQ' : 'SOL'}
-        tokenIcon={isSell ? <QQIcon /> : <SolanaIcon />}
+        tokenMint={inputMint}
+        onTokenSelect={isSell ? undefined : setSelectedPayMint}
+        excludeMint={QQ_MINT}
       />
 
-      {/* Quick amounts */}
-      {!isSell && (
+      {/* Quick amounts (buy mode only) */}
+      {quickAmounts.length > 0 && (
         <QuickAmounts
-          amounts={[0.1, 0.5, 1]}
+          amounts={quickAmounts}
           onSelect={(amt) => setInputAmount(String(amt))}
         />
       )}
@@ -122,18 +151,22 @@ export function SwapPanel() {
           value={outputAmount}
           readOnly
           loading={quoteLoading}
-          tokenSymbol={isSell ? 'SOL' : 'QQ'}
-          tokenIcon={isSell ? <SolanaIcon /> : <QQIcon />}
+          tokenMint={outputMint}
+          onTokenSelect={isSell ? setSelectedReceiveMint : undefined}
+          excludeMint={QQ_MINT}
         />
       </div>
 
-      {/* Slippage */}
+      {/* Slippage + fee info */}
       <div className="flex items-center justify-between mt-3">
-        <span className="text-text-muted text-xs">
-          {quote ? `Fee: ${Number(quote.tradingFee.toString()) / 1e9} SOL` : ''}
-        </span>
+        <span className="text-text-muted text-xs">{feeInfo()}</span>
         <SlippagePopover value={slippage} onChange={setSlippage} />
       </div>
+
+      {/* Route indicator */}
+      {routeLabel() && (
+        <p className="text-text-muted text-[10px] text-center mt-1">{routeLabel()}</p>
+      )}
 
       {/* CTA */}
       <div className="mt-5">

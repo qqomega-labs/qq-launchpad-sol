@@ -9,6 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Multi-asset swap** with dual-path routing
+  - Token selector dropdown on pay/receive inputs (SOL, USDC, USDT)
+  - SOL <-> QQ swaps go direct via Meteora DBC SDK (unchanged, lowest latency)
+  - USDC/USDT <-> QQ swaps route via Jupiter Quote API v6 + Swap API (headless `fetch`, no widget/iframe)
+  - `VersionedTransaction` signing for Jupiter-routed swaps
+  - Dynamic quick-amount presets per token: SOL [0.1, 0.5, 1], USDC/USDT [5, 25, 50]
+  - Route indicator below output: "via Meteora DBC" or "via Jupiter"
+  - Price impact display for Jupiter-routed swaps
+- **Token registry** (`src/config/tokens.ts`)
+  - `SupportedToken` type with mint, symbol, decimals, icon
+  - Helpers: `isSOL()`, `isQQ()`, `getToken()`, `isDirectPath()`
+  - `PAY_TOKENS` allowlist and `QUICK_AMOUNTS` per-token presets
+- **Jupiter API clients** (zero new dependencies, pure `fetch`)
+  - `src/lib/jupiter.ts`: Quote API + Swap API with typed responses and 429 retry
+  - `src/lib/jupiter-data.ts`: Data API client for holders and transaction history
+- **Token icons** (`src/components/icons.tsx`): `USDCIcon`, `USDTIcon` SVG components, `TokenIcon` mapper
+- **Token selector** (`src/components/swap/token-selector.tsx`): glass-panel dropdown with click-outside dismiss
+- **Live data feeds** (`src/components/data/`)
+  - `useTradeFeed` hook: WebSocket to `wss://trench-stream.jup.ag/ws` with auto-reconnect and exponential backoff
+  - `useHolders` hook: top holders polling every 60s from `datapi.jup.ag`
+  - `useTxHistory` hook: cursor-based paginated transaction history with `loadMore`, `loadingMore`, `hasMore` state
+  - `TradeFeed` component: live trade table with buy/sell color coding and Solscan tx links
+  - `HoldersTable` component: top 20 holders with rank, address, amount, % of supply
+  - `TxHistory` component: historical transactions with wallet + tx links, cursor pagination with "Load more" button
+  - `DataTabs` container: tabbed UI (Live Trades | Top Holders | Transactions) below chart panel
+- **Jupiter API constants** in `src/config/const.ts`: `JUPITER_QUOTE_API`, `JUPITER_DATA_API`, `JUPITER_WS`
 - **LICENSE** file (proprietary, QQ Omega Labs)
 - **README.md** with dev-friendly documentation: tech stack, setup, project structure, design system, build optimizations
 - `package.json`: added `description`, `license`, `author`, `repository` fields
@@ -84,3 +110,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Responsive layout** (mobile-first)
   - Desktop (>=1024px): Hero 55% / Swap 45% side-by-side
   - Tablet/Mobile: single column stack (Hero, Swap, Progress, Chart)
+
+### Changed
+
+- `SwapInput` now accepts `tokenMint` + optional `onTokenSelect` instead of static `tokenSymbol`/`tokenIcon` props
+- `useSwap` hook signature: `getQuote(amountIn, inputMint, outputMint, slippageBps)` replaces `getQuote(amountIn, isSell, slippageBps)`
+- `SwapPanel` manages `selectedPayMint`/`selectedReceiveMint` state; decimals resolved from token registry
+- Layout: `DataTabs` added below `ChartPanel` in `app.tsx`
+
+### Fixed
+
+- `Buffer` externalization error in Jupiter swap path (explicit `import { Buffer } from 'buffer'` polyfill)
+- Duplicate OHLCV timestamps from GeckoTerminal crashing `lightweight-charts` (deduplicate after sort)
+- Jupiter Data API response mapping: `address`/`amount` for holders, `txHash`/`traderAddress`/`usdPrice`/`timestamp` (ISO) for transactions
+- WebSocket cleanup in React StrictMode double-mount (nullify `onclose` before teardown to prevent reconnect loop)

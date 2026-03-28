@@ -19,6 +19,10 @@ export const GRADUATION_THRESHOLD_USDC = 20_000;
 export const GT_BASE = "https://api.geckoterminal.com/api/v2";
 export const GT_POOL_ADDR = "FHRTNJD3p3fSyHovubo8oBvRaowVQfLVdzaSota11X1U";
 
+export const JUPITER_QUOTE_API = 'https://quote-api.jup.ag/v6';
+export const JUPITER_DATA_API = 'https://datapi.jup.ag/v1';
+export const JUPITER_WS = 'wss://trench-stream.jup.ag/ws';
+
 export const DEXSCREENER_URL = `https://dexscreener.com/solana/${GT_POOL_ADDR}`;
 export const GECKOTERMINAL_URL = `https://www.geckoterminal.com/solana/pools/${GT_POOL_ADDR}`;
 

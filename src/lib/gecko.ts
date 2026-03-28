@@ -42,5 +42,6 @@ export async function fetchOhlcv(
       close,
       volume,
     }))
-    .sort((a, b) => a.time - b.time);
+    .sort((a, b) => a.time - b.time)
+    .filter((c, i, arr) => i === 0 || c.time !== arr[i - 1].time);
 }

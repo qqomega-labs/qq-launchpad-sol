@@ -1,5 +1,7 @@
-import type { ReactNode } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { TokenIcon } from '@/components/icons';
+import { TokenSelector } from './token-selector';
+import { getToken } from '@/config/tokens';
 
 interface SwapInputProps {
   label: string;
@@ -7,12 +9,16 @@ interface SwapInputProps {
   onChange?: (val: string) => void;
   readOnly?: boolean;
   loading?: boolean;
-  tokenSymbol: string;
-  tokenIcon: ReactNode;
+  /** Token mint address */
+  tokenMint: string;
+  /** When provided, renders a token selector dropdown instead of static badge */
+  onTokenSelect?: (mint: string) => void;
+  /** Mint to exclude from the selector (prevents same token on both sides) */
+  excludeMint?: string;
 }
 
 /**
- * @dev Amount input field with token badge
+ * @dev Amount input field with token badge or token selector dropdown
  */
 export function SwapInput({
   label,
@@ -20,9 +26,12 @@ export function SwapInput({
   onChange,
   readOnly = false,
   loading = false,
-  tokenSymbol,
-  tokenIcon,
+  tokenMint,
+  onTokenSelect,
+  excludeMint,
 }: SwapInputProps) {
+  const token = getToken(tokenMint);
+
   return (
     <div>
       <label className="text-text-muted text-xs mb-1.5 block">{label}</label>
@@ -40,10 +49,18 @@ export function SwapInput({
             className="bg-transparent text-white font-mono text-lg flex-1 outline-none placeholder:text-text-muted w-0"
           />
         )}
-        <span className="flex items-center gap-1.5 text-text-secondary text-sm font-medium shrink-0">
-          {tokenIcon}
-          <span>{tokenSymbol}</span>
-        </span>
+        {onTokenSelect ? (
+          <TokenSelector
+            selectedMint={tokenMint}
+            onSelect={onTokenSelect}
+            excludeMint={excludeMint}
+          />
+        ) : (
+          <span className="flex items-center gap-1.5 text-text-secondary text-sm font-medium shrink-0">
+            <TokenIcon mint={tokenMint} />
+            <span>{token?.symbol ?? '???'}</span>
+          </span>
+        )}
       </div>
     </div>
   );
