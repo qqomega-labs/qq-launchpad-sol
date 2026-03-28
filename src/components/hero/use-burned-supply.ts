@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useConnection } from '@solana/wallet-adapter-react';
-import { TOKEN_MINT, TOTAL_SUPPLY } from '../../config/const';
-import { getTokenSupply } from '../../lib/solana';
+import { TOKEN_MINT, TOTAL_SUPPLY } from '@/config/const';
+import { getTokenSupply } from '@/lib/solana';
 
 interface BurnedSupplyData {
   currentSupply: number | null;

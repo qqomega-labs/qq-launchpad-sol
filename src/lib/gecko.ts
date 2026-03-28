@@ -1,4 +1,4 @@
-import { GT_BASE, GT_POOL_ADDR } from "../config/const";
+import { GT_BASE, GT_POOL_ADDR } from "@/config/const";
 
 export interface Candle {
   time: number;

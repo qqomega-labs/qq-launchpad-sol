@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
-import { truncateAddress } from '../lib/format';
-import { COLORS } from '../config/const';
+import { truncateAddress } from '@/lib/format';
+import { COLORS } from '@/config/const';
 
 export function Header() {
   const { publicKey, connected, disconnect } = useWallet();

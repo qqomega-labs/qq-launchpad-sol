@@ -1,7 +1,7 @@
 import { StatCard } from './stat-card';
 import { useBurnedSupply } from './use-burned-supply';
-import { formatNumber } from '../../lib/format';
-import { TOTAL_SUPPLY } from '../../config/const';
+import { formatNumber } from '@/lib/format';
+import { TOTAL_SUPPLY } from '@/config/const';
 
 /**
  * @dev Hero section with value proposition and live stats

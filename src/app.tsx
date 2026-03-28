@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { ConnectionProvider } from "@solana/wallet-adapter-react";
 import { UnifiedWalletProvider } from "@jup-ag/wallet-adapter";
-import { Header } from "./components/header";
-import { HeroSection } from "./components/hero/hero-section";
-import { SwapPanel } from "./components/swap/swap-panel";
-import { BondingProgress } from "./components/progress/bonding-progress";
-import { ChartPanel } from "./components/chart/chart-panel";
-import { Footer } from "./components/footer";
-import { ToastProvider } from "./components/ui/toast";
+import { Header } from "@/components/header";
+import { HeroSection } from "@/components/hero/hero-section";
+import { SwapPanel } from "@/components/swap/swap-panel";
+import { BondingProgress } from "@/components/progress/bonding-progress";
+import { ChartPanel } from "@/components/chart/chart-panel";
+import { Footer } from "@/components/footer";
+import { ToastProvider } from "@/components/ui/toast";
 
 /**
  * @dev LaunchpadPage.

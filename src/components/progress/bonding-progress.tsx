@@ -1,7 +1,7 @@
 import { usePoolState } from './use-pool-state';
-import { formatNumber } from '../../lib/format';
-import { DBC_SUPPLY, COLORS } from '../../config/const';
-import { Skeleton } from '../ui/skeleton';
+import { formatNumber } from '@/lib/format';
+import { DBC_SUPPLY, COLORS } from '@/config/const';
+import { Skeleton } from '@/components/ui/skeleton';
 
 /**
  * @dev Bonding curve progress bar with graduation detection

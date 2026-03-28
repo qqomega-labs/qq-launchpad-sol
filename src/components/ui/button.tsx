@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { COLORS } from '../../config/const';
+import { COLORS } from '@/config/const';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'accent' | 'ghost' | 'tab';

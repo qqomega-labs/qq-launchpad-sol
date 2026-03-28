@@ -8,8 +8,8 @@ import {
   CandlestickSeries,
   HistogramSeries,
 } from 'lightweight-charts';
-import type { Candle } from '../../lib/gecko';
-import { COLORS } from '../../config/const';
+import type { Candle } from '@/lib/gecko';
+import { COLORS } from '@/config/const';
 
 interface TradingChartProps {
   candles: Candle[];

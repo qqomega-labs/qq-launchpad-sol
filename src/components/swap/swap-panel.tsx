@@ -3,15 +3,15 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
 import { Loader2, ArrowUpRight } from 'lucide-react';
 import BN from 'bn.js';
-import { SolanaIcon, QQIcon } from '../icons';
+import { SolanaIcon, QQIcon } from '@/components/icons';
 import { useSwap } from './use-swap';
 import { SwapInput } from './swap-input';
 import { QuickAmounts } from './quick-amounts';
 import { SlippagePopover } from './slippage-popover';
-import { Button } from '../ui/button';
-import { useToast } from '../ui/toast';
-import { truncateAddress } from '../../lib/format';
-import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY, TOKEN_DECIMALS } from '../../config/const';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/toast';
+import { truncateAddress } from '@/lib/format';
+import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY, TOKEN_DECIMALS } from '@/config/const';
 
 /**
  * @dev Main swap panel with buy/sell tabs, quote fetching, and swap execution

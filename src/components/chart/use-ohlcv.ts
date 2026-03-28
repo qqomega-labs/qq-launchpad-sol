@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { fetchOhlcv, type Candle } from '../../lib/gecko';
+import { fetchOhlcv, type Candle } from '@/lib/gecko';
 
 interface UseOhlcvOptions {
   timeframe: 'minute' | 'hour' | 'day';
