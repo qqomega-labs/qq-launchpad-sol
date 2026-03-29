@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-03-29 (QQAlpha)
+
+### Changed
+
+- **Glass panels**: Removed frost gradient overlays and SVG noise grain for cleaner translucent panels
+- **Header**: Sticky top with translucent blur background (`rgba(10,3,18,0.15)`), content blurs through on scroll
+
 ## [Unreleased] - 2026-03-28 (QQAlpha)
 
 ### Added
@@ -113,8 +120,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Glassmorphism** upgraded to frosted glass: `backdrop-blur` 40px -> 64px with `saturate(120%)`, denser backgrounds (card 0.35 -> 0.55, input 0.3 -> 0.4, accent 0.4 -> 0.6), subtle top-edge frost gradient, SVG noise grain overlay at 3% opacity, deeper shadows with glass rim highlight
-- Header/Footer backdrop blur matched to 64px + saturate, header bg opacity 0.7 -> 0.8
+- **Typography**: Inter replaced with **Outfit** (geometric, sharp, luxury feel)
+  - Hero headline: 32px mobile / 38px desktop, bold, tight tracking, "Dashboard" keyword highlighted in accent
+  - Stat card labels: uppercase with letter-spacing
+  - Supply tagline: uppercase tracking-wider
+- **UX layout**: Mobile-first swap priority
+  - Swap panel renders first on mobile (order-1), hero second; desktop keeps hero left / swap right
+  - Accent divider line between hero+swap and data sections
+  - Staggered entrance animations (`fade-up`) on each section (0s to 0.4s delay)
+- **CTA button**: Animated gradient shimmer (`btn-cta`), hover glow + lift (-1px), press scale, disabled state without animation
+- **Progress bar**: Flowing animated gradient (`progress-gradient`) replacing static gradient
+- **Stat cards**: Hover lift (-2px) with border glow transition (`stat-card` class)
+- **Glass panels**: Border glow transition on hover
+- **Header**: Uses `.glass-panel` class for frosted glass effect (blur + grain + frost gradient), replacing opaque `rgba(4,1,8,0.8)` background
+- **Glassmorphism** upgraded: `backdrop-blur` 40px -> 64px with `saturate(120%)`, denser backgrounds (card 0.35 -> 0.55, input 0.3 -> 0.4, accent 0.4 -> 0.6), frost gradient, SVG noise grain overlay at 3% opacity, deeper shadows with glass rim highlight
 - Global `cursor: pointer` on all clickable elements (`button`, `a`, `[role="button"]`, `select`, `summary`) via `@layer base`
 - `SwapInput` now accepts `tokenMint` + optional `onTokenSelect` instead of static `tokenSymbol`/`tokenIcon` props
 - `useSwap` hook signature: `getQuote(amountIn, inputMint, outputMint, slippageBps)` replaces `getQuote(amountIn, isSell, slippageBps)`

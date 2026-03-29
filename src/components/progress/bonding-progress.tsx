@@ -4,12 +4,10 @@ import { DBC_SUPPLY, COLORS } from '@/config/const';
 import { Skeleton } from '@/components/ui/skeleton';
 
 /**
- * @dev Bonding curve progress bar with graduation detection
+ * @dev Bonding curve progress bar with animated gradient and graduation detection
  */
 export function BondingProgress() {
   const { tokensSold, progressPct, graduated, loading } = usePoolState();
-
-  const progressGradient = `linear-gradient(90deg, ${COLORS.accentDark}, ${COLORS.accent}, ${COLORS.accentLight})`;
 
   if (loading) {
     return (
@@ -33,10 +31,10 @@ export function BondingProgress() {
       {/* Progress bar */}
       <div className="w-full h-6 bg-bg-input rounded-full overflow-hidden">
         <div
-          className="h-full rounded-full relative transition-all duration-500"
+          className={`h-full rounded-full relative transition-all duration-500 ${graduated ? '' : 'progress-gradient'}`}
           style={{
             width: `${progressPct}%`,
-            background: graduated ? COLORS.green : progressGradient,
+            ...(graduated ? { background: COLORS.green } : {}),
           }}
         >
           {!graduated && progressPct > 0 && (

@@ -35,7 +35,6 @@ export function SwapPanel() {
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // Resolve input/output mints based on buy/sell mode
   const inputMint = isSell ? QQ_MINT : selectedPayMint;
   const outputMint = isSell ? selectedReceiveMint : QQ_MINT;
   const inputToken = getToken(inputMint);
@@ -43,10 +42,8 @@ export function SwapPanel() {
   const inputDecimals = inputToken?.decimals ?? 9;
   const outputDecimals = outputToken?.decimals ?? 6;
 
-  // Debounced quote fetch
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-
     const amount = parseFloat(inputAmount);
     if (isNaN(amount) || amount <= 0) return;
 
@@ -94,11 +91,8 @@ export function SwapPanel() {
   };
 
   const ctaDisabled = loading || success || (connected && (!inputAmount || parseFloat(inputAmount) <= 0));
-
-  // Quick amounts for the selected pay token
   const quickAmounts = !isSell ? (QUICK_AMOUNTS[selectedPayMint] ?? []) : [];
 
-  // Fee / route info
   const feeInfo = () => {
     if (!quote) return '';
     if (quote.route === 'dbc') {
@@ -136,7 +130,7 @@ export function SwapPanel() {
         excludeMint={QQ_MINT}
       />
 
-      {/* Quick amounts (buy mode only) */}
+      {/* Quick amounts */}
       {quickAmounts.length > 0 && (
         <QuickAmounts
           amounts={quickAmounts}
@@ -157,47 +151,43 @@ export function SwapPanel() {
         />
       </div>
 
-      {/* Slippage + fee info */}
-      <div className="flex items-center justify-between mt-3">
-        <span className="text-text-muted text-xs">{feeInfo()}</span>
-        <SlippagePopover value={slippage} onChange={setSlippage} />
+      {/* Slippage + fee + route - grouped together */}
+      <div className="mt-3 space-y-1">
+        <div className="flex items-center justify-between">
+          <span className="text-text-muted text-xs">{feeInfo()}</span>
+          <SlippagePopover value={slippage} onChange={setSlippage} />
+        </div>
+        {routeLabel() && (
+          <p className="text-text-muted text-[10px] text-center">{routeLabel()}</p>
+        )}
       </div>
 
-      {/* Route indicator */}
-      {routeLabel() && (
-        <p className="text-text-muted text-[10px] text-center mt-1">{routeLabel()}</p>
-      )}
+      {/* CTA - shimmer gradient button */}
+      <button
+        onClick={handleSwap}
+        disabled={!!ctaDisabled}
+        className="btn-cta w-full mt-5 rounded-[12px] px-6 py-3.5 text-white text-base font-semibold tracking-wide disabled:cursor-not-allowed"
+      >
+        {loading && (
+          <Loader2 size={16} className="animate-spin -ml-1 mr-2 inline" />
+        )}
+        {ctaText()}
+      </button>
 
-      {/* CTA */}
-      <div className="mt-5">
-        <Button
-          variant="accent"
-          onClick={handleSwap}
-          disabled={!!ctaDisabled}
-        >
-          {loading && (
-            <Loader2 size={16} className="animate-spin -ml-1 mr-2 inline" />
-          )}
-          {ctaText()}
-        </Button>
-      </div>
-
-      {/* Error display */}
+      {/* Error */}
       {error && (
         <p className="text-red text-xs mt-2 text-center">{error}</p>
       )}
 
-      {/* Fallback link */}
+      {/* Fallback */}
       <div className="mt-4 text-center">
-        <span className="text-text-muted text-xs">&mdash; or &mdash;</span>
-        <br />
         <a
           href={DEXSCREENER_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-text-secondary text-xs hover:text-white transition-colors"
+          className="text-text-muted text-xs hover:text-accent transition-colors inline-flex items-center gap-1"
         >
-          Buy on DexScreener <ArrowUpRight size={12} className="inline ml-0.5" />
+          or buy on DexScreener <ArrowUpRight size={11} />
         </a>
       </div>
     </div>

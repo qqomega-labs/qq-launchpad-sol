@@ -30,10 +30,10 @@
   --color-text-secondary: rgba(240, 232, 240, 0.55);
   --color-text-muted: rgba(240, 232, 240, 0.35);
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: 'Outfit', system-ui, sans-serif;
 }
 
-/* Background layers from qq-omega-landing */
+/* Background layers */
 .bg-radial-deep {
   background:
     radial-gradient(ellipse at 50% 45%, rgba(253, 1, 90, 0.14) 0%, transparent 42%),
@@ -57,66 +57,40 @@
   background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.65) 100%);
 }
 
-/* Glass panel base - frosted glass effect */
+/* Glass panel base */
 .glass-panel {
   position: relative;
   backdrop-filter: blur(64px) saturate(120%);
   -webkit-backdrop-filter: blur(64px) saturate(120%);
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.04) 0%,
-      rgba(255, 255, 255, 0) 40%
-    ),
-    var(--color-bg-card);
+  background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   box-shadow:
     0 0 24px rgba(253, 1, 90, 0.04),
     0 4px 24px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     inset 0 0 0 0.5px rgba(255, 255, 255, 0.03);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Glass panel with accent glow (swap panel) - frosted glass effect */
+.glass-panel:hover {
+  border-color: rgba(253, 1, 90, 0.25);
+}
+
+/* Glass panel accent */
 .glass-panel-accent {
   position: relative;
   backdrop-filter: blur(64px) saturate(130%);
   -webkit-backdrop-filter: blur(64px) saturate(130%);
-  background:
-    linear-gradient(
-      180deg,
-      rgba(253, 1, 90, 0.04) 0%,
-      rgba(255, 255, 255, 0) 50%
-    ),
-    rgba(10, 3, 18, 0.6);
+  background: rgba(10, 3, 18, 0.6);
   border: 1px solid var(--color-border-active);
   box-shadow:
     0 0 40px rgba(253, 1, 90, 0.1),
     0 4px 24px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
     inset 0 0 0 0.5px rgba(255, 255, 255, 0.03);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Noise grain overlay for frosted glass realism */
-.glass-panel::before,
-.glass-panel-accent::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  background-size: 128px 128px;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
-/* Ensure panel content sits above the noise overlay */
-.glass-panel > *,
-.glass-panel-accent > * {
-  position: relative;
-  z-index: 1;
-}
 
 body {
   margin: 0;
@@ -131,6 +105,22 @@ body {
   box-sizing: border-box;
 }
 
+/* Entrance animations */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @keyframes pulse-edge {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
@@ -138,4 +128,75 @@ body {
 
 .animate-pulse-edge {
   animation: pulse-edge 2s ease-in-out infinite;
+}
+
+/* Animated gradient shimmer for CTA button */
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.btn-cta {
+  background: linear-gradient(135deg, #c70046 0%, #fd015a 40%, #ff3d7a 60%, #fd015a 100%);
+  background-size: 300% 300%;
+  animation: shimmer 4s ease infinite;
+  border: 1px solid rgba(255, 61, 122, 0.4);
+  box-shadow:
+    0 0 24px rgba(253, 1, 90, 0.2),
+    0 4px 16px rgba(253, 1, 90, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: all 0.2s ease;
+}
+
+.btn-cta:hover:not(:disabled) {
+  box-shadow:
+    0 0 32px rgba(253, 1, 90, 0.35),
+    0 6px 20px rgba(253, 1, 90, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.btn-cta:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-cta:disabled {
+  animation: none;
+  background: rgba(253, 1, 90, 0.15);
+  border-color: rgba(253, 1, 90, 0.2);
+  box-shadow: none;
+  opacity: 0.5;
+}
+
+/* Accent divider */
+.accent-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(253, 1, 90, 0.3), transparent);
+}
+
+/* Animated progress bar gradient */
+@keyframes progress-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.progress-gradient {
+  background: linear-gradient(90deg, #c70046, #fd015a, #ff3d7a, #fd015a, #c70046);
+  background-size: 200% 100%;
+  animation: progress-flow 3s linear infinite;
+}
+
+/* Stat card lift on hover */
+.stat-card {
+  transition: transform 0.25s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(253, 1, 90, 0.3);
+  box-shadow:
+    0 0 24px rgba(253, 1, 90, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }

@@ -9,23 +9,24 @@ import { TOTAL_SUPPLY } from '@/config/const';
 export function HeroSection() {
   const { burned, seatsRemaining, loading } = useBurnedSupply();
 
-  // Color logic: seats < 8000 = red, < 9000 = accent, else default
   const seatsColor = seatsRemaining !== null
     ? seatsRemaining < 8000 ? 'red' : seatsRemaining < 9000 ? 'accent' : 'default'
     : 'default';
 
   return (
     <div className="flex flex-col justify-center h-full">
-      <h1 className="text-[28px] font-semibold text-white leading-tight">
-        1 QQ = 1 Dashboard Access
+      <h1 className="text-[32px] lg:text-[38px] font-bold text-white leading-[1.1] tracking-tight">
+        1 QQ = 1{' '}
+        <span className="text-accent">Dashboard</span>{' '}
+        Access
       </h1>
 
-      <p className="mt-3 text-[15px] text-text-secondary leading-relaxed max-w-lg">
-        Hold $QQ in your wallet to unlock the QQ Omega scoring dashboard:
+      <p className="mt-4 text-[15px] text-text-secondary leading-relaxed max-w-lg">
+        Hold <span className="text-white font-medium">$QQ</span> in your wallet to unlock the QQ Omega scoring dashboard:
         real-time ratings, rankings, and AI-driven insights across 100+ crypto assets.
       </p>
 
-      <p className="mt-2 text-sm font-mono text-accent">
+      <p className="mt-3 text-sm font-mono text-accent tracking-wider uppercase">
         10,000 total supply. Shrinking.
       </p>
 
@@ -43,7 +44,7 @@ export function HeroSection() {
         />
         <StatCard
           value={seatsRemaining !== null ? formatNumber(seatsRemaining) : null}
-          label="Seats Remaining"
+          label="Seats Left"
           loading={loading}
           color={seatsColor}
         />

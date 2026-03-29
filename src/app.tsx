@@ -11,34 +11,46 @@ import { Footer } from "@/components/footer";
 import { ToastProvider } from "@/components/ui/toast";
 
 /**
- * @dev LaunchpadPage.
+ * @dev LaunchpadPage - reorganized for buy/sell-first UX.
+ * Mobile: Swap at top, then hero context, then data.
+ * Desktop: Swap panel pinned right, hero left, data below.
  */
 function LaunchpadPage() {
   return (
     <div className="min-h-screen flex flex-col relative bg-bg-primary">
-      {/* Background layers from qq-omega-landing */}
       <div className="fixed inset-0 bg-radial-deep" />
       <div className="fixed inset-0 bg-filigree" />
       <div className="fixed inset-0 bg-vignette" />
 
       <div className="relative z-10 min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 py-6 space-y-6">
-        {/* Hero + Swap side by side on desktop */}
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="lg:w-[55%]">
-            <HeroSection />
+        <Header />
+        <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 py-6">
+          {/* Swap-first layout: swap panel is the hero on mobile */}
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Mobile: swap first, desktop: hero left */}
+            <div className="lg:w-[55%] order-2 lg:order-1 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+              <HeroSection />
+            </div>
+            <div className="lg:w-[45%] order-1 lg:order-2 animate-fade-up" style={{ animationDelay: '0s' }}>
+              <SwapPanel />
+            </div>
           </div>
-          <div className="lg:w-[45%]">
-            <SwapPanel />
-          </div>
-        </div>
 
-        <BondingProgress />
-        <ChartPanel />
-        <DataTabs />
-      </main>
-      <Footer />
+          <div className="accent-divider my-6" />
+
+          <div className="animate-fade-up" style={{ animationDelay: '0.2s' }}>
+            <BondingProgress />
+          </div>
+
+          <div className="mt-6 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+            <ChartPanel />
+          </div>
+
+          <div className="mt-6 animate-fade-up" style={{ animationDelay: '0.4s' }}>
+            <DataTabs />
+          </div>
+        </main>
+        <Footer />
       </div>
     </div>
   );
