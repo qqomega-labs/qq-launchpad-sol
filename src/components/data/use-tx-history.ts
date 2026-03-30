@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { TOKEN_MINT } from '@/config/const';
-import { fetchTxHistory, type TxRecord } from '@/lib/jupiter-data';
+import { useState, useEffect, useCallback } from "react";
+import { TOKEN_MINT } from "@/config/const";
+import { fetchTxHistory, type TxRecord } from "@/lib/jupiter-data";
 
 /**
  * @dev Hook for paginated transaction history via Jupiter Data API
@@ -31,7 +31,9 @@ export function useTxHistory() {
     }
 
     load();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
 
   const loadMore = useCallback(async () => {

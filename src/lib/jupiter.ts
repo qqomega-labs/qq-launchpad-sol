@@ -2,7 +2,7 @@
  * @dev Jupiter Quote API v6 + Swap API client (headless, no widget)
  */
 
-import { JUPITER_QUOTE_API } from '@/config/const';
+import { JUPITER_QUOTE_API } from "@/config/const";
 
 export class JupiterApiError extends Error {
   constructor(
@@ -10,7 +10,7 @@ export class JupiterApiError extends Error {
     public status: number,
   ) {
     super(message);
-    this.name = 'JupiterApiError';
+    this.name = "JupiterApiError";
   }
 }
 
@@ -63,10 +63,10 @@ export async function fetchJupiterQuote(
   params: JupiterQuoteParams,
 ): Promise<JupiterQuoteResponse> {
   const url = new URL(`${JUPITER_QUOTE_API}/quote`);
-  url.searchParams.set('inputMint', params.inputMint);
-  url.searchParams.set('outputMint', params.outputMint);
-  url.searchParams.set('amount', params.amount);
-  url.searchParams.set('slippageBps', String(params.slippageBps));
+  url.searchParams.set("inputMint", params.inputMint);
+  url.searchParams.set("outputMint", params.outputMint);
+  url.searchParams.set("amount", params.amount);
+  url.searchParams.set("slippageBps", String(params.slippageBps));
 
   const res = await fetchWithRetry(url.toString());
   return res.json();
@@ -81,8 +81,8 @@ export async function fetchJupiterSwapTx(
   userPublicKey: string,
 ): Promise<JupiterSwapResponse> {
   const res = await fetchWithRetry(`${JUPITER_QUOTE_API}/swap`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       quoteResponse,
       userPublicKey,
@@ -107,7 +107,7 @@ async function fetchWithRetry(
   }
 
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await res.text().catch(() => "");
     throw new JupiterApiError(
       `Jupiter API ${res.status}: ${body || res.statusText}`,
       res.status,

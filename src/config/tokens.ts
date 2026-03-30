@@ -7,42 +7,42 @@ export interface SupportedToken {
   symbol: string;
   name: string;
   decimals: number;
-  icon: 'sol' | 'usdc' | 'usdt' | 'qq';
+  icon: "sol" | "usdc" | "usdt" | "qq";
 }
 
-export const SOL_MINT = 'So11111111111111111111111111111111111111112';
-export const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
-export const USDT_MINT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB';
-export const QQ_MINT = '76vURLKDqAMhiX2wvoedoWRNvwqSjsZ7EtrJKJiKArDN';
+export const SOL_MINT = "So11111111111111111111111111111111111111112";
+export const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+export const USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB";
+export const QQ_MINT = "76vURLKDqAMhiX2wvoedoWRNvwqSjsZ7EtrJKJiKArDN";
 
 export const TOKENS: Record<string, SupportedToken> = {
   [SOL_MINT]: {
     mint: SOL_MINT,
-    symbol: 'SOL',
-    name: 'Solana',
+    symbol: "SOL",
+    name: "Solana",
     decimals: 9,
-    icon: 'sol',
+    icon: "sol",
   },
   [USDC_MINT]: {
     mint: USDC_MINT,
-    symbol: 'USDC',
-    name: 'USD Coin',
+    symbol: "USDC",
+    name: "USD Coin",
     decimals: 6,
-    icon: 'usdc',
+    icon: "usdc",
   },
   [USDT_MINT]: {
     mint: USDT_MINT,
-    symbol: 'USDT',
-    name: 'Tether USD',
+    symbol: "USDT",
+    name: "Tether USD",
     decimals: 6,
-    icon: 'usdt',
+    icon: "usdt",
   },
   [QQ_MINT]: {
     mint: QQ_MINT,
-    symbol: 'QQ',
-    name: 'QQ Omega',
+    symbol: "QQ",
+    name: "QQ Omega",
     decimals: 6,
-    icon: 'qq',
+    icon: "qq",
   },
 };
 
@@ -73,5 +73,8 @@ export function getToken(mint: string): SupportedToken | undefined {
  * (one side is SOL, the other is QQ)
  */
 export function isDirectPath(inputMint: string, outputMint: string): boolean {
-  return (isSOL(inputMint) && isQQ(outputMint)) || (isQQ(inputMint) && isSOL(outputMint));
+  return (
+    (isSOL(inputMint) && isQQ(outputMint)) ||
+    (isQQ(inputMint) && isSOL(outputMint))
+  );
 }

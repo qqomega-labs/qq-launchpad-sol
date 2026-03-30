@@ -14,7 +14,7 @@ export function QuickAmounts({ amounts, onSelect, onMax }: QuickAmountsProps) {
         <button
           key={amt}
           onClick={() => onSelect(amt)}
-          className="bg-bg-input border border-border hover:border-border-active rounded-[8px] px-3 py-1 text-xs text-text-secondary hover:text-white transition-colors font-mono"
+          className="bg-bg-input border border-border hover:border-border-active rounded-[8px] px-3 py-2 text-xs text-text-secondary hover:text-white transition-colors font-mono"
         >
           {amt}
         </button>
@@ -22,7 +22,7 @@ export function QuickAmounts({ amounts, onSelect, onMax }: QuickAmountsProps) {
       {onMax && (
         <button
           onClick={onMax}
-          className="bg-bg-input border border-border hover:border-border-active rounded-[8px] px-3 py-1 text-xs text-text-secondary hover:text-white transition-colors"
+          className="bg-bg-input border border-border hover:border-border-active rounded-[8px] px-3 py-2 text-xs text-text-secondary hover:text-white transition-colors"
         >
           Max
         </button>

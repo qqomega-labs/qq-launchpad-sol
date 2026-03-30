@@ -1,7 +1,7 @@
-import { usePoolState } from './use-pool-state';
-import { formatNumber } from '@/lib/format';
-import { DBC_SUPPLY, COLORS } from '@/config/const';
-import { Skeleton } from '@/components/ui/skeleton';
+import { usePoolState } from "./use-pool-state";
+import { formatNumber } from "@/lib/format";
+import { DBC_SUPPLY, COLORS } from "@/config/const";
+import { Skeleton } from "@/components/ui/skeleton";
 
 /**
  * @dev Bonding curve progress bar with animated gradient and graduation detection
@@ -20,9 +20,11 @@ export function BondingProgress() {
   }
 
   return (
-    <div className="glass-panel rounded-[12px] p-5">
+    <div className="glass-panel rounded-[12px] p-5 h-full flex flex-col justify-center">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-text-secondary text-sm font-medium">Bonding Curve</span>
+        <span className="text-text-secondary text-sm font-medium">
+          Bonding Curve
+        </span>
         <span className="text-text-muted text-xs font-mono">
           {progressPct.toFixed(1)}%
         </span>
@@ -31,7 +33,7 @@ export function BondingProgress() {
       {/* Progress bar */}
       <div className="w-full h-6 bg-bg-input rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full relative transition-all duration-500 ${graduated ? '' : 'progress-gradient'}`}
+          className={`h-full rounded-full relative transition-all duration-500 ${graduated ? "" : "progress-gradient"}`}
           style={{
             width: `${progressPct}%`,
             ...(graduated ? { background: COLORS.green } : {}),
@@ -47,10 +49,13 @@ export function BondingProgress() {
       <div className="flex items-center justify-between mt-2">
         <span className="text-xs font-mono text-text-secondary">
           {graduated ? (
-            <span className="text-green">Graduated &mdash; now trading on Meteora DAMM v2</span>
+            <span className="text-green">
+              Graduated &mdash; now trading on Meteora DAMM v2
+            </span>
           ) : (
             <>
-              {formatNumber(Math.floor(tokensSold))} / {formatNumber(DBC_SUPPLY)} QQ sold
+              {formatNumber(Math.floor(tokensSold))} /{" "}
+              {formatNumber(DBC_SUPPLY)} QQ sold
             </>
           )}
         </span>

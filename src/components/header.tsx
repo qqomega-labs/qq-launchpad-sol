@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
-import { truncateAddress } from '@/lib/format';
-import { COLORS } from '@/config/const';
+import { useState } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useUnifiedWalletContext } from "@jup-ag/wallet-adapter";
+import { truncateAddress } from "@/lib/format";
+import { COLORS } from "@/config/const";
 
 export function Header() {
   const { publicKey, connected, disconnect } = useWallet();
@@ -33,7 +33,9 @@ export function Header() {
     <header className="glass-panel !sticky top-0 z-40 h-16 flex items-center justify-between px-4 md:px-6 !rounded-none !border-x-0 !border-t-0 !bg-[rgba(10,3,18,0.15)]">
       <div className="flex items-center gap-3">
         <img src="/logo.svg" alt="QQ" className="h-8 w-8" />
-        <span className="text-text-muted text-sm font-medium tracking-wide">Launchpad</span>
+        <span className="text-text-muted text-sm font-medium tracking-wide">
+          Launchpad
+        </span>
       </div>
 
       <div className="relative">
@@ -41,13 +43,13 @@ export function Header() {
           onClick={handleWalletClick}
           className={`px-4 py-2 rounded-[8px] text-sm font-medium transition-all duration-200 ${
             connected
-              ? 'glass-panel hover:border-border-active text-white font-mono'
+              ? "glass-panel hover:border-border-active text-white font-mono"
               : `${COLORS.tw.accentBg} border border-accent/35 ${COLORS.tw.accentBgHover} hover:border-accent/50 text-white ${COLORS.tw.accentGlow} active:scale-[0.98]`
           }`}
         >
           {connected && publicKey
             ? truncateAddress(publicKey.toBase58())
-            : 'Connect Wallet'}
+            : "Connect Wallet"}
         </button>
 
         {showDropdown && connected && (

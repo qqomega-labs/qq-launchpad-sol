@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { TOKEN_MINT } from '@/config/const';
-import { fetchTopHolders, type TopHolder } from '@/lib/jupiter-data';
+import { useState, useEffect, useRef } from "react";
+import { TOKEN_MINT } from "@/config/const";
+import { fetchTopHolders, type TopHolder } from "@/lib/jupiter-data";
 
 const POLL_INTERVAL = 60_000;
 

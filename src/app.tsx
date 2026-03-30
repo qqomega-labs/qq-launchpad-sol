@@ -9,11 +9,12 @@ import { ChartPanel } from "@/components/chart/chart-panel";
 import { DataTabs } from "@/components/data/data-tabs";
 import { Footer } from "@/components/footer";
 import { ToastProvider } from "@/components/ui/toast";
+import { QQHexSphere } from "@/components/sphere/qq-hex-sphere";
 
 /**
- * @dev LaunchpadPage - reorganized for buy/sell-first UX.
- * Mobile: Swap at top, then hero context, then data.
- * Desktop: Swap panel pinned right, hero left, data below.
+ * @dev LaunchpadPage - sphere hero + swap-first layout.
+ * Mobile: hero banner, swap, sphere, then data sections.
+ * Desktop: sphere left + swap right, hero banner above, data below.
  */
 function LaunchpadPage() {
   return (
@@ -25,28 +26,40 @@ function LaunchpadPage() {
       <div className="relative z-10 min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 py-6">
-          {/* Swap-first layout: swap panel is the hero on mobile */}
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Mobile: swap first, desktop: hero left */}
-            <div className="lg:w-[55%] order-2 lg:order-1 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-              <HeroSection />
+          {/* Hero banner - compact value prop + stats */}
+          <div className="animate-fade-up mb-6">
+            <HeroSection />
+          </div>
+
+          {/* Sphere + Swap side by side, stretched to equal height */}
+          <div className="flex flex-col lg:flex-row lg:items-stretch gap-5">
+            <div
+              className="lg:w-[55%] order-2 lg:order-1 animate-fade-up"
+              style={{ animationDelay: "0.1s" }}
+            >
+              <QQHexSphere />
             </div>
-            <div className="lg:w-[45%] order-1 lg:order-2 animate-fade-up" style={{ animationDelay: '0s' }}>
+            <div
+              className="lg:w-[45%] order-1 lg:order-2 flex flex-col gap-5 animate-fade-up"
+              style={{ animationDelay: "0s" }}
+            >
               <SwapPanel />
+              <div className="flex-1">
+                <BondingProgress />
+              </div>
             </div>
           </div>
 
           <div className="accent-divider my-6" />
 
-          <div className="animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            <BondingProgress />
-          </div>
-
-          <div className="mt-6 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+          <div className="animate-fade-up" style={{ animationDelay: "0.3s" }}>
             <ChartPanel />
           </div>
 
-          <div className="mt-6 animate-fade-up" style={{ animationDelay: '0.4s' }}>
+          <div
+            className="mt-6 animate-fade-up"
+            style={{ animationDelay: "0.4s" }}
+          >
             <DataTabs />
           </div>
         </main>

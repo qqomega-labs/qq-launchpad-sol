@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useConnection } from '@solana/wallet-adapter-react';
-import { DynamicBondingCurveClient } from '@meteora-ag/dynamic-bonding-curve-sdk';
-import { POOL_ADDRESS, DBC_SUPPLY, TOKEN_DECIMALS } from '@/config/const';
+import { useState, useEffect } from "react";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { DynamicBondingCurveClient } from "@meteora-ag/dynamic-bonding-curve-sdk";
+import { POOL_ADDRESS, DBC_SUPPLY, TOKEN_DECIMALS } from "@/config/const";
 
 interface PoolState {
   tokensSold: number;
@@ -29,7 +29,7 @@ export function usePoolState(): PoolState {
 
     const fetchState = async () => {
       try {
-        const client = new DynamicBondingCurveClient(connection, 'confirmed');
+        const client = new DynamicBondingCurveClient(connection, "confirmed");
         const poolState = await client.state.getPool(POOL_ADDRESS);
         const configState = await client.state.getPoolConfig(poolState.config);
 
@@ -39,12 +39,18 @@ export function usePoolState(): PoolState {
           100;
 
         const tokensSold =
-          DBC_SUPPLY - Number(poolState.baseReserve.toString()) / 10 ** TOKEN_DECIMALS;
+          DBC_SUPPLY -
+          Number(poolState.baseReserve.toString()) / 10 ** TOKEN_DECIMALS;
 
         const graduated = progressPct >= 100;
 
         if (mounted) {
-          setState({ tokensSold, progressPct: Math.min(progressPct, 100), graduated, loading: false });
+          setState({
+            tokensSold,
+            progressPct: Math.min(progressPct, 100),
+            graduated,
+            loading: false,
+          });
         }
       } catch {
         if (mounted) setState((prev) => ({ ...prev, loading: false }));

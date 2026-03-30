@@ -2,7 +2,7 @@
  * @dev Jupiter Data API client for holders, transactions, and token info
  */
 
-import { JUPITER_DATA_API } from '@/config/const';
+import { JUPITER_DATA_API } from "@/config/const";
 
 // PUBLIC
 
@@ -35,9 +35,11 @@ export async function fetchTopHolders(mint: string): Promise<TopHolder[]> {
   const res = await fetch(`${JUPITER_DATA_API}/holders/${mint}`);
   if (!res.ok) return [];
   const data = await res.json();
-  const raw: Array<Record<string, unknown>> = Array.isArray(data) ? data : data.holders ?? [];
+  const raw: Array<Record<string, unknown>> = Array.isArray(data)
+    ? data
+    : (data.holders ?? []);
   return raw.map((h) => ({
-    address: (h.address as string) ?? '',
+    address: (h.address as string) ?? "",
     amount: (h.amount as number) ?? 0,
     pct: (h.pct as number) ?? 0,
   }));
@@ -51,7 +53,7 @@ export async function fetchTxHistory(
   offset?: string,
 ): Promise<TxHistoryResponse> {
   const url = new URL(`${JUPITER_DATA_API}/txs/${mint}`);
-  if (offset) url.searchParams.set('offset', offset);
+  if (offset) url.searchParams.set("offset", offset);
 
   const res = await fetch(url.toString());
   if (!res.ok) return { txs: [], next: null };

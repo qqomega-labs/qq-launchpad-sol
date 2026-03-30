@@ -24,21 +24,33 @@
   --color-accent-glow: rgba(253, 1, 90, 0.15);
   --color-green: #00dc78;
   --color-green-dim: rgba(0, 220, 120, 0.1);
-  --color-red: #FF3D57;
+  --color-red: #ff3d57;
   --color-red-dim: rgba(255, 61, 87, 0.1);
   --color-text-primary: #f0e8f0;
   --color-text-secondary: rgba(240, 232, 240, 0.55);
   --color-text-muted: rgba(240, 232, 240, 0.35);
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --font-sans: 'Outfit', system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-sans: "Outfit", system-ui, sans-serif;
 }
 
 /* Background layers */
 .bg-radial-deep {
   background:
-    radial-gradient(ellipse at 50% 45%, rgba(253, 1, 90, 0.14) 0%, transparent 42%),
-    radial-gradient(ellipse at 20% 80%, rgba(253, 1, 90, 0.06) 0%, transparent 38%),
-    radial-gradient(ellipse at 80% 20%, rgba(120, 0, 60, 0.07) 0%, transparent 32%),
+    radial-gradient(
+      ellipse at 50% 45%,
+      rgba(253, 1, 90, 0.14) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 20% 80%,
+      rgba(253, 1, 90, 0.06) 0%,
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(120, 0, 60, 0.07) 0%,
+      transparent 32%
+    ),
     radial-gradient(ellipse at 40% 30%, #120610 0%, #060110 42%, #000 100%);
 }
 
@@ -54,7 +66,11 @@
 }
 
 .bg-vignette {
-  background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.65) 100%);
+  background: radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    rgba(0, 0, 0, 0.65) 100%
+  );
 }
 
 /* Glass panel base */
@@ -69,7 +85,9 @@
     0 4px 24px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     inset 0 0 0 0.5px rgba(255, 255, 255, 0.03);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .glass-panel:hover {
@@ -88,9 +106,10 @@
     0 4px 24px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
     inset 0 0 0 0.5px rgba(255, 255, 255, 0.03);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
-
 
 body {
   margin: 0;
@@ -122,8 +141,13 @@ body {
 }
 
 @keyframes pulse-edge {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .animate-pulse-edge {
@@ -132,13 +156,25 @@ body {
 
 /* Animated gradient shimmer for CTA button */
 @keyframes shimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .btn-cta {
-  background: linear-gradient(135deg, #c70046 0%, #fd015a 40%, #ff3d7a 60%, #fd015a 100%);
+  background: linear-gradient(
+    135deg,
+    #c70046 0%,
+    #fd015a 40%,
+    #ff3d7a 60%,
+    #fd015a 100%
+  );
   background-size: 300% 300%;
   animation: shimmer 4s ease infinite;
   border: 1px solid rgba(255, 61, 122, 0.4);
@@ -172,24 +208,43 @@ body {
 /* Accent divider */
 .accent-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(253, 1, 90, 0.3), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(253, 1, 90, 0.3),
+    transparent
+  );
 }
 
 /* Animated progress bar gradient */
 @keyframes progress-flow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
 }
 
 .progress-gradient {
-  background: linear-gradient(90deg, #c70046, #fd015a, #ff3d7a, #fd015a, #c70046);
+  background: linear-gradient(
+    90deg,
+    #c70046,
+    #fd015a,
+    #ff3d7a,
+    #fd015a,
+    #c70046
+  );
   background-size: 200% 100%;
   animation: progress-flow 3s linear infinite;
 }
 
 /* Stat card lift on hover */
 .stat-card {
-  transition: transform 0.25s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.25s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .stat-card:hover {

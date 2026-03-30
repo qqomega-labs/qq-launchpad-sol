@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { Settings } from 'lucide-react';
-import { SLIPPAGE_STORAGE_KEY } from '@/config/const';
+import { useState, useEffect, useRef } from "react";
+import { Settings } from "lucide-react";
+import { SLIPPAGE_STORAGE_KEY } from "@/config/const";
 
 interface SlippagePopoverProps {
   value: number;
@@ -14,7 +14,7 @@ const PRESETS = [50, 100, 200]; // 0.5%, 1%, 2%
  */
 export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
   const [open, setOpen] = useState(false);
-  const [custom, setCustom] = useState('');
+  const [custom, setCustom] = useState("");
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,14 +23,14 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
         setOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handlePreset = (bps: number) => {
     onChange(bps);
     localStorage.setItem(SLIPPAGE_STORAGE_KEY, String(bps));
-    setCustom('');
+    setCustom("");
   };
 
   const handleCustom = (val: string) => {
@@ -61,10 +61,10 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
               <button
                 key={bps}
                 onClick={() => handlePreset(bps)}
-                className={`flex-1 py-1.5 rounded-[6px] text-xs font-medium transition-colors ${
-                  value === bps && custom === ''
-                    ? 'bg-accent text-white'
-                    : 'bg-bg-input text-text-secondary hover:text-white'
+                className={`flex-1 py-2 rounded-[6px] text-xs font-medium transition-colors ${
+                  value === bps && custom === ""
+                    ? "bg-accent text-white"
+                    : "bg-bg-input text-text-secondary hover:text-white"
                 }`}
               >
                 {(bps / 100).toFixed(1)}%

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 import {
   createChart,
   type IChartApi,
@@ -7,9 +7,9 @@ import {
   LineStyle,
   CandlestickSeries,
   HistogramSeries,
-} from 'lightweight-charts';
-import type { Candle } from '@/lib/gecko';
-import { COLORS } from '@/config/const';
+} from "lightweight-charts";
+import type { Candle } from "@/lib/gecko";
+import { COLORS } from "@/config/const";
 
 interface TradingChartProps {
   candles: Candle[];
@@ -27,7 +27,7 @@ export function TradingChart({ candles }: TradingChartProps) {
 
     const chart = createChart(containerRef.current, {
       layout: {
-        background: { color: 'transparent' },
+        background: { color: "transparent" },
         textColor: COLORS.raw.textSecondary,
         fontFamily: "'Inter', sans-serif",
         fontSize: 12,
@@ -63,11 +63,11 @@ export function TradingChart({ candles }: TradingChartProps) {
     });
 
     const volumeSeries = chart.addSeries(HistogramSeries, {
-      priceFormat: { type: 'volume' },
-      priceScaleId: 'volume',
+      priceFormat: { type: "volume" },
+      priceScaleId: "volume",
     });
 
-    chart.priceScale('volume').applyOptions({
+    chart.priceScale("volume").applyOptions({
       scaleMargins: { top: 0.8, bottom: 0 },
     });
 
@@ -86,7 +86,8 @@ export function TradingChart({ candles }: TradingChartProps) {
         candles.map((c) => ({
           time: c.time as UTCTimestamp,
           value: c.volume,
-          color: c.close >= c.open ? COLORS.raw.volumeUp : COLORS.raw.volumeDown,
+          color:
+            c.close >= c.open ? COLORS.raw.volumeUp : COLORS.raw.volumeDown,
         })),
       );
 
@@ -98,10 +99,10 @@ export function TradingChart({ candles }: TradingChartProps) {
         chart.applyOptions({ width: containerRef.current.clientWidth });
       }
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       chart.remove();
       chartRef.current = null;
     };

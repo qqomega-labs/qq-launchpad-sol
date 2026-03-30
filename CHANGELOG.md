@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-03-30 (QQAlpha)
+
+### Added
+
+- **QQ Hex Sphere** (`src/components/sphere/`): 3D interactive Fibonacci sphere with hexagonal crypto asset tiles
+  - `sphere-data.ts`: typed dimension/category/asset data for 50 crypto assets scored across 5 dimensions (Macro, Fundamentals, Tokenomics, On-Chain, Technical)
+  - `sphere-utils.ts`: geometry (Fibonacci sphere, surface repulsion, 3D rotation, hex path), scoring (`composite`, `qqScore`, `rankAll`), rank-based HSL coloring
+  - `qq-hex-sphere.tsx`: main component with `DimChips` dimension selector, SVG sphere renderer, `Detail` card for selected asset
+  - Drag-to-rotate with momentum decay (friction `0.94`, velocity tracking per frame)
+  - Idle auto-rotation at `0.0012` rad/frame, pauses on hover, resumes on leave
+  - Mobile touch support: `onTouchStart`/`onTouchMove`/`onTouchEnd`, `touch-action: none` on SVG, `preventDefault` to block scroll during drag
+  - Wrapped in `glass-panel` card with header ("QQ Score", asset count, "drag to explore" hint)
+  - Detail card flows below the sphere (not absolute overlay), uses `glass-panel` + `animate-fade-up`
+- **Prettier** added as dev dependency with `format` and `format:check` scripts
+
+### Changed
+
+- **Page layout**: Sphere replaces hero paragraph next to swap panel
+  - Hero section condensed to compact horizontal banner (tagline + 3 stat cards in a row)
+  - Two-column section: Sphere (left 55%) + Swap panel + Bonding progress (right 45%), columns stretch to equal height via `lg:items-stretch`
+  - Mobile order: hero banner, swap panel, sphere, bonding, chart, data
+  - Bonding progress moved into swap column with `h-full flex flex-col justify-center` to fill remaining height
+- **Unified border intensity**: Swap panel changed from `glass-panel-accent` to `glass-panel` so all widgets share `--color-border` (`rgba(253,1,90,0.15)`)
+- **Text size audit and fixes** across all components
+  - Minimum `text-xs` (12px) for all readable text, eliminated all sub-10px sizes
+  - Hero headline bumped to `text-2xl md:text-3xl`, description to `text-sm md:text-base`
+  - Stat card values bumped to `text-lg md:text-xl`, labels to `text-xs`
+  - Data tab buttons: removed `text-xs` override, restored `text-sm` from Button `tab` variant
+  - Table headers (`holders`, `trade-feed`, `tx-history`): `text-[10px]` bumped to `text-xs`
+  - Swap route label: `text-[10px]` bumped to `text-xs`
+  - DimChips: unified to `text-xs`, increased padding for touch targets
+  - Detail panel: category badge `text-[10px] md:text-xs`, dimension scores `text-xs`, note `text-xs`
+  - Touch targets improved: quick-amount buttons `py-1` to `py-2`, slippage presets `py-1.5` to `py-2`, load-more `py-2` to `py-2.5`
+- **SVG hex text vertical spacing**: score y-offset `-0.30` to `-0.42`, rank `0.35` to `0.45` for better breathing room
+- **Logo**: Replaced 1.2MB `public/logo.svg` with 7.8KB transparent SVG from qq-docs (`QQOmega_logo_transparent.svg`)
+
 ## [Unreleased] - 2026-03-29 (QQAlpha)
 
 ### Changed

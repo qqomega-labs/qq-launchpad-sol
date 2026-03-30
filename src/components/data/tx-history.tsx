@@ -1,7 +1,7 @@
-import { useTxHistory } from './use-tx-history';
-import type { TxRecord } from '@/lib/jupiter-data';
-import { truncateAddress, formatPrice } from '@/lib/format';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useTxHistory } from "./use-tx-history";
+import type { TxRecord } from "@/lib/jupiter-data";
+import { truncateAddress, formatPrice } from "@/lib/format";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function timeAgo(isoStr: string): string {
   const diff = Math.floor((Date.now() - new Date(isoStr).getTime()) / 1000);
@@ -12,16 +12,22 @@ function timeAgo(isoStr: string): string {
 }
 
 function TxRow({ tx }: { tx: TxRecord }) {
-  const isBuy = tx.type === 'buy';
+  const isBuy = tx.type === "buy";
   return (
     <tr className="border-b border-border/50 last:border-0 text-xs">
-      <td className="py-2 pr-3 text-text-muted whitespace-nowrap">{timeAgo(tx.timestamp)}</td>
-      <td className={`py-2 pr-3 font-medium ${isBuy ? 'text-green' : 'text-red'}`}>
-        {isBuy ? 'Buy' : 'Sell'}
+      <td className="py-2 pr-3 text-text-muted whitespace-nowrap">
+        {timeAgo(tx.timestamp)}
       </td>
-      <td className="py-2 pr-3 text-text-primary font-mono">{tx.amount?.toFixed(2) ?? '-'}</td>
+      <td
+        className={`py-2 pr-3 font-medium ${isBuy ? "text-green" : "text-red"}`}
+      >
+        {isBuy ? "Buy" : "Sell"}
+      </td>
+      <td className="py-2 pr-3 text-text-primary font-mono">
+        {tx.amount?.toFixed(2) ?? "-"}
+      </td>
       <td className="py-2 pr-3 text-text-secondary font-mono">
-        {tx.usdPrice ? `$${formatPrice(tx.usdPrice)}` : '-'}
+        {tx.usdPrice ? `$${formatPrice(tx.usdPrice)}` : "-"}
       </td>
       <td className="py-2 pr-3 font-mono text-text-muted">
         {tx.traderAddress ? (
@@ -33,7 +39,9 @@ function TxRow({ tx }: { tx: TxRecord }) {
           >
             {truncateAddress(tx.traderAddress, 4)}
           </a>
-        ) : '-'}
+        ) : (
+          "-"
+        )}
       </td>
       <td className="py-2 text-right">
         {tx.txHash ? (
@@ -45,7 +53,9 @@ function TxRow({ tx }: { tx: TxRecord }) {
           >
             {truncateAddress(tx.txHash, 4)}
           </a>
-        ) : '-'}
+        ) : (
+          "-"
+        )}
       </td>
     </tr>
   );
@@ -55,7 +65,8 @@ function TxRow({ tx }: { tx: TxRecord }) {
  * @dev Transaction history table with load-more pagination
  */
 export function TxHistory() {
-  const { transactions, loading, loadingMore, hasMore, loadMore } = useTxHistory();
+  const { transactions, loading, loadingMore, hasMore, loadMore } =
+    useTxHistory();
 
   if (loading) {
     return (
@@ -68,7 +79,11 @@ export function TxHistory() {
   }
 
   if (transactions.length === 0) {
-    return <p className="text-text-muted text-xs text-center py-4">No transactions found</p>;
+    return (
+      <p className="text-text-muted text-xs text-center py-4">
+        No transactions found
+      </p>
+    );
   }
 
   return (
@@ -76,7 +91,7 @@ export function TxHistory() {
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="text-text-muted text-[10px] uppercase border-b border-border/50">
+            <tr className="text-text-muted text-xs uppercase border-b border-border/50">
               <th className="pb-2 pr-3 font-medium">Time</th>
               <th className="pb-2 pr-3 font-medium">Type</th>
               <th className="pb-2 pr-3 font-medium">Amount</th>
@@ -96,9 +111,9 @@ export function TxHistory() {
         <button
           onClick={loadMore}
           disabled={loadingMore}
-          className="w-full mt-3 py-2 text-xs text-text-muted hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full mt-3 py-2.5 text-xs text-text-muted hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {loadingMore ? 'Loading...' : 'Load more'}
+          {loadingMore ? "Loading..." : "Load more"}
         </button>
       )}
     </div>

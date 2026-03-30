@@ -19,9 +19,9 @@ export const GRADUATION_THRESHOLD_USDC = 20_000;
 export const GT_BASE = "https://api.geckoterminal.com/api/v2";
 export const GT_POOL_ADDR = "FHRTNJD3p3fSyHovubo8oBvRaowVQfLVdzaSota11X1U";
 
-export const JUPITER_QUOTE_API = 'https://quote-api.jup.ag/v6';
-export const JUPITER_DATA_API = 'https://datapi.jup.ag/v1';
-export const JUPITER_WS = 'wss://trench-stream.jup.ag/ws';
+export const JUPITER_QUOTE_API = "https://quote-api.jup.ag/v6";
+export const JUPITER_DATA_API = "https://datapi.jup.ag/v1";
+export const JUPITER_WS = "wss://trench-stream.jup.ag/ws";
 
 export const DEXSCREENER_URL = `https://dexscreener.com/solana/${GT_POOL_ADDR}`;
 export const GECKOTERMINAL_URL = `https://www.geckoterminal.com/solana/pools/${GT_POOL_ADDR}`;
@@ -51,30 +51,30 @@ export const SLIPPAGE_STORAGE_KEY = "qq-slippage";
 // PRIVATE - Design tokens (raw values for JS contexts where Tailwind classes aren't usable)
 
 export const COLORS = {
-  accent: '#fd015a',
-  accentDark: '#c70046',
-  accentLight: '#ff3d7a',
-  green: '#00dc78',
-  white: '#ffffff',
+  accent: "#fd015a",
+  accentDark: "#c70046",
+  accentLight: "#ff3d7a",
+  green: "#00dc78",
+  white: "#ffffff",
   /** @dev Tailwind arbitrary class strings for glass accent elements */
   tw: {
-    accentBg: 'bg-[rgba(253,1,90,0.15)]',
-    accentBgHover: 'hover:bg-[rgba(253,1,90,0.25)]',
-    accentGlow: 'shadow-[0_0_20px_rgba(253,1,90,0.08)]',
-    accentTabActive: 'bg-[rgba(253,1,90,0.12)]',
-    skeletonBg: 'bg-[rgba(253,1,90,0.08)]',
-    headerBg: 'bg-[rgba(4,1,8,0.8)]',
+    accentBg: "bg-[rgba(253,1,90,0.15)]",
+    accentBgHover: "hover:bg-[rgba(253,1,90,0.25)]",
+    accentGlow: "shadow-[0_0_20px_rgba(253,1,90,0.08)]",
+    accentTabActive: "bg-[rgba(253,1,90,0.12)]",
+    skeletonBg: "bg-[rgba(253,1,90,0.08)]",
+    headerBg: "bg-[rgba(4,1,8,0.8)]",
   },
   /** @dev Raw rgba strings for style props and chart config */
   raw: {
-    accentBg: 'rgba(253, 1, 90, 0.15)',
-    accentBgHover: 'rgba(253, 1, 90, 0.25)',
-    accentGlow: 'rgba(253, 1, 90, 0.08)',
-    accentTabActive: 'rgba(253, 1, 90, 0.12)',
-    accentGrid: 'rgba(253, 1, 90, 0.06)',
-    accentBorder: 'rgba(253, 1, 90, 0.15)',
-    volumeUp: 'rgba(253, 1, 90, 0.25)',
-    volumeDown: 'rgba(255, 255, 255, 0.15)',
-    textSecondary: 'rgba(240, 232, 240, 0.55)',
+    accentBg: "rgba(253, 1, 90, 0.15)",
+    accentBgHover: "rgba(253, 1, 90, 0.25)",
+    accentGlow: "rgba(253, 1, 90, 0.08)",
+    accentTabActive: "rgba(253, 1, 90, 0.12)",
+    accentGrid: "rgba(253, 1, 90, 0.06)",
+    accentBorder: "rgba(253, 1, 90, 0.15)",
+    volumeUp: "rgba(253, 1, 90, 0.25)",
+    volumeDown: "rgba(255, 255, 255, 0.15)",
+    textSecondary: "rgba(240, 232, 240, 0.55)",
   },
 } as const;

@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { TradingChart } from './trading-chart';
-import { useOhlcv } from './use-ohlcv';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { TIMEFRAMES } from '@/config/const';
+import { useState } from "react";
+import { TradingChart } from "./trading-chart";
+import { useOhlcv } from "./use-ohlcv";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TIMEFRAMES } from "@/config/const";
 
 /**
  * @dev Chart panel with timeframe selector and TradingView chart

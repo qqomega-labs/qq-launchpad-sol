@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { fetchOhlcv, type Candle } from '@/lib/gecko';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { fetchOhlcv, type Candle } from "@/lib/gecko";
 
 interface UseOhlcvOptions {
-  timeframe: 'minute' | 'hour' | 'day';
+  timeframe: "minute" | "hour" | "day";
   aggregate: number;
   pollMs: number;
 }
@@ -33,7 +33,7 @@ export function useOhlcv({ timeframe, aggregate, pollMs }: UseOhlcvOptions) {
         backoffRef.current = pollMs;
       }
     } catch (e) {
-      if (e instanceof Error && e.message === 'RATE_LIMITED') {
+      if (e instanceof Error && e.message === "RATE_LIMITED") {
         backoffRef.current = Math.min(backoffRef.current * 2, 30_000);
       }
       if (mountedRef.current) setLoading(false);

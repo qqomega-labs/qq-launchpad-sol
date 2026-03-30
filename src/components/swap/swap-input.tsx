@@ -1,7 +1,7 @@
-import { Skeleton } from '@/components/ui/skeleton';
-import { TokenIcon } from '@/components/icons';
-import { TokenSelector } from './token-selector';
-import { getToken } from '@/config/tokens';
+import { Skeleton } from "@/components/ui/skeleton";
+import { TokenIcon } from "@/components/icons";
+import { TokenSelector } from "./token-selector";
+import { getToken } from "@/config/tokens";
 
 interface SwapInputProps {
   label: string;
@@ -58,7 +58,7 @@ export function SwapInput({
         ) : (
           <span className="flex items-center gap-1.5 text-text-secondary text-sm font-medium shrink-0">
             <TokenIcon mint={tokenMint} />
-            <span>{token?.symbol ?? '???'}</span>
+            <span>{token?.symbol ?? "???"}</span>
           </span>
         )}
       </div>

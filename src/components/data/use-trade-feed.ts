@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { JUPITER_WS } from '@/config/const';
-import { TOKEN_MINT } from '@/config/const';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { JUPITER_WS } from "@/config/const";
+import { TOKEN_MINT } from "@/config/const";
 
 export interface Trade {
   txHash: string;
@@ -25,11 +25,17 @@ export function useTradeFeed() {
   const ws = useRef<WebSocket | null>(null);
   const shouldReconnect = useRef(true);
   const reconnectDelay = useRef(1000);
-  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   const connect = useCallback(() => {
     if (!shouldReconnect.current) return;
-    if (ws.current?.readyState === WebSocket.OPEN || ws.current?.readyState === WebSocket.CONNECTING) return;
+    if (
+      ws.current?.readyState === WebSocket.OPEN ||
+      ws.current?.readyState === WebSocket.CONNECTING
+    )
+      return;
 
     const socket = new WebSocket(JUPITER_WS);
     ws.current = socket;
@@ -39,7 +45,7 @@ export function useTradeFeed() {
       reconnectDelay.current = 1000;
       socket.send(
         JSON.stringify({
-          type: 'subscribe:txns',
+          type: "subscribe:txns",
           assets: [TOKEN_MINT.toBase58()],
         }),
       );
@@ -48,7 +54,7 @@ export function useTradeFeed() {
     socket.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data);
-        if (msg.type === 'actions' && Array.isArray(msg.data)) {
+        if (msg.type === "actions" && Array.isArray(msg.data)) {
           setTrades((prev) => {
             const next = [...msg.data, ...prev];
             return next.slice(0, MAX_TRADES);
@@ -68,7 +74,10 @@ export function useTradeFeed() {
       ws.current = null;
       if (shouldReconnect.current) {
         reconnectTimer.current = setTimeout(connect, reconnectDelay.current);
-        reconnectDelay.current = Math.min(reconnectDelay.current * 2, MAX_RECONNECT_DELAY);
+        reconnectDelay.current = Math.min(
+          reconnectDelay.current * 2,
+          MAX_RECONNECT_DELAY,
+        );
       }
     };
   }, []);
