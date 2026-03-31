@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`TOKEN_DECIMALS`**: Corrected from `6` to `9` to match on-chain QQ token mint decimals
 - **QQ token decimals in `tokens.ts`**: Corrected from `6` to `9` in token registry (affected swap input/output calculations)
 - **Swap pricing**: 1 SOL was showing ~136 QQ instead of ~11 QQ because SOL lamports were sent to a USDC-denominated DBC pool
+- **Swap input validation**: Only accepts numbers and dot as decimal separator, commas auto-converted to dots, rejects letters and symbols
+- **Swap output clearing**: Output resets immediately when input is emptied or invalid
 
 ### Removed
 
@@ -37,11 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.stat-card`**: Hover lift CSS removed (no longer needed with borderless counters)
 - **`DimChipsProps`** interface, `handleSort`, `setSortKey`, `setAnimKey` - unused after making chips non-interactive
 - **Price impact UI**: Removed fee/price impact display from swap panel
-
-### Fixed
-
-- **Swap input validation**: Only accepts numbers and dot as decimal separator, commas auto-converted to dots, rejects letters and symbols
-- **Swap output clearing**: Output resets immediately when input is emptied or invalid
 
 ## [Unreleased] - 2026-03-30 (QQAlpha)
 
