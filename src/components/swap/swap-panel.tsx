@@ -12,7 +12,7 @@ import { QuickAmounts } from "./quick-amounts"
 import { SlippagePopover } from "./slippage-popover"
 import { Button } from "@/components/ui/button"
 
-import { truncateAddress } from "@/lib/format"
+import { truncateAddress } from "@/lib/utils"
 import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY } from "@/config/const"
 import { SOL_MINT, QQ_MINT, QUICK_AMOUNTS, getToken } from "@/config/tokens"
 

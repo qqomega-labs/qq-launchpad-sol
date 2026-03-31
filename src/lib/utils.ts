@@ -1,3 +1,13 @@
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+/**
+ * @dev Merge Tailwind classes safely, resolving conflicts via tailwind-merge
+ */
+export function cn(...inputs: ClassValue[]): string {
+   return twMerge(clsx(inputs))
+}
+
 /**
  * @dev Format a number with locale-specific thousands separators
  */
@@ -26,7 +36,7 @@ export function truncateAddress(addr: string, chars = 4): string {
 }
 
 /**
- * @dev Format SOL amount from lamports
+ * @dev Convert lamports to SOL
  */
 export function lamportsToSol(lamports: number): number {
    return lamports / 1e9

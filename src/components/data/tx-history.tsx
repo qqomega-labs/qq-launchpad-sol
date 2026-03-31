@@ -1,6 +1,6 @@
 import { useTxHistory } from "./use-tx-history"
 import type { TxRecord } from "@/lib/jupiter-data"
-import { truncateAddress, formatPrice } from "@/lib/format"
+import { truncateAddress, formatPrice, cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function timeAgo(isoStr: string): string {
@@ -16,7 +16,7 @@ function TxRow({ tx }: { tx: TxRecord }) {
    return (
       <tr className="border-b border-border/50 last:border-0 text-xs">
          <td className="py-2 pr-3 text-text-muted whitespace-nowrap">{timeAgo(tx.timestamp)}</td>
-         <td className={`py-2 pr-3 font-medium ${isBuy ? "text-green" : "text-red"}`}>{isBuy ? "Buy" : "Sell"}</td>
+         <td className={cn("py-2 pr-3 font-medium", isBuy ? "text-green" : "text-red")}>{isBuy ? "Buy" : "Sell"}</td>
          <td className="py-2 pr-3 text-text-primary font-mono">{tx.amount?.toFixed(2) ?? "-"}</td>
          <td className="py-2 pr-3 text-text-secondary font-mono">
             {tx.usdPrice ? `$${formatPrice(tx.usdPrice)}` : "-"}

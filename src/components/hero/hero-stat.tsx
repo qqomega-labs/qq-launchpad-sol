@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton"
 import { COLORS } from "@/config/const"
+import { cn } from "@/lib/utils"
 
 interface HeroStatProps {
    value: string | null
@@ -26,7 +27,10 @@ export function HeroStat({ value, label, loading = false, color = "default" }: H
             <Skeleton className="h-8 w-20 mb-1" />
          ) : (
             <span
-               className={`font-mono text-2xl md:text-3xl font-bold tabular-nums tracking-tight ${colorClasses[color]}`}
+               className={cn(
+                  "font-mono text-2xl md:text-3xl font-bold tabular-nums tracking-tight",
+                  colorClasses[color]
+               )}
             >
                {value ?? "\u2014"}
             </span>

@@ -1,4 +1,5 @@
 import { SOL_MINT, USDC_MINT, USDT_MINT, QQ_MINT } from "@/config/tokens"
+import { cn } from "@/lib/utils"
 
 /**
  * @dev Solana logo icon from qq-omega-landing
@@ -26,7 +27,7 @@ export function SolanaIcon({ className = "w-5 h-5" }: { className?: string }) {
  * @dev QQ token icon - uses favicon.svg
  */
 export function QQIcon({ className = "w-5 h-5" }: { className?: string }) {
-   return <img src="/favicon.svg" alt="QQ" className={`${className} rounded-sm`} />
+   return <img src="/favicon.svg" alt="QQ" className={cn(className, "rounded-sm")} />
 }
 
 /**

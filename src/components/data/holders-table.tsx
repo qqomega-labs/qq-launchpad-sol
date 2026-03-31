@@ -1,5 +1,5 @@
 import { useHolders } from "./use-holders"
-import { truncateAddress, formatNumber } from "@/lib/format"
+import { truncateAddress, formatNumber, cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TOTAL_SUPPLY } from "@/config/const"
 
@@ -41,7 +41,7 @@ export function HoldersTable() {
                   return (
                      <tr
                         key={holder.address}
-                        className={`border-b border-border/50 last:border-0 text-xs ${isTop3 ? "text-accent" : ""}`}
+                        className={cn("border-b border-border/50 last:border-0 text-xs", isTop3 && "text-accent")}
                      >
                         <td className="py-2 pr-3 text-text-muted">{idx + 1}</td>
                         <td className="py-2 pr-3 font-mono">

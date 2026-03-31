@@ -3,7 +3,7 @@ import { useWallet } from "@solana/wallet-adapter-react"
 import { useUnifiedWalletContext } from "@jup-ag/wallet-adapter"
 import { Globe, BookOpen } from "lucide-react"
 
-import { truncateAddress } from "@/lib/format"
+import { truncateAddress, cn } from "@/lib/utils"
 import { COLORS, SOCIAL_LINKS } from "@/config/const"
 
 /** @dev X/Twitter brand icon (not in lucide) */
@@ -94,11 +94,18 @@ export function Header() {
          <div className="relative">
             <button
                onClick={handleWalletClick}
-               className={`px-4 py-2 rounded-[8px] text-sm font-medium transition-all duration-200 ${
+               className={cn(
+                  "px-4 py-2 rounded-[8px] text-sm font-medium transition-all duration-200",
                   connected
                      ? "glass-panel hover:border-border-active text-white font-mono"
-                     : `${COLORS.tw.accentBg} border border-accent/35 ${COLORS.tw.accentBgHover} hover:border-accent/50 text-white ${COLORS.tw.accentGlow} active:scale-[0.98]`
-               }`}
+                     : cn(
+                          COLORS.tw.accentBg,
+                          "border border-accent/35",
+                          COLORS.tw.accentBgHover,
+                          "hover:border-accent/50 text-white active:scale-[0.98]",
+                          COLORS.tw.accentGlow
+                       )
+               )}
             >
                {connected && publicKey ? truncateAddress(publicKey.toBase58()) : "Connect Wallet"}
             </button>

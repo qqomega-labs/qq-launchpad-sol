@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`src/lib/utils.ts`**: merged all format utilities (`formatNumber`, `formatPrice`, `truncateAddress`, `lamportsToSol`, `solToLamports`) into `utils.ts` alongside `cn`; `format.ts` reduced to a re-export shim
+- **`cn` adoption**: replaced all template literal `className` constructions with `cn()` across `button.tsx`, `skeleton.tsx`, `tx-history.tsx`, `trade-feed.tsx`, `holders-table.tsx`, `bonding-progress.tsx`, `slippage-popover.tsx`, `token-selector.tsx`, `icons.tsx`, `header.tsx`, `hero-stat.tsx`, `qq-hex-sphere.tsx`
 - **Format scripts**: `format` and `format:check` now use `prettier --write .` / `prettier --check .` instead of explicit glob patterns
 - **`hero-stat.tsx`**: FOMO color classes now reference `COLORS.tw.fomoSoft/fomoWarm/fomoHot` instead of hardcoded Tailwind arbitrary values
 - **`qq-hex-sphere.tsx`**: accent `rgba` and black shadow values replaced with `COLORS.raw.*` references

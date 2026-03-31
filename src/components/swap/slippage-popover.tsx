@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Settings } from "lucide-react"
 import { SLIPPAGE_STORAGE_KEY } from "@/config/const"
+import { cn } from "@/lib/utils"
 
 interface SlippagePopoverProps {
    value: number
@@ -61,11 +62,12 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
                      <button
                         key={bps}
                         onClick={() => handlePreset(bps)}
-                        className={`flex-1 py-3 min-h-[44px] rounded-[6px] text-xs font-medium transition-colors ${
+                        className={cn(
+                           "flex-1 py-3 min-h-[44px] rounded-[6px] text-xs font-medium transition-colors",
                            value === bps && custom === ""
                               ? "bg-accent text-white"
                               : "bg-bg-input text-text-secondary hover:text-white"
-                        }`}
+                        )}
                      >
                         {(bps / 100).toFixed(1)}%
                      </button>

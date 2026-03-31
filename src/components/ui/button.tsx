@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react"
 import { COLORS } from "@/config/const"
+import { cn } from "@/lib/utils"
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    variant?: "accent" | "ghost" | "tab"
@@ -35,7 +36,7 @@ export function Button({ variant = "accent", active = false, className = "", chi
    }
 
    return (
-      <button className={`${base} ${variants[variant]} ${className}`} {...props}>
+      <button className={cn(base, variants[variant], className)} {...props}>
          {children}
       </button>
    )

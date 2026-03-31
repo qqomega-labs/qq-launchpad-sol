@@ -1,5 +1,5 @@
 import { useTradeFeed, type Trade } from "./use-trade-feed"
-import { truncateAddress, formatPrice } from "@/lib/format"
+import { truncateAddress, formatPrice, cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function timeAgo(isoStr: string): string {
@@ -16,7 +16,7 @@ function TradeRow({ trade }: { trade: Trade }) {
    return (
       <tr className="border-b border-border/50 last:border-0 text-xs">
          <td className="py-2 pr-3 text-text-muted whitespace-nowrap">{timeAgo(trade.timestamp)}</td>
-         <td className={`py-2 pr-3 font-medium ${isBuy ? "text-green" : "text-red"}`}>{isBuy ? "Buy" : "Sell"}</td>
+         <td className={cn("py-2 pr-3 font-medium", isBuy ? "text-green" : "text-red")}>{isBuy ? "Buy" : "Sell"}</td>
          <td className="py-2 pr-3 text-text-primary font-mono">{trade.amount?.toFixed(2) ?? "-"}</td>
          <td className="py-2 pr-3 text-text-secondary font-mono">
             {trade.usdPrice ? `$${formatPrice(trade.usdPrice)}` : "-"}
@@ -49,7 +49,7 @@ export function TradeFeed() {
       <div>
          <div className="flex items-center justify-between mb-3">
             <h3 className="text-text-secondary text-sm font-medium">Live Trades</h3>
-            <span className={`w-1.5 h-1.5 rounded-full ${connected ? "bg-green" : "bg-red"}`} />
+            <span className={cn("w-1.5 h-1.5 rounded-full", connected ? "bg-green" : "bg-red")} />
          </div>
 
          {trades.length === 0 ? (

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import { DIMS, CATS, TOTAL, type SortKey, type RankedAsset, type CatKey } from "./sphere-data"
 import { fibSphere, rotate3D, hexPath, rankAll, getHexColor } from "./sphere-utils"
 import { COLORS } from "@/config/const"
+import { cn } from "@/lib/utils"
 
 // PRIVATE - sub-components
 
@@ -67,16 +68,14 @@ function DimChips({ active }: { active: SortKey }) {
    return (
       <div className="flex items-center gap-1.5 flex-wrap cursor-not-allowed">
          <span
-            className={`
-          flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-mono font-bold text-xs
-          ${
-             isC
-                ? "bg-accent/[0.15] border border-accent/40 text-accent shadow-[0_0_10px_rgba(253,1,90,0.12)]"
-                : "bg-white/[0.03] border border-white/[0.06] text-text-muted"
-          }
-        `}
+            className={cn(
+               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-mono font-bold text-xs",
+               isC
+                  ? "bg-accent/[0.15] border border-accent/40 text-accent shadow-[0_0_10px_rgba(253,1,90,0.12)]"
+                  : "bg-white/[0.03] border border-white/[0.06] text-text-muted"
+            )}
          >
-            <span className={`w-1.5 h-1.5 rounded-full ${isC ? "bg-accent" : "bg-text-muted"}`} />
+            <span className={cn("w-1.5 h-1.5 rounded-full", isC ? "bg-accent" : "bg-text-muted")} />
             QQ
          </span>
          {DIMS.map((d) => {

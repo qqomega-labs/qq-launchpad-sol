@@ -1,6 +1,6 @@
 import { HeroStat } from "./hero-stat"
 import { usePoolState } from "@/components/progress/use-pool-state"
-import { formatNumber } from "@/lib/format"
+import { formatNumber } from "@/lib/utils"
 import { SOLANA_NON_DBC_SUPPLY, DBC_SUPPLY } from "@/config/const"
 
 /**

@@ -1,5 +1,5 @@
 import { usePoolState } from "./use-pool-state"
-import { formatNumber } from "@/lib/format"
+import { formatNumber, cn } from "@/lib/utils"
 import { DBC_SUPPLY, COLORS } from "@/config/const"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -29,7 +29,10 @@ export function BondingProgress() {
          {/* Progress bar */}
          <div className="w-full h-6 bg-bg-input rounded-full overflow-hidden">
             <div
-               className={`h-full rounded-full relative transition-all duration-500 ${graduated ? "" : "progress-gradient"}`}
+               className={cn(
+                  "h-full rounded-full relative transition-all duration-500",
+                  !graduated && "progress-gradient"
+               )}
                style={{
                   width: `${progressPct}%`,
                   ...(graduated ? { background: COLORS.green } : {}),
