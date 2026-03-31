@@ -5,6 +5,7 @@ import { POOL_ADDRESS, DBC_SUPPLY, TOKEN_DECIMALS } from "@/config/const";
 
 interface PoolState {
   tokensSold: number;
+  baseRemaining: number;
   progressPct: number;
   graduated: boolean;
   loading: boolean;
@@ -19,6 +20,7 @@ export function usePoolState(): PoolState {
   const { connection } = useConnection();
   const [state, setState] = useState<PoolState>({
     tokensSold: 0,
+    baseRemaining: 0,
     progressPct: 0,
     graduated: false,
     loading: true,
@@ -38,15 +40,16 @@ export function usePoolState(): PoolState {
             Number(configState.migrationQuoteThreshold.toString())) *
           100;
 
-        const tokensSold =
-          DBC_SUPPLY -
+        const baseRemaining =
           Number(poolState.baseReserve.toString()) / 10 ** TOKEN_DECIMALS;
+        const tokensSold = DBC_SUPPLY - baseRemaining;
 
         const graduated = progressPct >= 100;
 
         if (mounted) {
           setState({
             tokensSold,
+            baseRemaining,
             progressPct: Math.min(progressPct, 100),
             graduated,
             loading: false,

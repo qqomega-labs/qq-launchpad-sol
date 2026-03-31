@@ -13,7 +13,8 @@ export const TOKEN_MINT = new PublicKey(
 
 export const TOTAL_SUPPLY = 10_000;
 export const DBC_SUPPLY = 2_600;
-export const TOKEN_DECIMALS = 6;
+export const SOLANA_NON_DBC_SUPPLY = 3_400; // LP migration 2400 + airdrop 750 + core 200 + partnerships 50
+export const TOKEN_DECIMALS = 9;
 export const GRADUATION_THRESHOLD_USDC = 20_000;
 
 export const GT_BASE = "https://api.geckoterminal.com/api/v2";

@@ -1,23 +1,20 @@
-import { StatCard } from "./stat-card";
-import { useBurnedSupply } from "./use-burned-supply";
+import { HeroStat } from "./hero-stat";
+import { usePoolState } from "@/components/progress/use-pool-state";
 import { formatNumber } from "@/lib/format";
-import { TOTAL_SUPPLY } from "@/config/const";
+import { SOLANA_NON_DBC_SUPPLY, DBC_SUPPLY } from "@/config/const";
 
 /**
- * @dev Compact hero banner - value prop + live stats in a horizontal strip.
+ * @dev Compact hero banner - value prop + live counter stats.
  * Stacks vertically on mobile, single row on desktop.
  */
 export function HeroSection() {
-  const { burned, seatsRemaining, loading } = useBurnedSupply();
+  const { baseRemaining, loading } = usePoolState();
+
+  // Remaining seats = tokens in pool minus non-DBC allocations (LP, airdrop, core, partnerships)
+  const seatsRemaining = Math.floor(baseRemaining) - SOLANA_NON_DBC_SUPPLY;
 
   const seatsColor =
-    seatsRemaining !== null
-      ? seatsRemaining < 8000
-        ? "red"
-        : seatsRemaining < 9000
-          ? "accent"
-          : "default"
-      : "default";
+    seatsRemaining < 500 ? "hot" : seatsRemaining < 1300 ? "warm" : "fomo";
 
   return (
     <div className="glass-panel rounded-[12px] p-4 md:p-5">
@@ -25,33 +22,30 @@ export function HeroSection() {
         {/* Value prop */}
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight tracking-tight">
-            1 QQ = 1 <span className="text-accent">Dashboard</span> Access
+            1 QQ = <span className="text-accent">Lifetime</span> access to Your
+            Quant Assistant{" "}
           </h1>
-          <p className="mt-2 text-sm md:text-base text-text-secondary leading-relaxed max-w-md">
-            Hold <span className="text-white font-medium">$QQ</span> to unlock
-            QQ Omega: real-time ratings, rankings, and insights across 100+
-            crypto assets.
+          <p className="mt-2 text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl">
+            Hold just <span className="text-white font-medium">1 $QQ</span> in
+            your wallet to access the lifetime wisdom of QQ Omega's swarms:
+            fundamentals, tokenomics, on-chain data, technical analysis, and
+            macro signals into one investment edge
           </p>
         </div>
 
-        {/* Stats strip */}
-        <div className="flex gap-2.5 shrink-0">
-          <StatCard
-            value={formatNumber(TOTAL_SUPPLY)}
-            label="Supply"
+        {/* Counter strip */}
+        <div className="flex items-center gap-0 shrink-0">
+          <HeroStat
+            value={formatNumber(DBC_SUPPLY)}
+            label="Seats"
             loading={false}
           />
-          <StatCard
-            value={burned !== null ? formatNumber(burned) : null}
-            label="Burned"
-            loading={loading}
-            color="accent"
-          />
-          <StatCard
-            value={
-              seatsRemaining !== null ? formatNumber(seatsRemaining) : null
-            }
-            label="Seats"
+          <span className="text-white/15 text-2xl md:text-3xl font-thin mx-1 mb-5 select-none">
+            /
+          </span>
+          <HeroStat
+            value={formatNumber(seatsRemaining)}
+            label="Remaining"
             loading={loading}
             color={seatsColor}
           />

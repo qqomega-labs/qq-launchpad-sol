@@ -10,6 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Header**: New `.glass-header` CSS class replacing `glass-panel` overrides, translucent pseudo-element with `backdrop-filter: blur(5px)` and `rgba(21,16,29,0.15)` background matching qq-docs navbar style, bottom border uses `--color-border`
+- **Hero stats**: Redesigned from bordered glass-panel cards to raw counter display with big bold numbers (`text-2xl md:text-3xl`), `/` separator between counters, no borders or card wrapping
+- **Hero stats**: Renamed `StatCard` to `HeroStat`, moved from `stat-card.tsx` to `hero-stat.tsx`
+- **Remaining seats**: Live counter showing `baseRemaining - 3,400` (pool reserve minus non-DBC allocations: LP 2,400 + airdrop 750 + core 200 + partnerships 50), powered by `usePoolState` hook
+- **FOMO color system**: Four-level pink gradient for remaining seats counter: `default` (white), `fomo` (#ff9db8), `warm` (#ff3d7a), `hot` (#fd015a)
+
+### Fixed
+
+- **`TOKEN_DECIMALS`**: Corrected from `6` to `9` to match on-chain QQ token mint decimals
+
+### Removed
+
+- **`.glass-panel-accent`**: Unused CSS class removed
+- **`.stat-card`**: Hover lift CSS removed (no longer needed with borderless counters)
 
 ## [Unreleased] - 2026-03-30 (QQAlpha)
 
