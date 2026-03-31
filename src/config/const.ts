@@ -59,7 +59,9 @@ export const COLORS = {
    accent: "#fd015a",
    accentDark: "#c70046",
    accentLight: "#ff3d7a",
+   fomoSoft: "#ff9db8",
    green: "#00dc78",
+   red: "#ff3d57",
    white: "#ffffff",
    /** @dev Tailwind arbitrary class strings for glass accent elements */
    tw: {
@@ -69,6 +71,9 @@ export const COLORS = {
       accentTabActive: "bg-[rgba(253,1,90,0.12)]",
       skeletonBg: "bg-[rgba(253,1,90,0.08)]",
       headerBg: "bg-[rgba(4,1,8,0.8)]",
+      fomoSoft: "text-[#ff9db8]",
+      fomoWarm: "text-[#ff3d7a]",
+      fomoHot: "text-[#fd015a]",
    },
    /** @dev Raw rgba strings for style props and chart config */
    raw: {
@@ -78,8 +83,15 @@ export const COLORS = {
       accentTabActive: "rgba(253, 1, 90, 0.12)",
       accentGrid: "rgba(253, 1, 90, 0.06)",
       accentBorder: "rgba(253, 1, 90, 0.15)",
+      accentSubtle: "rgba(253, 1, 90, 0.04)",
+      accentFaint: "rgba(253, 1, 90, 0.02)",
       volumeUp: "rgba(253, 1, 90, 0.25)",
       volumeDown: "rgba(255, 255, 255, 0.15)",
       textSecondary: "rgba(240, 232, 240, 0.55)",
+      shadow: "rgba(0, 0, 0, 0.5)",
+      shadowDeep: "rgba(0, 0, 0, 0.6)",
+      shadowText: "rgba(0, 0, 0, 0.7)",
+      shadowLight: "rgba(0, 0, 0, 0.4)",
+      shadowVignette: "rgba(0, 0, 0, 0.35)",
    },
 } as const

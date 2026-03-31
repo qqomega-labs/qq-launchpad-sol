@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import { DIMS, CATS, TOTAL, type SortKey, type RankedAsset, type CatKey } from "./sphere-data"
 import { fibSphere, rotate3D, hexPath, rankAll, getHexColor } from "./sphere-utils"
+import { COLORS } from "@/config/const"
 
 // PRIVATE - sub-components
 
@@ -19,7 +20,7 @@ function Detail({ data, onClose }: DetailProps) {
          className="glass-panel animate-fade-up rounded-xl px-3 py-2 flex items-center gap-3"
          style={{
             borderColor: `${catColor}33`,
-            boxShadow: `0 0 20px ${catColor}12, 0 4px 16px rgba(0,0,0,.5)`,
+            boxShadow: `0 0 20px ${catColor}12, 0 4px 16px ${COLORS.raw.shadow}`,
          }}
       >
          <div className="flex-1 min-w-0">
@@ -263,7 +264,7 @@ export function QQHexSphere() {
                   transform: "translate(-50%, -50%)",
                   width: sphereR * 2.4,
                   height: sphereR * 2.4,
-                  background: "radial-gradient(circle, rgba(253,1,90,.12) 0%, rgba(253,1,90,.02) 50%, transparent 70%)",
+                  background: `radial-gradient(circle, ${COLORS.raw.accentTabActive} 0%, ${COLORS.raw.accentFaint} 50%, transparent 70%)`,
                }}
             />
 
@@ -285,7 +286,7 @@ export function QQHexSphere() {
                   <radialGradient id="sphereShadow" cx="50%" cy="55%" r="40%">
                      <stop offset="0%" stopColor="rgba(0,0,0,0)" />
                      <stop offset="80%" stopColor="rgba(0,0,0,0)" />
-                     <stop offset="100%" stopColor="rgba(0,0,0,.35)" />
+                     <stop offset="100%" stopColor={COLORS.raw.shadowVignette} />
                   </radialGradient>
                </defs>
 
@@ -294,7 +295,7 @@ export function QQHexSphere() {
                   cy={cy}
                   r={sphereR + hexR * 0.3}
                   fill="none"
-                  stroke="rgba(253,1,90,.04)"
+                  stroke={COLORS.raw.accentSubtle}
                   strokeWidth="0.8"
                />
                <circle cx={cx} cy={cy} r={sphereR + hexR * 0.3} fill="url(#sphereShadow)" opacity=".25" />
@@ -313,7 +314,7 @@ export function QQHexSphere() {
                   const sx = cx + p.x * sphereR
                   const sy = cy + p.y * sphereR
                   const isSel = selected === p.idx
-                  const shadow = depth01 > 0.4 ? "0 1px 2px rgba(0,0,0,.6)" : "none"
+                  const shadow = depth01 > 0.4 ? `0 1px 2px ${COLORS.raw.shadowDeep}` : "none"
                   const vis = depth01 > 0.18
                   const visTicker = depth01 > 0.12
 
@@ -347,7 +348,7 @@ export function QQHexSphere() {
                            className="hexFill"
                            d={hexD}
                            fill={isSel ? `hsla(${h},${s + 10}%,${fillL + 8}%,${Math.min(1, fillA + 0.2)})` : fill}
-                           stroke={isSel ? "#fff" : stroke}
+                           stroke={isSel ? COLORS.white : stroke}
                            strokeWidth={isSel ? 1.5 : 0.6}
                            strokeLinejoin="round"
                            filter={isSel ? "url(#hexGlow)" : undefined}
@@ -363,7 +364,7 @@ export function QQHexSphere() {
                               fontWeight="800"
                               fontSize={scoreFs}
                               style={{
-                                 textShadow: "0 1px 3px rgba(0,0,0,.7), 0 0 6px rgba(0,0,0,.4)",
+                                 textShadow: `0 1px 3px ${COLORS.raw.shadowText}, 0 0 6px ${COLORS.raw.shadowLight}`,
                               }}
                               opacity={0.5 + depth01 * 0.5}
                            >

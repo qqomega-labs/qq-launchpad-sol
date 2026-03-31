@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton"
+import { COLORS } from "@/config/const"
 
 interface HeroStatProps {
    value: string | null
@@ -14,9 +15,9 @@ interface HeroStatProps {
 export function HeroStat({ value, label, loading = false, color = "default" }: HeroStatProps) {
    const colorClasses: Record<string, string> = {
       default: "text-white",
-      fomo: "text-[#ff9db8]",
-      warm: "text-[#ff3d7a]",
-      hot: "text-[#fd015a]",
+      fomo: COLORS.tw.fomoSoft,
+      warm: COLORS.tw.fomoWarm,
+      hot: COLORS.tw.fomoHot,
    }
 
    return (
