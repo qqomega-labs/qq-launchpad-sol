@@ -38,6 +38,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`DimChipsProps`** interface, `handleSort`, `setSortKey`, `setAnimKey` - unused after making chips non-interactive
 - **Price impact UI**: Removed fee/price impact display from swap panel
 
+### Fixed
+
+- **Swap input validation**: Only accepts numbers and dot as decimal separator, commas auto-converted to dots, rejects letters and symbols
+- **Swap output clearing**: Output resets immediately when input is emptied or invalid
+
 ## [Unreleased] - 2026-03-30 (QQAlpha)
 
 ### Added

@@ -43,7 +43,10 @@ export function SwapInput({
             type="text"
             inputMode="decimal"
             value={value}
-            onChange={(e) => onChange?.(e.target.value)}
+            onChange={(e) => {
+              const v = e.target.value.replace(",", ".");
+              if (v === "" || /^\d*\.?\d*$/.test(v)) onChange?.(v);
+            }}
             readOnly={readOnly}
             placeholder="0.00"
             className="bg-transparent text-white font-mono text-lg flex-1 outline-none placeholder:text-text-muted w-0"

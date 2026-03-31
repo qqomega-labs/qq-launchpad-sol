@@ -67,11 +67,15 @@ export function SwapPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputAmount, inputMint, outputMint, slippage, inputDecimals]);
 
-  const outputAmount = quote
-    ? (Number(quote.outputAmount.toString()) / 10 ** outputDecimals).toFixed(
-        outputDecimals > 6 ? 4 : 2,
-      )
-    : "";
+  const hasValidInput =
+    inputAmount !== "" && !isNaN(parseFloat(inputAmount)) && parseFloat(inputAmount) > 0;
+
+  const outputAmount =
+    hasValidInput && quote
+      ? (Number(quote.outputAmount.toString()) / 10 ** outputDecimals).toFixed(
+          outputDecimals > 6 ? 4 : 2,
+        )
+      : "";
 
   const handleSwap = async () => {
     if (!connected) {
