@@ -7,19 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-03-31 (QQAlpha)
 
-### Security
-
-- **Content Security Policy**: `<meta http-equiv="Content-Security-Policy">` added to `index.html`, allowlisting Helius RPC, Jupiter API/WS, and GeckoTerminal; `frame-src` and `object-src` set to `none`
-- **Slippage cap**: custom slippage input capped at 10% (was 50%); warning rendered when tolerance exceeds 2% to alert users of sandwich attack risk
-- **Meteora SDK pinned**: `@meteora-ag/dynamic-bonding-curve-sdk` pinned to exact version `1.5.7` (was `latest`) to prevent silent supply-chain updates to the package that constructs on-chain transactions
-- **Float-to-BN fix**: `parseTokenAmount(amount, decimals)` added to `utils.ts` — converts input strings to `BN` via integer string arithmetic, eliminating JS float precision errors (e.g. `0.1 * 1e9 = 100000000.00000001`); replaces all `new BN(Math.floor(parseFloat(...) * 10 ** decimals))` call sites in `swap-panel.tsx`
-- **Stale quote guard**: `SwapQuote` now carries `quotedAt` timestamp; `handleSwap` re-fetches the quote before execution if it is older than 30 seconds, preventing execution against stale pricing
-- **Partial execution recovery**: `PartialExecution` interface and `partialExecution` state added to `useSwap`; if leg 1 of a hybrid swap succeeds but leg 2 fails, a dismissible warning banner appears in `swap-panel.tsx` with a Retry button that re-quotes and re-executes the second leg via `retrySecondLeg()`
-- **WebSocket schema validation**: `isValidTrade()` type guard added to `use-trade-feed.ts`; Jupiter WebSocket messages are filtered before entering React state, rejecting malformed or injected payloads
-- **Jupiter error sanitization**: raw Jupiter API response bodies are now logged to `console.error` only; the UI receives a mapped user-friendly message (`friendlyJupiterError`) instead of potentially sensitive server internals
-- **Amount input length cap**: `maxLength={20}` added to `SwapInput` to prevent absurdly large values that could cause `Infinity`/`NaN` in numeric conversions
-- **RPC fallback warning**: `app.tsx` emits a `console.warn` when `VITE_RPC_ENDPOINT` is not set and the app falls back to the rate-limited public Solana RPC
-
 ### Added
 
 - **Prettier config**: `.prettierrc` with project overrides
@@ -29,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Bundle split**: `index` entry chunk reduced from 646 kB to 33 kB
+  - `react-dom` extracted into `vendor-react` chunk (222 kB)
+  - `@meteora-ag/dynamic-bonding-curve-sdk` extracted into `meteora` chunk (705 kB) and made lazy via dynamic `import()` inside `getDbcQuoteRaw` and `executeDbcSwap` — SDK only loads when the first swap quote is requested
+  - `QQHexSphere`, `ChartPanel`, `DataTabs` converted to `React.lazy` with `Suspense` fallbacks — deferred until after initial render
+  - `chunkSizeWarningLimit` raised to 750 kB to reflect the Meteora SDK's fixed size
 - **`src/lib/utils.ts`**: merged all format utilities (`formatNumber`, `formatPrice`, `truncateAddress`, `lamportsToSol`, `solToLamports`) into `utils.ts` alongside `cn`; `format.ts` reduced to a re-export shim
 - **`cn` adoption**: replaced all template literal `className` constructions with `cn()` across `button.tsx`, `skeleton.tsx`, `tx-history.tsx`, `trade-feed.tsx`, `holders-table.tsx`, `bonding-progress.tsx`, `slippage-popover.tsx`, `token-selector.tsx`, `icons.tsx`, `header.tsx`, `hero-stat.tsx`, `qq-hex-sphere.tsx`
 - **Format scripts**: `format` and `format:check` now use `prettier --write .` / `prettier --check .` instead of explicit glob patterns
@@ -47,40 +39,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `app.tsx`: `min-h-screen → min-h-dvh` for mobile browser chrome
   - `hero-section.tsx`: `landscape:flex-row landscape:items-center` for horizontal layout on landscape phones
 
-### Fixed
-
-- **Header social icons**: hidden on mobile due to `hidden md:flex` — now always visible; "Launchpad -" label moved to `hidden md:inline` to free horizontal space on small screens
-
-- **Token icons**: Replaced inline SVG `USDCIcon` and `USDTIcon` with official brand SVGs (`public/usdc.svg`, `public/usdt.svg`) loaded as `<img>` tags
-- **Header**: New `.glass-header` CSS class replacing `glass-panel` overrides, translucent pseudo-element with `backdrop-filter: blur(5px)` and `rgba(21,16,29,0.15)` background matching qq-docs navbar style, bottom border uses `--color-border`
-- **Hero stats**: Redesigned from bordered glass-panel cards to raw counter display with big bold numbers (`text-2xl md:text-3xl`), `/` separator between counters, no borders or card wrapping
-- **Hero stats**: Renamed `StatCard` to `HeroStat`, moved from `stat-card.tsx` to `hero-stat.tsx`
-- **Remaining seats**: Live counter showing `baseRemaining - 3,400` (pool reserve minus non-DBC allocations: LP 2,400 + airdrop 750 + core 200 + partnerships 50), powered by `usePoolState` hook
-- **FOMO color system**: Four-level pink gradient for remaining seats counter: `default` (white), `fomo` (#ff9db8), `warm` (#ff3d7a), `hot` (#fd015a)
-- **Header dropdown**: New `.glass-panel-solid` CSS class with solid background (`#0a0312`) for wallet popover
-- **Glass panel**: Replaced `position: relative` with `isolation: isolate` for `backdrop-filter` stacking context without position side-effects
-- **Sphere chips**: Converted `DimChips` from interactive buttons to display-only spans with `cursor-not-allowed` (demo preview)
-- **React Compiler**: Removed all `useCallback` and `useMemo` from `qq-hex-sphere.tsx`, `swap-panel.tsx`, `toast.tsx`, `app.tsx` - React Compiler handles memoization automatically
-- **Sphere detail panel**: Changed from flow layout (below sphere) to absolute overlay at bottom, eliminating vertical layout shift when selecting an asset
-- **Swap routing**: Hybrid two-leg swap for SOL/USDT (Jupiter SOL/USDT->USDC, then DBC USDC->QQ). DBC pool quote token is USDC, not SOL. QQ is not listed on Jupiter pre-graduation.
-- **Swap routing**: USDC<->QQ goes direct via Meteora DBC; `isDirectPath` now checks USDC<->QQ instead of SOL<->QQ
-- **Bonding progress**: `tokensSold` uses `SOLANA_SUPPLY (6,000) - baseRemaining` instead of `DBC_SUPPLY (2,600)` since the pool holds all 6,000 Solana tokens
-- **Jupiter API**: Migrated from deprecated `quote-api.jup.ag/v6` to `api.jup.ag/swap/v1`, added `x-api-key` header from `VITE_JUPITER_API_KEY` env var
-
-### Fixed
-
-- **`TOKEN_DECIMALS`**: Corrected from `6` to `9` to match on-chain QQ token mint decimals
-- **QQ token decimals in `tokens.ts`**: Corrected from `6` to `9` in token registry (affected swap input/output calculations)
-- **Swap pricing**: 1 SOL was showing ~136 QQ instead of ~11 QQ because SOL lamports were sent to a USDC-denominated DBC pool
-- **Swap input validation**: Only accepts numbers and dot as decimal separator, commas auto-converted to dots, rejects letters and symbols
-- **Swap output clearing**: Output resets immediately when input is emptied or invalid
-
 ### Removed
 
 - **`.glass-panel-accent`**: Unused CSS class removed
 - **`.stat-card`**: Hover lift CSS removed (no longer needed with borderless counters)
 - **`DimChipsProps`** interface, `handleSort`, `setSortKey`, `setAnimKey` - unused after making chips non-interactive
 - **Price impact UI**: Removed fee/price impact display from swap panel
+
+### Fixed
+
+- **`confirmTransaction` deprecation**: both DBC and Jupiter swap legs now use the `{ signature, blockhash, lastValidBlockHeight }` strategy via `connection.getLatestBlockhash()` before each send, replacing the deprecated string-signature overload
+- **`TOKEN_DECIMALS`**: Corrected from `6` to `9` to match on-chain QQ token mint decimals
+- **QQ token decimals in `tokens.ts`**: Corrected from `6` to `9` in token registry (affected swap input/output calculations)
+- **Swap pricing**: 1 SOL was showing ~136 QQ instead of ~11 QQ because SOL lamports were sent to a USDC-denominated DBC pool
+- **Swap input validation**: Only accepts numbers and dot as decimal separator, commas auto-converted to dots, rejects letters and symbols
+- **Swap output clearing**: Output resets immediately when input is emptied or invalid
+- **Header social icons**: hidden on mobile due to `hidden md:flex` — now always visible; "Launchpad -" label moved to `hidden md:inline` to free horizontal space on small screens
+- **Token icons**: Replaced inline SVG `USDCIcon` and `USDTIcon` with official brand SVGs (`public/usdc.svg`, `public/usdt.svg`) loaded as `<img>` tags
+- **Header**: New `.glass-header` CSS class replacing `glass-panel` overrides, translucent pseudo-element with `backdrop-filter: blur(5px)` and `rgba(21,16,29,0.15)` background matching qq-docs navbar style, bottom border uses `--color-border`
+- **Hero stats**: Redesigned from bordered glass-panel cards to raw counter display with big bold numbers (`text-2xl md:text-3xl`), `/` separator between counters, no borders or card wrapping; renamed `StatCard` to `HeroStat`, moved from `stat-card.tsx` to `hero-stat.tsx`
+- **Remaining seats**: Live counter showing `baseRemaining - 3,400` (pool reserve minus non-DBC allocations: LP 2,400 + airdrop 750 + core 200 + partnerships 50), powered by `usePoolState` hook
+- **FOMO color system**: Four-level pink gradient for remaining seats counter: `default` (white), `fomo` (#ff9db8), `warm` (#ff3d7a), `hot` (#fd015a)
+- **Header dropdown**: New `.glass-panel-solid` CSS class with solid background (`#0a0312`) for wallet popover
+- **Glass panel**: Replaced `position: relative` with `isolation: isolate` for `backdrop-filter` stacking context without position side-effects
+- **Sphere chips**: Converted `DimChips` from interactive buttons to display-only spans with `cursor-not-allowed` (demo preview)
+- **React Compiler**: Removed all `useCallback` and `useMemo` from `qq-hex-sphere.tsx`, `swap-panel.tsx`, `toast.tsx`, `app.tsx` — React Compiler handles memoization automatically
+- **Sphere detail panel**: Changed from flow layout (below sphere) to absolute overlay at bottom, eliminating vertical layout shift when selecting an asset
+- **Swap routing**: Hybrid two-leg swap for SOL/USDT (Jupiter SOL/USDT->USDC, then DBC USDC->QQ); DBC pool quote token is USDC, not SOL; QQ is not listed on Jupiter pre-graduation
+- **Swap routing**: USDC<->QQ goes direct via Meteora DBC; `isDirectPath` now checks USDC<->QQ instead of SOL<->QQ
+- **Bonding progress**: `tokensSold` uses `SOLANA_SUPPLY (6,000) - baseRemaining` instead of `DBC_SUPPLY (2,600)` since the pool holds all 6,000 Solana tokens
+- **Jupiter API**: Migrated from deprecated `quote-api.jup.ag/v6` to `api.jup.ag/swap/v1`, added `x-api-key` header from `VITE_JUPITER_API_KEY` env var
+
+### Security
+
+- **Content Security Policy**: `<meta http-equiv="Content-Security-Policy">` added to `index.html`, allowlisting Helius RPC, Jupiter API/WS, and GeckoTerminal; `frame-src` and `object-src` set to `none`
+- **Slippage cap**: custom slippage input capped at 10% (was 50%); warning rendered when tolerance exceeds 2% to alert users of sandwich attack risk
+- **Meteora SDK pinned**: `@meteora-ag/dynamic-bonding-curve-sdk` pinned to exact version `1.5.7` (was `latest`) to prevent silent supply-chain updates to the package that constructs on-chain transactions
+- **Float-to-BN fix**: `parseTokenAmount(amount, decimals)` added to `utils.ts` — converts input strings to `BN` via integer string arithmetic, eliminating JS float precision errors (e.g. `0.1 * 1e9 = 100000000.00000001`); replaces all `new BN(Math.floor(parseFloat(...) * 10 ** decimals))` call sites in `swap-panel.tsx`
+- **Stale quote guard**: `SwapQuote` now carries `quotedAt` timestamp; `handleSwap` re-fetches the quote before execution if it is older than 30 seconds, preventing execution against stale pricing
+- **Partial execution recovery**: `PartialExecution` interface and `partialExecution` state added to `useSwap`; if leg 1 of a hybrid swap succeeds but leg 2 fails, a dismissible warning banner appears in `swap-panel.tsx` with a Retry button that re-quotes and re-executes the second leg via `retrySecondLeg()`
+- **WebSocket schema validation**: `isValidTrade()` type guard added to `use-trade-feed.ts`; Jupiter WebSocket messages are filtered before entering React state, rejecting malformed or injected payloads
+- **Jupiter error sanitization**: raw Jupiter API response bodies are now logged to `console.error` only; the UI receives a mapped user-friendly message (`friendlyJupiterError`) instead of potentially sensitive server internals
+- **Amount input length cap**: `maxLength={20}` added to `SwapInput` to prevent absurdly large values that could cause `Infinity`/`NaN` in numeric conversions
+- **RPC fallback warning**: `app.tsx` emits a `console.warn` when `VITE_RPC_ENDPOINT` is not set and the app falls back to the rate-limited public Solana RPC
 
 ## [Unreleased] - 2026-03-30 (QQAlpha)
 

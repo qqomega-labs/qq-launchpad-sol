@@ -1,15 +1,23 @@
+import { lazy, Suspense } from "react"
 import { ConnectionProvider } from "@solana/wallet-adapter-react"
 import { UnifiedWalletProvider } from "@jup-ag/wallet-adapter"
 import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero/hero-section"
 import { SwapPanel } from "@/components/swap/swap-panel"
 import { BondingProgress } from "@/components/progress/bonding-progress"
-import { ChartPanel } from "@/components/chart/chart-panel"
-import { DataTabs } from "@/components/data/data-tabs"
 import { Footer } from "@/components/footer"
 import { Toaster } from "sonner"
 import { COLORS } from "@/config/const"
-import { QQHexSphere } from "@/components/sphere/qq-hex-sphere"
+
+const QQHexSphere = lazy(() =>
+   import("@/components/sphere/qq-hex-sphere").then((m) => ({ default: m.QQHexSphere }))
+)
+const ChartPanel = lazy(() =>
+   import("@/components/chart/chart-panel").then((m) => ({ default: m.ChartPanel }))
+)
+const DataTabs = lazy(() =>
+   import("@/components/data/data-tabs").then((m) => ({ default: m.DataTabs }))
+)
 
 /**
  * @dev LaunchpadPage - sphere hero + swap-first layout.
@@ -34,7 +42,9 @@ function LaunchpadPage() {
                {/* Sphere + Swap side by side, stretched to equal height */}
                <div className="flex flex-col lg:flex-row lg:items-stretch gap-5">
                   <div className="lg:w-[55%] order-2 lg:order-1 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-                     <QQHexSphere />
+                     <Suspense fallback={<div className="glass-panel rounded-[12px] aspect-square" />}>
+                        <QQHexSphere />
+                     </Suspense>
                   </div>
                   <div
                      className="lg:w-[45%] order-1 lg:order-2 flex flex-col gap-5 animate-fade-up"
@@ -50,11 +60,15 @@ function LaunchpadPage() {
                <div className="accent-divider my-6" />
 
                <div className="animate-fade-up" style={{ animationDelay: "0.3s" }}>
-                  <ChartPanel />
+                  <Suspense fallback={<div className="glass-panel rounded-[12px] h-[320px]" />}>
+                     <ChartPanel />
+                  </Suspense>
                </div>
 
                <div className="mt-6 animate-fade-up" style={{ animationDelay: "0.4s" }}>
-                  <DataTabs />
+                  <Suspense fallback={null}>
+                     <DataTabs />
+                  </Suspense>
                </div>
             </main>
             <Footer />

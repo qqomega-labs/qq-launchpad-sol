@@ -3,8 +3,6 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import { VersionedTransaction } from "@solana/web3.js"
 import { Buffer } from "buffer"
 import BN from "bn.js"
-import { DynamicBondingCurveClient, getCurrentPoint } from "@meteora-ag/dynamic-bonding-curve-sdk"
-
 import { POOL_ADDRESS } from "@/config/const"
 import { isDirectPath, isQQ, USDC_MINT } from "@/config/tokens"
 import { fetchJupiterQuote, fetchJupiterSwapTx } from "@/lib/jupiter"
@@ -162,6 +160,7 @@ export function useSwap() {
 
    /** @dev Execute a DBC swap on-chain. Signs and sends the transaction. */
    async function executeDbcSwap(amountIn: BN, minimumAmountOut: BN, isSell: boolean): Promise<string> {
+      const { DynamicBondingCurveClient } = await import("@meteora-ag/dynamic-bonding-curve-sdk")
       const client = new DynamicBondingCurveClient(connection, "confirmed")
       const tx = await client.pool.swap({
          pool: POOL_ADDRESS,
@@ -171,8 +170,9 @@ export function useSwap() {
          owner: wallet.publicKey!,
          referralTokenAccount: null,
       })
+      const latestBlockhash = await connection.getLatestBlockhash()
       const sig = await wallet.sendTransaction!(tx, connection)
-      await connection.confirmTransaction(sig, "confirmed")
+      await connection.confirmTransaction({ signature: sig, ...latestBlockhash }, "confirmed")
       return sig
    }
 
@@ -249,6 +249,7 @@ export function useSwap() {
 
    /** @dev Stateless DBC quote (no React state update). Used internally by both paths. */
    async function getDbcQuoteRaw(amountIn: BN, isSell: boolean, slippageBps: number) {
+      const { DynamicBondingCurveClient, getCurrentPoint } = await import("@meteora-ag/dynamic-bonding-curve-sdk")
       const client = new DynamicBondingCurveClient(connection, "confirmed")
       const virtualPool = await client.state.getPool(POOL_ADDRESS)
       const config = await client.state.getPoolConfig(virtualPool.config)
@@ -327,11 +328,12 @@ export function useSwap() {
       const txBuf = Buffer.from(swapTransaction, "base64")
       const tx = VersionedTransaction.deserialize(txBuf)
       const signed = await wallet.signTransaction!(tx)
+      const latestBlockhash = await connection.getLatestBlockhash()
       const sig = await connection.sendRawTransaction(signed.serialize(), {
          skipPreflight: false,
          maxRetries: 2,
       })
-      await connection.confirmTransaction(sig, "confirmed")
+      await connection.confirmTransaction({ signature: sig, ...latestBlockhash }, "confirmed")
       return sig
    }
 
