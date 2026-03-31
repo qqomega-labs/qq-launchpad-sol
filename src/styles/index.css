@@ -73,6 +73,26 @@
   );
 }
 
+/* Sticky header - translucent glass */
+.glass-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: transparent;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.glass-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(21, 16, 29, 0.15);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: -1;
+  pointer-events: none;
+}
+
 /* Glass panel base */
 .glass-panel {
   position: relative;

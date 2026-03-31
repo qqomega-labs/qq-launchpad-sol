@@ -35,6 +35,12 @@ export const SOCIAL_LINKS = {
   geckoterminal: GECKOTERMINAL_URL,
 } as const;
 
+export const AUTHOR = {
+  href: SOCIAL_LINKS.website,
+  key: "QQ_Omega_labs",
+  label: "QQ Omega Labs",
+} as const;
+
 export const TIMEFRAMES = [
   { label: "1m", timeframe: "minute" as const, aggregate: 1, pollMs: 10_000 },
   { label: "5m", timeframe: "minute" as const, aggregate: 5, pollMs: 15_000 },
