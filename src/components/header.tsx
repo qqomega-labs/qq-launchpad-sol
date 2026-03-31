@@ -120,7 +120,7 @@ export function Header() {
         </button>
 
         {showDropdown && connected && (
-          <div className="absolute right-0 top-full mt-2 w-48 glass-panel rounded-[8px] py-1">
+          <div className="absolute right-0 top-full mt-6 w-48 glass-panel-solid rounded-[8px] py-1">
             <button
               onClick={handleCopy}
               className="w-full text-left px-4 py-2 text-sm text-text-secondary hover:text-white hover:bg-bg-input transition-colors"
