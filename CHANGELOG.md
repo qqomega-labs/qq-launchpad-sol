@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Glass panel**: Replaced `position: relative` with `isolation: isolate` for `backdrop-filter` stacking context without position side-effects
 - **Sphere chips**: Converted `DimChips` from interactive buttons to display-only spans with `cursor-not-allowed` (demo preview)
 - **React Compiler**: Removed all `useCallback` and `useMemo` from `qq-hex-sphere.tsx`, `swap-panel.tsx`, `toast.tsx`, `app.tsx` - React Compiler handles memoization automatically
+- **Sphere detail panel**: Changed from flow layout (below sphere) to absolute overlay at bottom, eliminating vertical layout shift when selecting an asset
 
 ### Fixed
 

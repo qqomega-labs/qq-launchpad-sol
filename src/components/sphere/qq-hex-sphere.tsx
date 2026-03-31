@@ -258,7 +258,7 @@ export function QQHexSphere() {
   const sel = selected !== null ? ranked[selected] : null;
 
   return (
-    <div className="glass-panel rounded-[12px] flex flex-col overflow-hidden">
+    <div className="glass-panel rounded-[12px] flex flex-col overflow-hidden relative">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
         <div className="flex items-baseline gap-2">
@@ -458,9 +458,9 @@ export function QQHexSphere() {
         </svg>
       </div>
 
-      {/* Detail panel - flows below the sphere */}
+      {/* Detail panel - overlays bottom of sphere */}
       {sel && (
-        <div className="px-3 pb-3">
+        <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 z-10">
           <Detail data={sel} onClose={() => setSelected(null)} />
         </div>
       )}
