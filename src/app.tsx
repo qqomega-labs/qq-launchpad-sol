@@ -7,7 +7,8 @@ import { BondingProgress } from "@/components/progress/bonding-progress"
 import { ChartPanel } from "@/components/chart/chart-panel"
 import { DataTabs } from "@/components/data/data-tabs"
 import { Footer } from "@/components/footer"
-import { ToastProvider } from "@/components/ui/toast"
+import { Toaster } from "sonner"
+import { COLORS } from "@/config/const"
 import { QQHexSphere } from "@/components/sphere/qq-hex-sphere"
 
 /**
@@ -84,9 +85,34 @@ export default function App() {
                theme: "dark",
             }}
          >
-            <ToastProvider>
-               <LaunchpadPage />
-            </ToastProvider>
+            <LaunchpadPage />
+            <Toaster
+               theme="dark"
+               position="bottom-right"
+               toastOptions={{
+                  style: {
+                     background: "rgba(10, 3, 18, 0.85)",
+                     backdropFilter: "blur(12px)",
+                     border: "1px solid rgba(253, 1, 90, 0.25)",
+                     color: "#f0e8f0",
+                     borderRadius: "8px",
+                  },
+                  classNames: {
+                     success: "!border-[rgba(0,220,120,0.4)]",
+                     error: "!border-[rgba(255,61,87,0.4)]",
+                  },
+               }}
+               style={
+                  {
+                     "--success-bg": "rgba(10, 3, 18, 0.85)",
+                     "--success-border": COLORS.green,
+                     "--success-text": COLORS.green,
+                     "--error-bg": "rgba(10, 3, 18, 0.85)",
+                     "--error-border": COLORS.red,
+                     "--error-text": COLORS.red,
+                  } as React.CSSProperties
+               }
+            />
          </UnifiedWalletProvider>
       </ConnectionProvider>
    )

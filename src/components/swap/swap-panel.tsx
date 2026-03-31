@@ -4,12 +4,13 @@ import { useUnifiedWalletContext } from "@jup-ag/wallet-adapter"
 import { Loader2, ArrowUpRight } from "lucide-react"
 import BN from "bn.js"
 
+import { toast } from "sonner"
+
 import { useSwap } from "./use-swap"
 import { SwapInput } from "./swap-input"
 import { QuickAmounts } from "./quick-amounts"
 import { SlippagePopover } from "./slippage-popover"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/toast"
 
 import { truncateAddress } from "@/lib/format"
 import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY } from "@/config/const"
@@ -23,8 +24,6 @@ export function SwapPanel() {
    const { connected } = useWallet()
    const { setShowModal } = useUnifiedWalletContext()
    const { quote, getQuote, executeSwap, loading, quoteLoading, error } = useSwap()
-   const { showToast } = useToast()
-
    const [isSell, setIsSell] = useState(false)
    const [inputAmount, setInputAmount] = useState("")
    const [selectedPayMint, setSelectedPayMint] = useState(SOL_MINT)
@@ -77,12 +76,12 @@ export function SwapPanel() {
       try {
          const amountIn = new BN(Math.floor(parseFloat(inputAmount) * 10 ** inputDecimals))
          const sig = await executeSwap(amountIn, inputMint, outputMint, quote)
-         showToast("success", `Transaction confirmed: ${truncateAddress(sig, 8)}`)
+         toast.success(`Transaction confirmed: ${truncateAddress(sig, 8)}`)
          setSuccess(true)
          setInputAmount("")
          setTimeout(() => setSuccess(false), 2000)
       } catch {
-         showToast("error", error || "Transaction failed")
+         toast.error(error || "Transaction failed")
       }
    }
 

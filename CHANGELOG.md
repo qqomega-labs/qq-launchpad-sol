@@ -11,12 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Prettier config**: `.prettierrc` with project overrides
 - **`COLORS` expansions**: added `fomoSoft` (`#ff9db8`), `red` (`#ff3d57`); `tw.fomoSoft/fomoWarm/fomoHot` Tailwind text classes; `raw.accentSubtle/accentFaint`, `raw.shadow/shadowDeep/shadowText/shadowLight/shadowVignette`
+- **Sonner** (`sonner@2.0.7`): replaced custom `ToastProvider`/`useToast` with Sonner `<Toaster>` mounted in `app.tsx`, glassmorphism-styled (`backdrop-filter: blur(12px)`, semi-transparent dark bg, accent border); success toasts use `--color-green` border, error toasts use `--color-red` border
 
 ### Changed
 
 - **Format scripts**: `format` and `format:check` now use `prettier --write .` / `prettier --check .` instead of explicit glob patterns
 - **`hero-stat.tsx`**: FOMO color classes now reference `COLORS.tw.fomoSoft/fomoWarm/fomoHot` instead of hardcoded Tailwind arbitrary values
 - **`qq-hex-sphere.tsx`**: accent `rgba` and black shadow values replaced with `COLORS.raw.*` references
+- **`swap-panel.tsx`**: `useToast` replaced with direct `toast.success` / `toast.error` calls from sonner
 
 - **Token icons**: Replaced inline SVG `USDCIcon` and `USDTIcon` with official brand SVGs (`public/usdc.svg`, `public/usdt.svg`) loaded as `<img>` tags
 - **Header**: New `.glass-header` CSS class replacing `glass-panel` overrides, translucent pseudo-element with `backdrop-filter: blur(5px)` and `rgba(21,16,29,0.15)` background matching qq-docs navbar style, bottom border uses `--color-border`
