@@ -49,7 +49,7 @@ export function SwapPanel() {
   const inputToken = getToken(inputMint);
   const outputToken = getToken(outputMint);
   const inputDecimals = inputToken?.decimals ?? 9;
-  const outputDecimals = outputToken?.decimals ?? 6;
+  const outputDecimals = outputToken?.decimals ?? 9;
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -64,7 +64,8 @@ export function SwapPanel() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [inputAmount, inputMint, outputMint, slippage, inputDecimals, getQuote]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputAmount, inputMint, outputMint, slippage, inputDecimals]);
 
   const outputAmount = quote
     ? (Number(quote.outputAmount.toString()) / 10 ** outputDecimals).toFixed(
@@ -107,21 +108,10 @@ export function SwapPanel() {
     (connected && (!inputAmount || parseFloat(inputAmount) <= 0));
   const quickAmounts = !isSell ? (QUICK_AMOUNTS[selectedPayMint] ?? []) : [];
 
-  const feeInfo = () => {
-    if (!quote) return "";
-    if (quote.route === "dbc") {
-      return `Fee: ${Number(quote.tradingFee.toString()) / 1e9} SOL`;
-    }
-    const impact = quote.priceImpactPct
-      ? `${parseFloat(quote.priceImpactPct).toFixed(2)}%`
-      : "N/A";
-    return `Price Impact: ${impact}`;
-  };
-
   const routeLabel = () => {
     if (!quote) return null;
     if (quote.route === "dbc") return "via Meteora DBC";
-    return "via Jupiter";
+    return "via Jupiter + Meteora DBC";
   };
 
   return (
@@ -183,10 +173,9 @@ export function SwapPanel() {
         />
       </div>
 
-      {/* Slippage + fee + route - grouped together */}
+      {/* Slippage + route */}
       <div className="mt-3 space-y-1">
-        <div className="flex items-center justify-between">
-          <span className="text-text-muted text-xs">{feeInfo()}</span>
+        <div className="flex items-center justify-end">
           <SlippagePopover value={slippage} onChange={setSlippage} />
         </div>
         {routeLabel() && (

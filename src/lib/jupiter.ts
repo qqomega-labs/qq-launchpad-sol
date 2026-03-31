@@ -94,12 +94,21 @@ export async function fetchJupiterSwapTx(
 
 // PRIVATE
 
+const JUPITER_API_KEY = import.meta.env.VITE_JUPITER_API_KEY ?? "";
+
 async function fetchWithRetry(
   url: string,
   init?: RequestInit,
   retries = 1,
 ): Promise<Response> {
-  const res = await fetch(url, init);
+  const headers: Record<string, string> = {
+    ...(init?.headers as Record<string, string>),
+  };
+  if (JUPITER_API_KEY) {
+    headers["x-api-key"] = JUPITER_API_KEY;
+  }
+
+  const res = await fetch(url, { ...init, headers });
 
   if (res.status === 429 && retries > 0) {
     await new Promise((r) => setTimeout(r, 2000));

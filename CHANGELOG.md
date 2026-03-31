@@ -20,16 +20,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Sphere chips**: Converted `DimChips` from interactive buttons to display-only spans with `cursor-not-allowed` (demo preview)
 - **React Compiler**: Removed all `useCallback` and `useMemo` from `qq-hex-sphere.tsx`, `swap-panel.tsx`, `toast.tsx`, `app.tsx` - React Compiler handles memoization automatically
 - **Sphere detail panel**: Changed from flow layout (below sphere) to absolute overlay at bottom, eliminating vertical layout shift when selecting an asset
+- **Swap routing**: Hybrid two-leg swap for SOL/USDT (Jupiter SOL/USDT->USDC, then DBC USDC->QQ). DBC pool quote token is USDC, not SOL. QQ is not listed on Jupiter pre-graduation.
+- **Swap routing**: USDC<->QQ goes direct via Meteora DBC; `isDirectPath` now checks USDC<->QQ instead of SOL<->QQ
+- **Bonding progress**: `tokensSold` uses `SOLANA_SUPPLY (6,000) - baseRemaining` instead of `DBC_SUPPLY (2,600)` since the pool holds all 6,000 Solana tokens
+- **Jupiter API**: Migrated from deprecated `quote-api.jup.ag/v6` to `api.jup.ag/swap/v1`, added `x-api-key` header from `VITE_JUPITER_API_KEY` env var
 
 ### Fixed
 
 - **`TOKEN_DECIMALS`**: Corrected from `6` to `9` to match on-chain QQ token mint decimals
+- **QQ token decimals in `tokens.ts`**: Corrected from `6` to `9` in token registry (affected swap input/output calculations)
+- **Swap pricing**: 1 SOL was showing ~136 QQ instead of ~11 QQ because SOL lamports were sent to a USDC-denominated DBC pool
 
 ### Removed
 
 - **`.glass-panel-accent`**: Unused CSS class removed
 - **`.stat-card`**: Hover lift CSS removed (no longer needed with borderless counters)
 - **`DimChipsProps`** interface, `handleSort`, `setSortKey`, `setAnimKey` - unused after making chips non-interactive
+- **Price impact UI**: Removed fee/price impact display from swap panel
 
 ## [Unreleased] - 2026-03-30 (QQAlpha)
 

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { VersionedTransaction } from "@solana/web3.js";
 import { Buffer } from "buffer";
@@ -8,7 +8,7 @@ import {
   getCurrentPoint,
 } from "@meteora-ag/dynamic-bonding-curve-sdk";
 import { POOL_ADDRESS } from "@/config/const";
-import { isDirectPath, isQQ } from "@/config/tokens";
+import { isDirectPath, isQQ, USDC_MINT } from "@/config/tokens";
 import { fetchJupiterQuote, fetchJupiterSwapTx } from "@/lib/jupiter";
 import type { JupiterQuoteResponse } from "@/lib/jupiter";
 
@@ -16,14 +16,23 @@ export interface SwapQuote {
   outputAmount: BN;
   minimumAmountOut: BN;
   tradingFee: BN;
-  route: "dbc" | "jupiter";
+  route: "dbc" | "hybrid";
   priceImpactPct?: string;
-  /** @dev Cached Jupiter quote for execution (avoids re-fetching) */
+  /** @dev Cached Jupiter quote for the SOL/USDT <-> USDC leg */
   jupiterQuote?: JupiterQuoteResponse;
+  /** @dev Intermediate USDC amount between Jupiter and DBC legs */
+  intermediateUsdcAmount?: BN;
 }
 
 /**
- * @dev Hook for dual-path swap: DBC direct (SOL<->QQ) or Jupiter routed (USDC/USDT<->QQ).
+ * @dev Hook for swap execution.
+ * QQ is not listed on Jupiter (pre-graduation), so all swaps go through the
+ * Meteora DBC pool which uses USDC as quote token.
+ *
+ * Routing:
+ * - USDC <-> QQ: Direct via Meteora DBC
+ * - SOL/USDT -> QQ: Hybrid (Jupiter SOL/USDT->USDC, then DBC USDC->QQ)
+ * - QQ -> SOL/USDT: Hybrid (DBC QQ->USDC, then Jupiter USDC->SOL/USDT)
  */
 export function useSwap() {
   const { connection } = useConnection();
@@ -35,99 +44,82 @@ export function useSwap() {
 
   // PUBLIC
 
-  const getQuote = useCallback(
-    async (
-      amountIn: BN,
-      inputMint: string,
-      outputMint: string,
-      slippageBps: number,
-    ) => {
-      setError(null);
-      setQuoteLoading(true);
-      try {
-        if (isDirectPath(inputMint, outputMint)) {
-          return await getDbcQuote(amountIn, inputMint, slippageBps);
-        }
-        return await getJupiterQuote(
+  const getQuote = async (
+    amountIn: BN,
+    inputMint: string,
+    outputMint: string,
+    slippageBps: number,
+  ) => {
+    setError(null);
+    setQuoteLoading(true);
+    try {
+      if (isDirectPath(inputMint, outputMint)) {
+        // USDC <-> QQ: single-leg DBC swap
+        return await getDbcQuote(amountIn, inputMint, slippageBps);
+      }
+      // SOL/USDT <-> QQ: two-leg hybrid (Jupiter + DBC)
+      return await getHybridQuote(
+        amountIn,
+        inputMint,
+        outputMint,
+        slippageBps,
+      );
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Quote failed";
+      setError(msg);
+      setQuote(null);
+      return null;
+    } finally {
+      setQuoteLoading(false);
+    }
+  };
+
+  const executeSwap = async (
+    amountIn: BN,
+    inputMint: string,
+    _outputMint: string,
+    currentQuote: SwapQuote,
+  ) => {
+    if (
+      !wallet.publicKey ||
+      !wallet.signTransaction ||
+      !wallet.sendTransaction
+    ) {
+      throw new Error("Wallet not connected");
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      if (currentQuote.route === "dbc") {
+        return await executeDbcSwap(
           amountIn,
-          inputMint,
-          outputMint,
-          slippageBps,
+          currentQuote.minimumAmountOut,
+          isQQ(inputMint),
         );
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : "Quote failed";
-        setError(msg);
-        setQuote(null);
-        return null;
-      } finally {
-        setQuoteLoading(false);
       }
-    },
-    [connection],
-  );
+      return await executeHybridSwap(amountIn, inputMint, currentQuote);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Transaction failed";
+      setError(msg);
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const executeSwap = useCallback(
-    async (
-      amountIn: BN,
-      inputMint: string,
-      _outputMint: string,
-      currentQuote: SwapQuote,
-    ) => {
-      if (
-        !wallet.publicKey ||
-        !wallet.signTransaction ||
-        !wallet.sendTransaction
-      ) {
-        throw new Error("Wallet not connected");
-      }
-      setLoading(true);
-      setError(null);
-      try {
-        if (currentQuote.route === "dbc") {
-          return await executeDbcSwap(
-            amountIn,
-            currentQuote.minimumAmountOut,
-            isQQ(inputMint),
-          );
-        }
-        return await executeJupiterSwap(currentQuote);
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : "Transaction failed";
-        setError(msg);
-        throw e;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [connection, wallet],
-  );
+  // PRIVATE - DBC direct path (USDC <-> QQ)
+  // The Meteora DBC pool uses USDC as quote token (not SOL).
+  // base = QQ (9 decimals), quote = USDC (6 decimals).
+  // swapBaseForQuote=true means sell QQ for USDC, false means buy QQ with USDC.
 
-  // PRIVATE - DBC path (SOL <-> QQ)
-
+  /** @dev Fetch a quote from the Meteora DBC for USDC<->QQ swaps. */
   async function getDbcQuote(
     amountIn: BN,
     inputMint: string,
     slippageBps: number,
   ): Promise<SwapQuote> {
     const isSell = isQQ(inputMint);
-    const client = new DynamicBondingCurveClient(connection, "confirmed");
-    const virtualPool = await client.state.getPool(POOL_ADDRESS);
-    const config = await client.state.getPoolConfig(virtualPool.config);
-    const currentPoint = await getCurrentPoint(
-      connection,
-      config.activationType,
-    );
-
-    const q = client.pool.swapQuote({
-      virtualPool,
-      config,
-      swapBaseForQuote: isSell,
-      amountIn,
-      slippageBps,
-      hasReferral: false,
-      eligibleForFirstSwapWithMinFee: false,
-      currentPoint,
-    });
+    const q = await getDbcQuoteRaw(amountIn, isSell, slippageBps);
 
     const result: SwapQuote = {
       outputAmount: q.outputAmount,
@@ -139,6 +131,7 @@ export function useSwap() {
     return result;
   }
 
+  /** @dev Execute a DBC swap on-chain. Signs and sends the transaction. */
   async function executeDbcSwap(
     amountIn: BN,
     minimumAmountOut: BN,
@@ -158,38 +151,145 @@ export function useSwap() {
     return sig;
   }
 
-  // PRIVATE - Jupiter path (USDC/USDT <-> QQ)
+  // PRIVATE - Hybrid path (SOL/USDT <-> QQ)
+  // QQ is not listed on Jupiter (pre-graduation), so SOL/USDT swaps
+  // require two legs: Jupiter handles SOL/USDT<->USDC, DBC handles USDC<->QQ.
 
-  async function getJupiterQuote(
+  /**
+   * @dev Two-leg quote for non-USDC tokens.
+   * Buy: SOL/USDT -> USDC (Jupiter) -> QQ (DBC)
+   * Sell: QQ -> USDC (DBC) -> SOL/USDT (Jupiter)
+   */
+  async function getHybridQuote(
     amountIn: BN,
     inputMint: string,
     outputMint: string,
     slippageBps: number,
   ): Promise<SwapQuote> {
-    const jupQuote = await fetchJupiterQuote({
-      inputMint,
-      outputMint,
-      amount: amountIn.toString(),
-      slippageBps,
-    });
+    const isBuy = isQQ(outputMint);
 
-    const result: SwapQuote = {
-      outputAmount: new BN(jupQuote.outAmount),
-      minimumAmountOut: new BN(jupQuote.otherAmountThreshold),
-      tradingFee: new BN(0), // Jupiter fees are embedded in the route
-      route: "jupiter",
-      priceImpactPct: jupQuote.priceImpactPct,
-      jupiterQuote: jupQuote,
-    };
-    setQuote(result);
-    return result;
+    if (isBuy) {
+      // Leg 1: SOL/USDT -> USDC via Jupiter
+      const jupQuote = await fetchJupiterQuote({
+        inputMint,
+        outputMint: USDC_MINT,
+        amount: amountIn.toString(),
+        slippageBps,
+      });
+
+      // Leg 2: USDC -> QQ via DBC (using Jupiter's USDC output as input)
+      const usdcAmount = new BN(jupQuote.outAmount);
+      const dbcQuote = await getDbcQuoteRaw(usdcAmount, false, slippageBps);
+
+      const result: SwapQuote = {
+        outputAmount: dbcQuote.outputAmount,
+        minimumAmountOut: dbcQuote.minimumAmountOut,
+        tradingFee: dbcQuote.tradingFee,
+        route: "hybrid",
+        priceImpactPct: jupQuote.priceImpactPct,
+        jupiterQuote: jupQuote,
+        intermediateUsdcAmount: usdcAmount,
+      };
+      setQuote(result);
+      return result;
+    } else {
+      // Leg 1: QQ -> USDC via DBC
+      const dbcQuote = await getDbcQuoteRaw(amountIn, true, slippageBps);
+
+      // Leg 2: USDC -> SOL/USDT via Jupiter (using DBC's USDC output as input)
+      const jupQuote = await fetchJupiterQuote({
+        inputMint: USDC_MINT,
+        outputMint,
+        amount: dbcQuote.outputAmount.toString(),
+        slippageBps,
+      });
+
+      const result: SwapQuote = {
+        outputAmount: new BN(jupQuote.outAmount),
+        minimumAmountOut: new BN(jupQuote.otherAmountThreshold),
+        tradingFee: dbcQuote.tradingFee,
+        route: "hybrid",
+        priceImpactPct: jupQuote.priceImpactPct,
+        jupiterQuote: jupQuote,
+        intermediateUsdcAmount: dbcQuote.outputAmount,
+      };
+      setQuote(result);
+      return result;
+    }
   }
 
-  async function executeJupiterSwap(currentQuote: SwapQuote): Promise<string> {
-    if (!currentQuote.jupiterQuote) throw new Error("Missing Jupiter quote");
+  /** @dev Stateless DBC quote (no React state update). Used internally by both paths. */
+  async function getDbcQuoteRaw(
+    amountIn: BN,
+    isSell: boolean,
+    slippageBps: number,
+  ) {
+    const client = new DynamicBondingCurveClient(connection, "confirmed");
+    const virtualPool = await client.state.getPool(POOL_ADDRESS);
+    const config = await client.state.getPoolConfig(virtualPool.config);
+    const currentPoint = await getCurrentPoint(
+      connection,
+      config.activationType,
+    );
 
+    return client.pool.swapQuote({
+      virtualPool,
+      config,
+      swapBaseForQuote: isSell,
+      amountIn,
+      slippageBps,
+      hasReferral: false,
+      eligibleForFirstSwapWithMinFee: false,
+      currentPoint,
+    });
+  }
+
+  /**
+   * @dev Execute a two-leg hybrid swap sequentially.
+   * Buy: Jupiter SOL/USDT->USDC first, then DBC USDC->QQ.
+   * Sell: DBC QQ->USDC first, then Jupiter USDC->SOL/USDT.
+   * If the first leg succeeds but the second fails, the user holds
+   * the intermediate USDC which can be retried or used directly.
+   */
+  async function executeHybridSwap(
+    amountIn: BN,
+    inputMint: string,
+    currentQuote: SwapQuote,
+  ): Promise<string> {
+    if (!currentQuote.jupiterQuote) throw new Error("Missing Jupiter quote");
+    const isBuy = !isQQ(inputMint);
+
+    if (isBuy) {
+      // Step 1: Jupiter SOL/USDT -> USDC
+      await executeJupiterLeg(currentQuote.jupiterQuote);
+
+      // Step 2: DBC USDC -> QQ
+      const usdcAmount = currentQuote.intermediateUsdcAmount!;
+      return await executeDbcSwap(
+        usdcAmount,
+        currentQuote.minimumAmountOut,
+        false,
+      );
+    } else {
+      // Step 1: DBC QQ -> USDC
+      const dbcSig = await executeDbcSwap(
+        amountIn,
+        currentQuote.intermediateUsdcAmount!,
+        true,
+      );
+
+      // Step 2: Jupiter USDC -> SOL/USDT
+      await executeJupiterLeg(currentQuote.jupiterQuote);
+      return dbcSig;
+    }
+  }
+
+  /** @dev Execute a single Jupiter swap leg. Deserializes, signs, and sends. */
+  async function executeJupiterLeg(
+    jupQuote: JupiterQuoteResponse,
+  ): Promise<string> {
     const { swapTransaction } = await fetchJupiterSwapTx(
-      currentQuote.jupiterQuote,
+      jupQuote,
       wallet.publicKey!.toBase58(),
     );
 

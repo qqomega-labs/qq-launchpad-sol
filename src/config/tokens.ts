@@ -41,7 +41,7 @@ export const TOKENS: Record<string, SupportedToken> = {
     mint: QQ_MINT,
     symbol: "QQ",
     name: "QQ Omega",
-    decimals: 6,
+    decimals: 9,
     icon: "qq",
   },
 };
@@ -60,6 +60,10 @@ export function isSOL(mint: string): boolean {
   return mint === SOL_MINT;
 }
 
+export function isUSDC(mint: string): boolean {
+  return mint === USDC_MINT;
+}
+
 export function isQQ(mint: string): boolean {
   return mint === QQ_MINT;
 }
@@ -69,12 +73,12 @@ export function getToken(mint: string): SupportedToken | undefined {
 }
 
 /**
- * @dev Returns true when the swap can go directly through the DBC pool
- * (one side is SOL, the other is QQ)
+ * @dev Returns true when the swap can go directly through the DBC pool.
+ * The DBC pool quote token is USDC (not SOL), so only USDC<->QQ is direct.
  */
 export function isDirectPath(inputMint: string, outputMint: string): boolean {
   return (
-    (isSOL(inputMint) && isQQ(outputMint)) ||
-    (isQQ(inputMint) && isSOL(outputMint))
+    (isUSDC(inputMint) && isQQ(outputMint)) ||
+    (isQQ(inputMint) && isUSDC(outputMint))
   );
 }

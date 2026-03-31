@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { DynamicBondingCurveClient } from "@meteora-ag/dynamic-bonding-curve-sdk";
-import { POOL_ADDRESS, DBC_SUPPLY, TOKEN_DECIMALS } from "@/config/const";
+import {
+  POOL_ADDRESS,
+  SOLANA_SUPPLY,
+  TOKEN_DECIMALS,
+} from "@/config/const";
 
 interface PoolState {
   tokensSold: number;
@@ -42,7 +46,7 @@ export function usePoolState(): PoolState {
 
         const baseRemaining =
           Number(poolState.baseReserve.toString()) / 10 ** TOKEN_DECIMALS;
-        const tokensSold = DBC_SUPPLY - baseRemaining;
+        const tokensSold = SOLANA_SUPPLY - baseRemaining;
 
         const graduated = progressPct >= 100;
 

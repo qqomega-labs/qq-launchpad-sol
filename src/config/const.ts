@@ -12,15 +12,17 @@ export const TOKEN_MINT = new PublicKey(
 );
 
 export const TOTAL_SUPPLY = 10_000;
+export const SOLANA_SUPPLY = 6_000; // Total tokens minted into the DBC pool
 export const DBC_SUPPLY = 2_600;
 export const SOLANA_NON_DBC_SUPPLY = 3_400; // LP migration 2400 + airdrop 750 + core 200 + partnerships 50
 export const TOKEN_DECIMALS = 9;
+export const QUOTE_DECIMALS = 6; // DBC quote token is USDC (6 decimals)
 export const GRADUATION_THRESHOLD_USDC = 20_000;
 
 export const GT_BASE = "https://api.geckoterminal.com/api/v2";
 export const GT_POOL_ADDR = "FHRTNJD3p3fSyHovubo8oBvRaowVQfLVdzaSota11X1U";
 
-export const JUPITER_QUOTE_API = "https://quote-api.jup.ag/v6";
+export const JUPITER_QUOTE_API = "https://api.jup.ag/swap/v1";
 export const JUPITER_DATA_API = "https://datapi.jup.ag/v1";
 export const JUPITER_WS = "wss://trench-stream.jup.ag/ws";
 
