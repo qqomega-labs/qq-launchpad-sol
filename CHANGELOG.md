@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Token icons**: Replaced inline SVG `USDCIcon` and `USDTIcon` with official brand SVGs (`public/usdc.svg`, `public/usdt.svg`) loaded as `<img>` tags
 - **Header**: New `.glass-header` CSS class replacing `glass-panel` overrides, translucent pseudo-element with `backdrop-filter: blur(5px)` and `rgba(21,16,29,0.15)` background matching qq-docs navbar style, bottom border uses `--color-border`
 - **Hero stats**: Redesigned from bordered glass-panel cards to raw counter display with big bold numbers (`text-2xl md:text-3xl`), `/` separator between counters, no borders or card wrapping
 - **Hero stats**: Renamed `StatCard` to `HeroStat`, moved from `stat-card.tsx` to `hero-stat.tsx`
