@@ -73,9 +73,9 @@ export function Header() {
       <header className="glass-header h-16 landscape:h-12 flex items-center justify-between px-4 md:px-6">
          <div className="flex items-center gap-3">
             <img src="/logo.svg" alt="QQ" className="h-8 w-8" />
-            <span className="text-text-muted text-sm font-medium tracking-wide">Launchpad</span>
-            <span className="text-text-muted text-sm font-medium tracking-wide">-</span>
-            <div className="hidden md:flex items-center gap-3 ml-1">
+            <span className="hidden md:inline text-text-muted text-sm font-medium tracking-wide">Launchpad</span>
+            <span className="hidden md:inline text-text-muted text-sm font-medium tracking-wide">-</span>
+            <div className="flex items-center gap-3 ml-1">
                {socialLinks.map((link) => (
                   <a
                      key={link.label}

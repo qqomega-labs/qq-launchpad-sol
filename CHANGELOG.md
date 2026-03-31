@@ -32,6 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `app.tsx`: `min-h-screen → min-h-dvh` for mobile browser chrome
   - `hero-section.tsx`: `landscape:flex-row landscape:items-center` for horizontal layout on landscape phones
 
+### Fixed
+
+- **Header social icons**: hidden on mobile due to `hidden md:flex` — now always visible; "Launchpad -" label moved to `hidden md:inline` to free horizontal space on small screens
+
 - **Token icons**: Replaced inline SVG `USDCIcon` and `USDTIcon` with official brand SVGs (`public/usdc.svg`, `public/usdt.svg`) loaded as `<img>` tags
 - **Header**: New `.glass-header` CSS class replacing `glass-panel` overrides, translucent pseudo-element with `backdrop-filter: blur(5px)` and `rgba(21,16,29,0.15)` background matching qq-docs navbar style, bottom border uses `--color-border`
 - **Hero stats**: Redesigned from bordered glass-panel cards to raw counter display with big bold numbers (`text-2xl md:text-3xl`), `/` separator between counters, no borders or card wrapping
