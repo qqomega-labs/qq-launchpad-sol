@@ -15,6 +15,21 @@ export interface Trade {
 const MAX_TRADES = 100
 const MAX_RECONNECT_DELAY = 30_000
 
+/** @dev Runtime type guard — rejects malformed/injected WebSocket messages before they reach state */
+function isValidTrade(obj: unknown): obj is Trade {
+   if (!obj || typeof obj !== "object") return false
+   const t = obj as Record<string, unknown>
+   return (
+      typeof t.txHash === "string" &&
+      typeof t.type === "string" &&
+      typeof t.asset === "string" &&
+      typeof t.amount === "number" &&
+      typeof t.usdPrice === "number" &&
+      typeof t.timestamp === "string" &&
+      typeof t.traderAddress === "string"
+   )
+}
+
 /**
  * @dev WebSocket hook for real-time trade feed via Jupiter's trench-stream.
  * Handles React StrictMode double-mount by checking shouldReconnect before close cleanup.
@@ -49,8 +64,9 @@ export function useTradeFeed() {
          try {
             const msg = JSON.parse(event.data)
             if (msg.type === "actions" && Array.isArray(msg.data)) {
+               const validTrades = msg.data.filter(isValidTrade)
                setTrades((prev) => {
-                  const next = [...msg.data, ...prev]
+                  const next = [...validTrades, ...prev]
                   return next.slice(0, MAX_TRADES)
                })
             }

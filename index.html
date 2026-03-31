@@ -2,6 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self';
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com data:;
+        img-src 'self' data: https:;
+        connect-src 'self'
+          https://*.helius-rpc.com wss://*.helius-rpc.com
+          https://api.mainnet-beta.solana.com wss://api.mainnet-beta.solana.com
+          https://api.jup.ag https://datapi.jup.ag wss://trench-stream.jup.ag
+          https://api.geckoterminal.com;
+        frame-src 'none';
+        object-src 'none';
+      "
+    />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta

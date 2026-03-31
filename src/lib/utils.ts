@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import BN from "bn.js"
 
 /**
  * @dev Merge Tailwind classes safely, resolving conflicts via tailwind-merge
@@ -47,4 +48,15 @@ export function lamportsToSol(lamports: number): number {
  */
 export function solToLamports(sol: number): number {
    return Math.floor(sol * 1e9)
+}
+
+/**
+ * @dev Convert a human-readable token amount string to BN without floating-point arithmetic.
+ * Parses the decimal string directly — avoids JS float precision issues like 0.1 * 1e9 = 100000000.00000001.
+ */
+export function parseTokenAmount(amount: string, decimals: number): BN {
+   const [intPart = "0", fracPart = ""] = amount.split(".")
+   const paddedFrac = fracPart.slice(0, decimals).padEnd(decimals, "0")
+   const raw = (intPart + paddedFrac).replace(/^0+/, "") || "0"
+   return new BN(raw)
 }

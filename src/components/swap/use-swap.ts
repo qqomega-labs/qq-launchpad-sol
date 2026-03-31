@@ -4,6 +4,7 @@ import { VersionedTransaction } from "@solana/web3.js"
 import { Buffer } from "buffer"
 import BN from "bn.js"
 import { DynamicBondingCurveClient, getCurrentPoint } from "@meteora-ag/dynamic-bonding-curve-sdk"
+
 import { POOL_ADDRESS } from "@/config/const"
 import { isDirectPath, isQQ, USDC_MINT } from "@/config/tokens"
 import { fetchJupiterQuote, fetchJupiterSwapTx } from "@/lib/jupiter"
@@ -14,11 +15,27 @@ export interface SwapQuote {
    minimumAmountOut: BN
    tradingFee: BN
    route: "dbc" | "hybrid"
+   slippageBps: number
+   quotedAt: number
    priceImpactPct?: string
    /** @dev Cached Jupiter quote for the SOL/USDT <-> USDC leg */
    jupiterQuote?: JupiterQuoteResponse
    /** @dev Intermediate USDC amount between Jupiter and DBC legs */
    intermediateUsdcAmount?: BN
+}
+
+/**
+ * @dev Partial execution state when leg 1 of a hybrid swap succeeds but leg 2 fails.
+ * User holds intermediate USDC and can retry the second leg via retrySecondLeg().
+ */
+export interface PartialExecution {
+   direction: "buy" | "sell"
+   leg1Sig: string
+   /** Approximate USDC amount user holds after leg 1 (from quote estimate) */
+   estimatedUsdcAmount: BN
+   slippageBps: number
+   /** For sell direction: the target output mint (SOL/USDT) */
+   outputMint?: string
 }
 
 /**
@@ -38,6 +55,7 @@ export function useSwap() {
    const [quoteLoading, setQuoteLoading] = useState(false)
    const [quote, setQuote] = useState<SwapQuote | null>(null)
    const [error, setError] = useState<string | null>(null)
+   const [partialExecution, setPartialExecution] = useState<PartialExecution | null>(null)
 
    // PUBLIC
 
@@ -61,7 +79,7 @@ export function useSwap() {
       }
    }
 
-   const executeSwap = async (amountIn: BN, inputMint: string, _outputMint: string, currentQuote: SwapQuote) => {
+   const executeSwap = async (amountIn: BN, inputMint: string, outputMint: string, currentQuote: SwapQuote) => {
       if (!wallet.publicKey || !wallet.signTransaction || !wallet.sendTransaction) {
          throw new Error("Wallet not connected")
       }
@@ -71,7 +89,7 @@ export function useSwap() {
          if (currentQuote.route === "dbc") {
             return await executeDbcSwap(amountIn, currentQuote.minimumAmountOut, isQQ(inputMint))
          }
-         return await executeHybridSwap(amountIn, inputMint, currentQuote)
+         return await executeHybridSwap(amountIn, inputMint, outputMint, currentQuote)
       } catch (e) {
          const msg = e instanceof Error ? e.message : "Transaction failed"
          setError(msg)
@@ -80,6 +98,45 @@ export function useSwap() {
          setLoading(false)
       }
    }
+
+   /**
+    * @dev Retry the second leg of a failed hybrid swap.
+    * Re-quotes fresh and re-executes with the stored intermediate USDC amount.
+    */
+   const retrySecondLeg = async (): Promise<string> => {
+      if (!partialExecution) throw new Error("No partial execution to retry")
+      setLoading(true)
+      setError(null)
+      try {
+         const { direction, estimatedUsdcAmount, slippageBps, outputMint } = partialExecution
+         if (direction === "buy") {
+            // Re-quote DBC for USDC -> QQ with fresh pool state
+            const dbcQ = await getDbcQuoteRaw(estimatedUsdcAmount, false, slippageBps)
+            const sig = await executeDbcSwap(estimatedUsdcAmount, dbcQ.minimumAmountOut, false)
+            setPartialExecution(null)
+            return sig
+         } else {
+            // Re-quote Jupiter for USDC -> SOL/USDT
+            const jupQ = await fetchJupiterQuote({
+               inputMint: USDC_MINT,
+               outputMint: outputMint!,
+               amount: estimatedUsdcAmount.toString(),
+               slippageBps,
+            })
+            const sig = await executeJupiterLeg(jupQ)
+            setPartialExecution(null)
+            return sig
+         }
+      } catch (e) {
+         const msg = e instanceof Error ? e.message : "Retry failed"
+         setError(msg)
+         throw e
+      } finally {
+         setLoading(false)
+      }
+   }
+
+   const dismissPartialExecution = () => setPartialExecution(null)
 
    // PRIVATE - DBC direct path (USDC <-> QQ)
    // The Meteora DBC pool uses USDC as quote token (not SOL).
@@ -96,6 +153,8 @@ export function useSwap() {
          minimumAmountOut: q.minimumAmountOut,
          tradingFee: q.tradingFee,
          route: "dbc",
+         slippageBps,
+         quotedAt: Date.now(),
       }
       setQuote(result)
       return result
@@ -152,6 +211,8 @@ export function useSwap() {
             minimumAmountOut: dbcQuote.minimumAmountOut,
             tradingFee: dbcQuote.tradingFee,
             route: "hybrid",
+            slippageBps,
+            quotedAt: Date.now(),
             priceImpactPct: jupQuote.priceImpactPct,
             jupiterQuote: jupQuote,
             intermediateUsdcAmount: usdcAmount,
@@ -175,6 +236,8 @@ export function useSwap() {
             minimumAmountOut: new BN(jupQuote.otherAmountThreshold),
             tradingFee: dbcQuote.tradingFee,
             route: "hybrid",
+            slippageBps,
+            quotedAt: Date.now(),
             priceImpactPct: jupQuote.priceImpactPct,
             jupiterQuote: jupQuote,
             intermediateUsdcAmount: dbcQuote.outputAmount,
@@ -207,27 +270,53 @@ export function useSwap() {
     * @dev Execute a two-leg hybrid swap sequentially.
     * Buy: Jupiter SOL/USDT->USDC first, then DBC USDC->QQ.
     * Sell: DBC QQ->USDC first, then Jupiter USDC->SOL/USDT.
-    * If the first leg succeeds but the second fails, the user holds
-    * the intermediate USDC which can be retried or used directly.
+    * If leg 1 succeeds but leg 2 fails, partialExecution state is set
+    * so the UI can offer a retry via retrySecondLeg().
     */
-   async function executeHybridSwap(amountIn: BN, inputMint: string, currentQuote: SwapQuote): Promise<string> {
+   async function executeHybridSwap(
+      amountIn: BN,
+      inputMint: string,
+      outputMint: string,
+      currentQuote: SwapQuote
+   ): Promise<string> {
       if (!currentQuote.jupiterQuote) throw new Error("Missing Jupiter quote")
       const isBuy = !isQQ(inputMint)
 
       if (isBuy) {
          // Step 1: Jupiter SOL/USDT -> USDC
-         await executeJupiterLeg(currentQuote.jupiterQuote)
+         const leg1Sig = await executeJupiterLeg(currentQuote.jupiterQuote)
 
          // Step 2: DBC USDC -> QQ
-         const usdcAmount = currentQuote.intermediateUsdcAmount!
-         return await executeDbcSwap(usdcAmount, currentQuote.minimumAmountOut, false)
+         try {
+            const usdcAmount = currentQuote.intermediateUsdcAmount!
+            return await executeDbcSwap(usdcAmount, currentQuote.minimumAmountOut, false)
+         } catch (e) {
+            setPartialExecution({
+               direction: "buy",
+               leg1Sig,
+               estimatedUsdcAmount: currentQuote.intermediateUsdcAmount!,
+               slippageBps: currentQuote.slippageBps,
+            })
+            throw e
+         }
       } else {
          // Step 1: DBC QQ -> USDC
          const dbcSig = await executeDbcSwap(amountIn, currentQuote.intermediateUsdcAmount!, true)
 
          // Step 2: Jupiter USDC -> SOL/USDT
-         await executeJupiterLeg(currentQuote.jupiterQuote)
-         return dbcSig
+         try {
+            await executeJupiterLeg(currentQuote.jupiterQuote)
+            return dbcSig
+         } catch (e) {
+            setPartialExecution({
+               direction: "sell",
+               leg1Sig: dbcSig,
+               estimatedUsdcAmount: currentQuote.intermediateUsdcAmount!,
+               slippageBps: currentQuote.slippageBps,
+               outputMint,
+            })
+            throw e
+         }
       }
    }
 
@@ -246,5 +335,15 @@ export function useSwap() {
       return sig
    }
 
-   return { quote, getQuote, executeSwap, loading, quoteLoading, error }
+   return {
+      quote,
+      getQuote,
+      executeSwap,
+      retrySecondLeg,
+      dismissPartialExecution,
+      partialExecution,
+      loading,
+      quoteLoading,
+      error,
+   }
 }

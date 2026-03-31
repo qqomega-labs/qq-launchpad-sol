@@ -67,7 +67,10 @@ function LaunchpadPage() {
  * @dev App.
  */
 export default function App() {
-   const endpoint = import.meta.env.VITE_RPC_ENDPOINT || "https://api.mainnet-beta.solana.com"
+   const endpoint = import.meta.env.VITE_RPC_ENDPOINT || (() => {
+      console.warn("[QQ] VITE_RPC_ENDPOINT not set — falling back to rate-limited public RPC. Set a dedicated endpoint in .env.")
+      return "https://api.mainnet-beta.solana.com"
+   })()
 
    return (
       <ConnectionProvider endpoint={endpoint}>

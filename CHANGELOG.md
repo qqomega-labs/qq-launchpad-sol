@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-03-31 (QQAlpha)
 
+### Security
+
+- **Content Security Policy**: `<meta http-equiv="Content-Security-Policy">` added to `index.html`, allowlisting Helius RPC, Jupiter API/WS, and GeckoTerminal; `frame-src` and `object-src` set to `none`
+- **Slippage cap**: custom slippage input capped at 10% (was 50%); warning rendered when tolerance exceeds 2% to alert users of sandwich attack risk
+- **Meteora SDK pinned**: `@meteora-ag/dynamic-bonding-curve-sdk` pinned to exact version `1.5.7` (was `latest`) to prevent silent supply-chain updates to the package that constructs on-chain transactions
+- **Float-to-BN fix**: `parseTokenAmount(amount, decimals)` added to `utils.ts` — converts input strings to `BN` via integer string arithmetic, eliminating JS float precision errors (e.g. `0.1 * 1e9 = 100000000.00000001`); replaces all `new BN(Math.floor(parseFloat(...) * 10 ** decimals))` call sites in `swap-panel.tsx`
+- **Stale quote guard**: `SwapQuote` now carries `quotedAt` timestamp; `handleSwap` re-fetches the quote before execution if it is older than 30 seconds, preventing execution against stale pricing
+- **Partial execution recovery**: `PartialExecution` interface and `partialExecution` state added to `useSwap`; if leg 1 of a hybrid swap succeeds but leg 2 fails, a dismissible warning banner appears in `swap-panel.tsx` with a Retry button that re-quotes and re-executes the second leg via `retrySecondLeg()`
+- **WebSocket schema validation**: `isValidTrade()` type guard added to `use-trade-feed.ts`; Jupiter WebSocket messages are filtered before entering React state, rejecting malformed or injected payloads
+- **Jupiter error sanitization**: raw Jupiter API response bodies are now logged to `console.error` only; the UI receives a mapped user-friendly message (`friendlyJupiterError`) instead of potentially sensitive server internals
+- **Amount input length cap**: `maxLength={20}` added to `SwapInput` to prevent absurdly large values that could cause `Infinity`/`NaN` in numeric conversions
+- **RPC fallback warning**: `app.tsx` emits a `console.warn` when `VITE_RPC_ENDPOINT` is not set and the app falls back to the rate-limited public Solana RPC
+
 ### Added
 
 - **Prettier config**: `.prettierrc` with project overrides

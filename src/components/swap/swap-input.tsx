@@ -49,6 +49,7 @@ export function SwapInput({
                   }}
                   readOnly={readOnly}
                   placeholder="0.00"
+                  maxLength={20}
                   className="bg-transparent text-white font-mono text-lg flex-1 outline-none placeholder:text-text-muted w-0"
                />
             )}

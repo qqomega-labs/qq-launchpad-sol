@@ -92,6 +92,14 @@ export async function fetchJupiterSwapTx(
 
 // PRIVATE
 
+function friendlyJupiterError(status: number): string {
+   if (status === 400) return "Invalid swap parameters"
+   if (status === 404) return "Route not found — try a different amount"
+   if (status === 429) return "Rate limited, please wait a moment"
+   if (status >= 500) return "Jupiter API unavailable, please try again"
+   return "Quote unavailable"
+}
+
 const JUPITER_API_KEY = import.meta.env.VITE_JUPITER_API_KEY ?? ""
 
 async function fetchWithRetry(url: string, init?: RequestInit, retries = 1): Promise<Response> {
@@ -111,7 +119,9 @@ async function fetchWithRetry(url: string, init?: RequestInit, retries = 1): Pro
 
    if (!res.ok) {
       const body = await res.text().catch(() => "")
-      throw new JupiterApiError(`Jupiter API ${res.status}: ${body || res.statusText}`, res.status)
+      // Log full error for debugging only — do not expose raw body to the UI
+      console.error(`[Jupiter] ${res.status}:`, body || res.statusText)
+      throw new JupiterApiError(friendlyJupiterError(res.status), res.status)
    }
 
    return res

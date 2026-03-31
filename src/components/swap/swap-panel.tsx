@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { useUnifiedWalletContext } from "@jup-ag/wallet-adapter"
-import { Loader2, ArrowUpRight } from "lucide-react"
-import BN from "bn.js"
+import { Loader2, ArrowUpRight, AlertTriangle, X } from "lucide-react"
 
 import { toast } from "sonner"
 
@@ -12,9 +11,12 @@ import { QuickAmounts } from "./quick-amounts"
 import { SlippagePopover } from "./slippage-popover"
 import { Button } from "@/components/ui/button"
 
-import { truncateAddress } from "@/lib/utils"
+import { cn, truncateAddress, parseTokenAmount } from "@/lib/utils"
 import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY } from "@/config/const"
 import { SOL_MINT, QQ_MINT, QUICK_AMOUNTS, getToken } from "@/config/tokens"
+
+/** @dev Re-fetch the quote if older than this threshold before executing */
+const QUOTE_STALE_MS = 30_000
 
 /**
  * @dev Main swap panel with buy/sell tabs, token selection, quote fetching, and swap execution.
@@ -23,7 +25,17 @@ import { SOL_MINT, QQ_MINT, QUICK_AMOUNTS, getToken } from "@/config/tokens"
 export function SwapPanel() {
    const { connected } = useWallet()
    const { setShowModal } = useUnifiedWalletContext()
-   const { quote, getQuote, executeSwap, loading, quoteLoading, error } = useSwap()
+   const {
+      quote,
+      getQuote,
+      executeSwap,
+      retrySecondLeg,
+      dismissPartialExecution,
+      partialExecution,
+      loading,
+      quoteLoading,
+      error,
+   } = useSwap()
    const [isSell, setIsSell] = useState(false)
    const [inputAmount, setInputAmount] = useState("")
    const [selectedPayMint, setSelectedPayMint] = useState(SOL_MINT)
@@ -49,7 +61,7 @@ export function SwapPanel() {
       if (isNaN(amount) || amount <= 0) return
 
       debounceRef.current = setTimeout(() => {
-         const amountIn = new BN(Math.floor(amount * 10 ** inputDecimals))
+         const amountIn = parseTokenAmount(inputAmount, inputDecimals)
          getQuote(amountIn, inputMint, outputMint, slippage)
       }, 500)
 
@@ -71,11 +83,19 @@ export function SwapPanel() {
          setShowModal(true)
          return
       }
-      if (!quote || !inputAmount) return
+      if (!inputAmount) return
+
+      // Re-fetch quote if stale (older than QUOTE_STALE_MS) to avoid executing on outdated pricing
+      let activeQuote = quote
+      if (!activeQuote || Date.now() - activeQuote.quotedAt > QUOTE_STALE_MS) {
+         const amountIn = parseTokenAmount(inputAmount, inputDecimals)
+         activeQuote = await getQuote(amountIn, inputMint, outputMint, slippage)
+         if (!activeQuote) return
+      }
 
       try {
-         const amountIn = new BN(Math.floor(parseFloat(inputAmount) * 10 ** inputDecimals))
-         const sig = await executeSwap(amountIn, inputMint, outputMint, quote)
+         const amountIn = parseTokenAmount(inputAmount, inputDecimals)
+         const sig = await executeSwap(amountIn, inputMint, outputMint, activeQuote)
          toast.success(`Transaction confirmed: ${truncateAddress(sig, 8)}`)
          setSuccess(true)
          setInputAmount("")
@@ -85,15 +105,26 @@ export function SwapPanel() {
       }
    }
 
+   const handleRetry = async () => {
+      try {
+         const sig = await retrySecondLeg()
+         toast.success(`Retry confirmed: ${truncateAddress(sig, 8)}`)
+         setSuccess(true)
+         setTimeout(() => setSuccess(false), 2000)
+      } catch {
+         toast.error(error || "Retry failed")
+      }
+   }
+
    const ctaText = () => {
       if (!connected) return "Connect Wallet"
-      if (loading) return "Confirming..."
+      if (loading || quoteLoading) return "Confirming..."
       if (success) return "\u2713 Confirmed"
       if (!inputAmount || parseFloat(inputAmount) <= 0) return "Enter Amount"
       return isSell ? "Sell QQ" : "Secure Your Seat"
    }
 
-   const ctaDisabled = loading || success || (connected && (!inputAmount || parseFloat(inputAmount) <= 0))
+   const ctaDisabled = loading || quoteLoading || success || (connected && (!inputAmount || parseFloat(inputAmount) <= 0))
    const quickAmounts = !isSell ? (QUICK_AMOUNTS[selectedPayMint] ?? []) : []
 
    const routeLabel = () => {
@@ -102,8 +133,44 @@ export function SwapPanel() {
       return "via Jupiter + Meteora DBC"
    }
 
+   const priceImpact = quote?.priceImpactPct ? parseFloat(quote.priceImpactPct) : 0
+   const showPriceImpact = priceImpact >= 1
+
    return (
       <div className="glass-panel rounded-[12px] p-5 landscape:p-3">
+         {/* Partial execution warning — shown when leg 1 succeeded but leg 2 failed */}
+         {partialExecution && (
+            <div className="mb-4 bg-[rgba(255,200,0,0.08)] border border-[rgba(255,200,0,0.3)] rounded-[8px] p-3 text-xs">
+               <div className="flex items-start gap-2">
+                  <AlertTriangle size={14} className="text-[#ffc800] shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                     <p className="text-[#ffc800] font-medium mb-1">Step 1 complete, step 2 failed</p>
+                     <p className="text-text-muted mb-2">
+                        You received ~
+                        {(Number(partialExecution.estimatedUsdcAmount.toString()) / 1e6).toFixed(2)} USDC. Retry to
+                        complete the swap.
+                     </p>
+                     <div className="flex gap-2">
+                        <button
+                           onClick={handleRetry}
+                           disabled={loading}
+                           className="bg-[rgba(255,200,0,0.15)] hover:bg-[rgba(255,200,0,0.25)] text-[#ffc800] rounded-[6px] px-3 py-1.5 min-h-[44px] transition-colors disabled:opacity-50"
+                        >
+                           {loading ? <Loader2 size={12} className="animate-spin inline" /> : "Retry"}
+                        </button>
+                        <button
+                           onClick={dismissPartialExecution}
+                           className="text-text-muted hover:text-text-secondary transition-colors p-1.5 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                           aria-label="Dismiss"
+                        >
+                           <X size={14} />
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         )}
+
          {/* Buy / Sell tabs */}
          <div className="flex gap-1 mb-5 landscape:mb-3 bg-bg-input rounded-[8px] p-1">
             <Button
@@ -158,12 +225,23 @@ export function SwapPanel() {
             />
          </div>
 
-         {/* Slippage + route */}
+         {/* Slippage + route + price impact */}
          <div className="mt-3 landscape:mt-1.5 space-y-1">
             <div className="flex items-center justify-end">
                <SlippagePopover value={slippage} onChange={setSlippage} />
             </div>
             {routeLabel() && <p className="text-text-muted text-xs text-center">{routeLabel()}</p>}
+            {showPriceImpact && (
+               <p
+                  className={cn(
+                     "text-xs text-center",
+                     priceImpact >= 5 ? "text-red" : "text-[#ff9db8]"
+                  )}
+               >
+                  Price impact: {priceImpact.toFixed(2)}%
+                  {priceImpact >= 5 && " — High impact"}
+               </p>
+            )}
          </div>
 
          {/* CTA - shimmer gradient button */}
@@ -172,7 +250,7 @@ export function SwapPanel() {
             disabled={!!ctaDisabled}
             className="btn-cta w-full mt-5 landscape:mt-3 rounded-[12px] px-6 py-3.5 text-white text-base font-semibold tracking-wide disabled:cursor-not-allowed"
          >
-            {loading && <Loader2 size={16} className="animate-spin -ml-1 mr-2 inline" />}
+            {(loading || quoteLoading) && <Loader2 size={16} className="animate-spin -ml-1 mr-2 inline" />}
             {ctaText()}
          </button>
 

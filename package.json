@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@jup-ag/wallet-adapter": "^0.2.6",
-    "@meteora-ag/dynamic-bonding-curve-sdk": "latest",
+    "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.7",
     "@solana/wallet-adapter-base": "^0.9",
     "@solana/wallet-adapter-react": "^0.15",
     "@solana/web3.js": "^1.98",

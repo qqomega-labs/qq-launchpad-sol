@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { Settings } from "lucide-react"
+import { Settings, AlertTriangle } from "lucide-react"
 import { SLIPPAGE_STORAGE_KEY } from "@/config/const"
 import { cn } from "@/lib/utils"
 
@@ -37,7 +37,7 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
    const handleCustom = (val: string) => {
       setCustom(val)
       const parsed = parseFloat(val)
-      if (!isNaN(parsed) && parsed > 0 && parsed <= 50) {
+      if (!isNaN(parsed) && parsed > 0 && parsed <= 10) {
          const bps = Math.round(parsed * 100)
          onChange(bps)
          localStorage.setItem(SLIPPAGE_STORAGE_KEY, String(bps))
@@ -76,11 +76,17 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
                <input
                   type="text"
                   inputMode="decimal"
-                  placeholder="Custom %"
+                  placeholder="Custom % (max 10)"
                   value={custom}
                   onChange={(e) => handleCustom(e.target.value)}
                   className="w-full bg-bg-input border border-border rounded-[6px] px-2 py-1.5 text-xs text-white placeholder:text-text-muted outline-none focus:border-border-active"
                />
+               {value > 200 && (
+                  <p className="mt-1.5 text-[#ffc800] text-xs flex items-center gap-1">
+                     <AlertTriangle size={11} />
+                     High slippage — sandwich attack risk
+                  </p>
+               )}
             </div>
          )}
       </div>
