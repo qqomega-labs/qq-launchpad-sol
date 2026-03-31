@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUnifiedWalletContext } from "@jup-ag/wallet-adapter";
 import { Loader2, ArrowUpRight } from "lucide-react";
@@ -70,7 +70,7 @@ export function SwapPanel() {
       )
     : "";
 
-  const handleSwap = useCallback(async () => {
+  const handleSwap = async () => {
     if (!connected) {
       setShowModal(true);
       return;
@@ -89,18 +89,7 @@ export function SwapPanel() {
     } catch {
       showToast("error", error || "Transaction failed");
     }
-  }, [
-    connected,
-    quote,
-    inputAmount,
-    inputMint,
-    outputMint,
-    inputDecimals,
-    executeSwap,
-    setShowModal,
-    showToast,
-    error,
-  ]);
+  };
 
   const ctaText = () => {
     if (!connected) return "Connect Wallet";

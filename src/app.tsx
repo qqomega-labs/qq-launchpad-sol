@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { ConnectionProvider } from "@solana/wallet-adapter-react";
 import { UnifiedWalletProvider } from "@jup-ag/wallet-adapter";
 import { Header } from "@/components/header";
@@ -73,12 +72,8 @@ function LaunchpadPage() {
  * @dev App.
  */
 export default function App() {
-  const endpoint = useMemo(
-    () =>
-      import.meta.env.VITE_RPC_ENDPOINT ||
-      "https://api.mainnet-beta.solana.com",
-    [],
-  );
+  const endpoint =
+    import.meta.env.VITE_RPC_ENDPOINT || "https://api.mainnet-beta.solana.com";
 
   return (
     <ConnectionProvider endpoint={endpoint}>

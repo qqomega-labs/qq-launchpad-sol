@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Hero stats**: Renamed `StatCard` to `HeroStat`, moved from `stat-card.tsx` to `hero-stat.tsx`
 - **Remaining seats**: Live counter showing `baseRemaining - 3,400` (pool reserve minus non-DBC allocations: LP 2,400 + airdrop 750 + core 200 + partnerships 50), powered by `usePoolState` hook
 - **FOMO color system**: Four-level pink gradient for remaining seats counter: `default` (white), `fomo` (#ff9db8), `warm` (#ff3d7a), `hot` (#fd015a)
+- **Header dropdown**: New `.glass-panel-solid` CSS class with solid background (`#0a0312`) for wallet popover
+- **Glass panel**: Replaced `position: relative` with `isolation: isolate` for `backdrop-filter` stacking context without position side-effects
+- **Sphere chips**: Converted `DimChips` from interactive buttons to display-only spans with `cursor-not-allowed` (demo preview)
+- **React Compiler**: Removed all `useCallback` and `useMemo` from `qq-hex-sphere.tsx`, `swap-panel.tsx`, `toast.tsx`, `app.tsx` - React Compiler handles memoization automatically
 
 ### Fixed
 
@@ -23,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`.glass-panel-accent`**: Unused CSS class removed
 - **`.stat-card`**: Hover lift CSS removed (no longer needed with borderless counters)
+- **`DimChipsProps`** interface, `handleSort`, `setSortKey`, `setAnimKey` - unused after making chips non-interactive
 
 ## [Unreleased] - 2026-03-30 (QQAlpha)
 

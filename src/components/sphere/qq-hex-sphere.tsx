@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   DIMS,
   CATS,
@@ -84,26 +84,19 @@ function Detail({ data, onClose }: DetailProps) {
   );
 }
 
-interface DimChipsProps {
-  active: SortKey;
-  onSelect: (key: SortKey) => void;
-}
-
-/** @dev Compact horizontal dimension chips. */
-function DimChips({ active, onSelect }: DimChipsProps) {
+/** @dev Compact horizontal dimension chips (display-only, demo preview). */
+function DimChips({ active }: { active: SortKey }) {
   const isC = active === "comp";
 
   return (
-    <div className="flex items-center gap-1.5 flex-wrap">
-      <button
-        onClick={() => onSelect("comp")}
+    <div className="flex items-center gap-1.5 flex-wrap cursor-not-allowed">
+      <span
         className={`
           flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-mono font-bold text-xs
-          transition-all duration-200 outline-none
           ${
             isC
               ? "bg-accent/[0.15] border border-accent/40 text-accent shadow-[0_0_10px_rgba(253,1,90,0.12)]"
-              : "bg-white/[0.03] border border-white/[0.06] text-text-muted hover:text-white hover:bg-white/[0.05]"
+              : "bg-white/[0.03] border border-white/[0.06] text-text-muted"
           }
         `}
       >
@@ -111,14 +104,13 @@ function DimChips({ active, onSelect }: DimChipsProps) {
           className={`w-1.5 h-1.5 rounded-full ${isC ? "bg-accent" : "bg-text-muted"}`}
         />
         QQ
-      </button>
+      </span>
       {DIMS.map((d) => {
         const isA = active === d.key;
         return (
-          <button
+          <span
             key={d.key}
-            onClick={() => onSelect(d.key)}
-            className="flex items-center gap-1.5 rounded-md font-mono text-xs transition-all duration-200 outline-none"
+            className="flex items-center gap-1.5 rounded-md font-mono text-xs"
             style={{
               padding: "6px 10px",
               background: isA ? `${d.color}15` : `${d.color}08`,
@@ -133,7 +125,7 @@ function DimChips({ active, onSelect }: DimChipsProps) {
               style={{ background: d.color, opacity: isA ? 1 : 0.4 }}
             />
             {d.short}
-          </button>
+          </span>
         );
       })}
     </div>
@@ -144,9 +136,8 @@ function DimChips({ active, onSelect }: DimChipsProps) {
 
 /** @dev 3D interactive hex sphere displaying crypto assets ranked by QQ Score dimensions. */
 export function QQHexSphere() {
-  const [sortKey, setSortKey] = useState<SortKey>("comp");
+  const sortKey: SortKey = "comp";
   const [selected, setSelected] = useState<number | null>(null);
-  const [, setAnimKey] = useState(0);
   const [rot, setRot] = useState({ x: -0.25, y: 0 });
   const dragRef = useRef({
     active: false,
@@ -160,14 +151,8 @@ export function QQHexSphere() {
   });
   const rafRef = useRef<number>(0);
 
-  const handleSort = useCallback((k: SortKey) => {
-    setSortKey(k);
-    setSelected(null);
-    setAnimKey((v) => v + 1);
-  }, []);
-
-  const ranked = useMemo(() => rankAll(sortKey), [sortKey]);
-  const sphere = useMemo(() => fibSphere(TOTAL), []);
+  const ranked = rankAll(sortKey);
+  const sphere = fibSphere(TOTAL);
 
   // Idle auto-rotation + momentum spin loop
   const IDLE_SPEED = 0.0012; // slow ambient rotation (radians/frame)
@@ -208,9 +193,8 @@ export function QQHexSphere() {
     return { x: e.clientX, y: e.clientY };
   };
 
-  const onDown = useCallback((e: React.PointerEvent | React.TouchEvent) => {
+  const onDown = (e: React.PointerEvent | React.TouchEvent) => {
     const { x, y } = getXY(e);
-    // Stop any momentum and start dragging
     dragRef.current = {
       active: true,
       hovering: true,
@@ -221,9 +205,9 @@ export function QQHexSphere() {
       vy: 0,
       lastTime: performance.now(),
     };
-  }, []);
+  };
 
-  const onMove = useCallback((e: React.PointerEvent | React.TouchEvent) => {
+  const onMove = (e: React.PointerEvent | React.TouchEvent) => {
     const d = dragRef.current;
     if (!d.active) return;
     if ("touches" in e) e.preventDefault();
@@ -239,24 +223,22 @@ export function QQHexSphere() {
     d.ly = y;
     d.lastTime = now;
     setRot((r) => ({ x: r.x - dy * 0.006, y: r.y + dx * 0.006 }));
-  }, []);
+  };
 
-  const onUp = useCallback(() => {
+  const onUp = () => {
     dragRef.current.active = false;
-  }, []);
+  };
 
-  // Pause idle rotation on hover, resume on leave
-  const onSphereEnter = useCallback(() => {
+  const onSphereEnter = () => {
     dragRef.current.hovering = true;
-    // Kill momentum so it stops cleanly
     dragRef.current.vx = 0;
     dragRef.current.vy = 0;
-  }, []);
+  };
 
-  const onSphereLeave = useCallback(() => {
+  const onSphereLeave = () => {
     dragRef.current.hovering = false;
     dragRef.current.active = false;
-  }, []);
+  };
 
   // Tighter sphere for side-by-side layout
   const sphereR = 190;
@@ -265,16 +247,14 @@ export function QQHexSphere() {
   const cx = 300;
   const cy = 260;
 
-  const proj = useMemo(() => {
-    return sphere
-      .map((sp, i) => {
-        const rp = rotate3D(sp, rot.x, rot.y);
-        return { ...rp, idx: i };
-      })
-      .sort((a, b) => a.z - b.z);
-  }, [sphere, rot]);
+  const proj = sphere
+    .map((sp, i) => {
+      const rp = rotate3D(sp, rot.x, rot.y);
+      return { ...rp, idx: i };
+    })
+    .sort((a, b) => a.z - b.z);
 
-  const hexD = useMemo(() => hexPath(hexR), [hexR]);
+  const hexD = hexPath(hexR);
   const sel = selected !== null ? ranked[selected] : null;
 
   return (
@@ -283,7 +263,7 @@ export function QQHexSphere() {
       <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
         <div className="flex items-baseline gap-2">
           <span className="font-mono font-bold text-sm md:text-base text-white tracking-tight">
-            QQ Score
+            QQ Score preview
           </span>
           <span className="text-xs text-text-muted">{TOTAL} assets</span>
         </div>
@@ -294,7 +274,7 @@ export function QQHexSphere() {
 
       {/* Dimension chips */}
       <div className="px-4 pb-2">
-        <DimChips active={sortKey} onSelect={handleSort} />
+        <DimChips active={sortKey} />
       </div>
 
       {/* SVG Sphere */}
