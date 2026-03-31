@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-03-31 (QQAlpha)
 
+### Added
+
+- **Prettier config**: `.prettierrc` with project overrides
+
 ### Changed
+
+- **Format scripts**: `format` and `format:check` now use `prettier --write .` / `prettier --check .` instead of explicit glob patterns
 
 - **Token icons**: Replaced inline SVG `USDCIcon` and `USDTIcon` with official brand SVGs (`public/usdc.svg`, `public/usdt.svg`) loaded as `<img>` tags
 - **Header**: New `.glass-header` CSS class replacing `glass-panel` overrides, translucent pseudo-element with `backdrop-filter: blur(5px)` and `rgba(21,16,29,0.15)` background matching qq-docs navbar style, bottom border uses `--color-border`
