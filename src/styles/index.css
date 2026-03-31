@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@custom-variant landscape {
+   @media (orientation: landscape) and (max-height: 600px) {
+      @slot;
+   }
+}
+
 @layer base {
    button,
    a,

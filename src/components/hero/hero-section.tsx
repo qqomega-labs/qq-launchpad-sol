@@ -17,7 +17,7 @@ export function HeroSection() {
 
    return (
       <div className="glass-panel rounded-[12px] p-4 md:p-5">
-         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+         <div className="flex flex-col md:flex-row landscape:flex-row md:items-center landscape:items-center gap-4 md:gap-6">
             {/* Value prop */}
             <div className="flex-1 min-w-0">
                <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight tracking-tight">

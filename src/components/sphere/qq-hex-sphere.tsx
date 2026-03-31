@@ -229,7 +229,7 @@ export function QQHexSphere() {
    const sel = selected !== null ? ranked[selected] : null
 
    return (
-      <div className="glass-panel rounded-[12px] flex flex-col overflow-hidden relative">
+      <div className="glass-panel rounded-[12px] flex flex-col overflow-hidden relative landscape:max-h-[320px] landscape:overflow-hidden">
          {/* Header */}
          <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
             <div className="flex items-baseline gap-2">
@@ -270,7 +270,7 @@ export function QQHexSphere() {
 
             <svg
                viewBox="0 0 600 520"
-               className="w-full h-auto cursor-grab active:cursor-grabbing relative z-[1]"
+               className="w-full h-auto cursor-grab active:cursor-grabbing relative z-[1] landscape:max-h-[260px]"
                style={{ touchAction: "none" }}
                onPointerDown={onDown}
                onTouchStart={onDown}

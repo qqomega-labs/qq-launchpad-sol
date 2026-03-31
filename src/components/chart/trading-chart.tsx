@@ -48,7 +48,7 @@ export function TradingChart({ candles }: TradingChartProps) {
          },
          rightPriceScale: { borderColor: COLORS.raw.accentBorder },
          width: containerRef.current.clientWidth,
-         height: 400,
+         height: containerRef.current.clientHeight,
       })
 
       chartRef.current = chart
@@ -107,5 +107,5 @@ export function TradingChart({ candles }: TradingChartProps) {
       }
    }, [candles])
 
-   return <div ref={containerRef} className="w-full h-[400px] md:h-[350px] lg:h-[400px]" />
+   return <div ref={containerRef} className="w-full h-[400px] md:h-[350px] lg:h-[400px] landscape:h-[240px]" />
 }

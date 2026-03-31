@@ -18,12 +18,12 @@ import { QQHexSphere } from "@/components/sphere/qq-hex-sphere"
  */
 function LaunchpadPage() {
    return (
-      <div className="min-h-screen flex flex-col relative bg-bg-primary">
+      <div className="min-h-dvh flex flex-col relative bg-bg-primary">
          <div className="fixed inset-0 bg-radial-deep" />
          <div className="fixed inset-0 bg-filigree" />
          <div className="fixed inset-0 bg-vignette" />
 
-         <div className="relative z-10 min-h-screen flex flex-col">
+         <div className="relative z-10 min-h-dvh flex flex-col">
             <Header />
             <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 py-6">
                {/* Hero banner - compact value prop + stats */}

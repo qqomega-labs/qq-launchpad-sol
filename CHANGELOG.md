@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Prettier config**: `.prettierrc` with project overrides
 - **`COLORS` expansions**: added `fomoSoft` (`#ff9db8`), `red` (`#ff3d57`); `tw.fomoSoft/fomoWarm/fomoHot` Tailwind text classes; `raw.accentSubtle/accentFaint`, `raw.shadow/shadowDeep/shadowText/shadowLight/shadowVignette`
 - **Sonner** (`sonner@2.0.7`): replaced custom `ToastProvider`/`useToast` with Sonner `<Toaster>` mounted in `app.tsx`, glassmorphism-styled (`backdrop-filter: blur(12px)`, semi-transparent dark bg, accent border); success toasts use `--color-green` border, error toasts use `--color-red` border
+- **`landscape:` Tailwind variant**: `@custom-variant landscape` targeting `orientation: landscape` + `max-height: 600px`, enabling height-aware responsive classes across all components
 
 ### Changed
 
@@ -19,6 +20,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`hero-stat.tsx`**: FOMO color classes now reference `COLORS.tw.fomoSoft/fomoWarm/fomoHot` instead of hardcoded Tailwind arbitrary values
 - **`qq-hex-sphere.tsx`**: accent `rgba` and black shadow values replaced with `COLORS.raw.*` references
 - **`swap-panel.tsx`**: `useToast` replaced with direct `toast.success` / `toast.error` calls from sonner
+- **Landscape layout**: all components adapted for landscape phones and small tablets (`max-height: 600px`)
+  - `trading-chart.tsx`: `landscape:h-[240px]`, chart JS `height` now reads `clientHeight` instead of hardcoded 400
+  - `chart-panel.tsx`: skeleton `landscape:h-[240px]`
+  - `qq-hex-sphere.tsx`: `landscape:max-h-[320px]` on root, `landscape:max-h-[260px]` on SVG
+  - `header.tsx`: `landscape:h-12`, wallet dropdown gap `mt-6 → mt-2`
+  - `swap-panel.tsx`: all vertical gaps tightened with `landscape:` variants (`p-3`, `mb-3`, `mt-2`, etc.)
+  - `quick-amounts.tsx`: `py-2.5 min-h-[44px]` — 44px touch targets
+  - `slippage-popover.tsx`: `py-3 min-h-[44px]` on presets, `max-h-[50vh]` on panel
+  - `token-selector.tsx`: `max-h-[50vh] overflow-y-auto` on dropdown
+  - `app.tsx`: `min-h-screen → min-h-dvh` for mobile browser chrome
+  - `hero-section.tsx`: `landscape:flex-row landscape:items-center` for horizontal layout on landscape phones
 
 - **Token icons**: Replaced inline SVG `USDCIcon` and `USDTIcon` with official brand SVGs (`public/usdc.svg`, `public/usdt.svg`) loaded as `<img>` tags
 - **Header**: New `.glass-header` CSS class replacing `glass-panel` overrides, translucent pseudo-element with `backdrop-filter: blur(5px)` and `rgba(21,16,29,0.15)` background matching qq-docs navbar style, bottom border uses `--color-border`

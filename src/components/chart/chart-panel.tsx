@@ -32,7 +32,7 @@ export function ChartPanel() {
          {/* Chart */}
          <div className="p-0">
             {loading && candles.length === 0 ? (
-               <div className="flex items-center justify-center h-[400px]">
+               <div className="flex items-center justify-center h-[400px] landscape:h-[240px]">
                   <Skeleton className="w-full h-full" />
                </div>
             ) : (

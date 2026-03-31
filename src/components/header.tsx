@@ -70,7 +70,7 @@ export function Header() {
    }
 
    return (
-      <header className="glass-header h-16 flex items-center justify-between px-4 md:px-6">
+      <header className="glass-header h-16 landscape:h-12 flex items-center justify-between px-4 md:px-6">
          <div className="flex items-center gap-3">
             <img src="/logo.svg" alt="QQ" className="h-8 w-8" />
             <span className="text-text-muted text-sm font-medium tracking-wide">Launchpad</span>
@@ -104,7 +104,7 @@ export function Header() {
             </button>
 
             {showDropdown && connected && (
-               <div className="absolute right-0 top-full mt-6 w-48 glass-panel-solid rounded-[8px] py-1">
+               <div className="absolute right-0 top-full mt-2 w-48 glass-panel-solid rounded-[8px] py-1">
                   <button
                      onClick={handleCopy}
                      className="w-full text-left px-4 py-2 text-sm text-text-secondary hover:text-white hover:bg-bg-input transition-colors"

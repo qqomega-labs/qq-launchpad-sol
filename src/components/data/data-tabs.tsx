@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 // TODO: Re-enable Live Trades tab and WebSocket feed after graduation
 // import { TradeFeed } from "./trade-feed";
 // TODO: Re-enable Top Holders tab after graduation

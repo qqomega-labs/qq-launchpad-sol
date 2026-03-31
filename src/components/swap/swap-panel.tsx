@@ -103,9 +103,9 @@ export function SwapPanel() {
    }
 
    return (
-      <div className="glass-panel rounded-[12px] p-5">
+      <div className="glass-panel rounded-[12px] p-5 landscape:p-3">
          {/* Buy / Sell tabs */}
-         <div className="flex gap-1 mb-5 bg-bg-input rounded-[8px] p-1">
+         <div className="flex gap-1 mb-5 landscape:mb-3 bg-bg-input rounded-[8px] p-1">
             <Button
                variant="tab"
                active={!isSell}
@@ -146,7 +146,7 @@ export function SwapPanel() {
          )}
 
          {/* Output */}
-         <div className="mt-4">
+         <div className="mt-4 landscape:mt-2">
             <SwapInput
                label="You receive (estimated)"
                value={outputAmount}
@@ -159,7 +159,7 @@ export function SwapPanel() {
          </div>
 
          {/* Slippage + route */}
-         <div className="mt-3 space-y-1">
+         <div className="mt-3 landscape:mt-1.5 space-y-1">
             <div className="flex items-center justify-end">
                <SlippagePopover value={slippage} onChange={setSlippage} />
             </div>
@@ -170,7 +170,7 @@ export function SwapPanel() {
          <button
             onClick={handleSwap}
             disabled={!!ctaDisabled}
-            className="btn-cta w-full mt-5 rounded-[12px] px-6 py-3.5 text-white text-base font-semibold tracking-wide disabled:cursor-not-allowed"
+            className="btn-cta w-full mt-5 landscape:mt-3 rounded-[12px] px-6 py-3.5 text-white text-base font-semibold tracking-wide disabled:cursor-not-allowed"
          >
             {loading && <Loader2 size={16} className="animate-spin -ml-1 mr-2 inline" />}
             {ctaText()}
@@ -180,7 +180,7 @@ export function SwapPanel() {
          {error && <p className="text-red text-xs mt-2 text-center">{error}</p>}
 
          {/* Fallback */}
-         <div className="mt-4 text-center">
+         <div className="mt-4 landscape:mt-2 text-center">
             <a
                href={DEXSCREENER_URL}
                target="_blank"

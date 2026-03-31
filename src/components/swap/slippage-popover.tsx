@@ -54,14 +54,14 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
          </button>
 
          {open && (
-            <div className="absolute right-0 bottom-full mb-2 glass-panel rounded-[8px] p-3 w-56 z-10">
+            <div className="absolute right-0 bottom-full mb-2 glass-panel rounded-[8px] p-3 w-56 z-10 max-h-[50vh] overflow-y-auto">
                <p className="text-text-secondary text-xs mb-2">Slippage Tolerance</p>
                <div className="flex gap-1.5 mb-2">
                   {PRESETS.map((bps) => (
                      <button
                         key={bps}
                         onClick={() => handlePreset(bps)}
-                        className={`flex-1 py-2 rounded-[6px] text-xs font-medium transition-colors ${
+                        className={`flex-1 py-3 min-h-[44px] rounded-[6px] text-xs font-medium transition-colors ${
                            value === bps && custom === ""
                               ? "bg-accent text-white"
                               : "bg-bg-input text-text-secondary hover:text-white"
