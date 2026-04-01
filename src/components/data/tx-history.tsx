@@ -98,7 +98,11 @@ export function TxHistory() {
             <button
                onClick={loadMore}
                disabled={loadingMore}
-               className="w-full mt-3 py-2.5 text-xs text-text-muted hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+               className={cn(
+                  "w-full mt-3 py-2.5 text-xs",
+                  "text-text-muted hover:text-white transition-colors",
+                  "disabled:opacity-40 disabled:cursor-not-allowed"
+               )}
             >
                {loadingMore ? "Loading..." : "Load more"}
             </button>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { Settings, AlertTriangle } from "lucide-react"
-import { SLIPPAGE_STORAGE_KEY } from "@/config/const"
+import { SLIPPAGE_STORAGE_KEY, COLORS } from "@/config/const"
 import { cn } from "@/lib/utils"
 
 interface SlippagePopoverProps {
@@ -48,14 +48,21 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
       <div ref={ref} className="relative inline-block">
          <button
             onClick={() => setOpen((prev) => !prev)}
-            className="flex items-center gap-1 text-text-muted hover:text-text-secondary transition-colors text-xs"
+            className={cn(
+               "flex items-center gap-1 text-xs",
+               "text-text-muted hover:text-text-secondary transition-colors"
+            )}
          >
             <span>Slippage: {(value / 100).toFixed(1)}%</span>
             <Settings size={14} />
          </button>
 
          {open && (
-            <div className="absolute right-0 bottom-full mb-2 glass-panel rounded-[8px] p-3 w-56 z-10 max-h-[50vh] overflow-y-auto">
+            <div className={cn(
+               "absolute right-0 bottom-full mb-2",
+               "glass-panel rounded-[8px] p-3 w-56 z-10",
+               "max-h-[50vh] overflow-y-auto"
+            )}>
                <p className="text-text-secondary text-xs mb-2">Slippage Tolerance</p>
                <div className="flex gap-1.5 mb-2">
                   {PRESETS.map((bps) => (
@@ -79,10 +86,14 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
                   placeholder="Custom % (max 10)"
                   value={custom}
                   onChange={(e) => handleCustom(e.target.value)}
-                  className="w-full bg-bg-input border border-border rounded-[6px] px-2 py-1.5 text-xs text-white placeholder:text-text-muted outline-none focus:border-border-active"
+                  className={cn(
+                     "w-full bg-bg-input border border-border rounded-[6px]",
+                     "px-2 py-1.5 text-xs text-white",
+                     "placeholder:text-text-muted outline-none focus:border-border-active"
+                  )}
                />
                {value > 200 && (
-                  <p className="mt-1.5 text-[#ffc800] text-xs flex items-center gap-1">
+                  <p className={cn("mt-1.5 text-xs flex items-center gap-1", COLORS.tw.warningText)}>
                      <AlertTriangle size={11} />
                      High slippage — sandwich attack risk
                   </p>

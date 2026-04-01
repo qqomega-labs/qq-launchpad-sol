@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils"
 import { AUTHOR } from "@/config/const"
 
 /**
@@ -5,7 +6,12 @@ import { AUTHOR } from "@/config/const"
  */
 export function Footer() {
    return (
-      <footer className="h-12 flex items-center justify-center px-4 md:px-6 border-t border-border backdrop-blur-[64px] backdrop-saturate-[120%] text-text-muted text-xs">
+      <footer className={cn(
+         "h-12 flex items-center justify-center",
+         "px-4 md:px-6 border-t border-border",
+         "backdrop-blur-[64px] backdrop-saturate-[120%]",
+         "text-text-muted text-xs"
+      )}>
          <a
             key={AUTHOR.key}
             href={AUTHOR.href}

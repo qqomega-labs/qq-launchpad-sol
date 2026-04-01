@@ -108,23 +108,23 @@ export default function App() {
                position="bottom-right"
                toastOptions={{
                   style: {
-                     background: "rgba(10, 3, 18, 0.85)",
+                     background: COLORS.raw.glassBg,
                      backdropFilter: "blur(12px)",
-                     border: "1px solid rgba(253, 1, 90, 0.25)",
-                     color: "#f0e8f0",
+                     border: `1px solid ${COLORS.raw.accentBorderStrong}`,
+                     color: COLORS.textPrimary,
                      borderRadius: "8px",
                   },
                   classNames: {
-                     success: "!border-[rgba(0,220,120,0.4)]",
-                     error: "!border-[rgba(255,61,87,0.4)]",
+                     success: COLORS.tw.successBorder,
+                     error: COLORS.tw.errorBorder,
                   },
                }}
                style={
                   {
-                     "--success-bg": "rgba(10, 3, 18, 0.85)",
+                     "--success-bg": COLORS.raw.glassBg,
                      "--success-border": COLORS.green,
                      "--success-text": COLORS.green,
-                     "--error-bg": "rgba(10, 3, 18, 0.85)",
+                     "--error-bg": COLORS.raw.glassBg,
                      "--error-border": COLORS.red,
                      "--error-text": COLORS.red,
                   } as React.CSSProperties

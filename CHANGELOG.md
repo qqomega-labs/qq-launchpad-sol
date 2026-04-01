@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-04-01 (QQAlpha)
+
+### Added
+
+- **Wallet balance display**: connected wallet balances shown in swap inputs (pay and receive sides), matching standard DEX UX; `use-wallet-balances.ts` hook fetches SOL via `getBalance` and SPL tokens (USDC, USDT, QQ) via `getParsedTokenAccountsByOwner`; resets on disconnect
+- **HALF / MAX buttons**: appear on the pay input when wallet is connected; MAX reserves 0.005 SOL for fees when paying with SOL
+- **`@solana/spl-token` dependency**: added explicitly; `NATIVE_MINT` now derives `SOL_MINT` in `tokens.ts`, `TOKEN_PROGRAM_ID` used in `use-wallet-balances.ts` — no more hardcoded program addresses
+- **`COLORS` expansions**: `textPrimary` (`#f0e8f0`); `tw.accentGlowSm`, `tw.successBorder`, `tw.errorBorder`; `raw.accentBorderStrong`, `raw.glassBg`; `warning` (`#ffc800`) with `tw.warningText/warningBg/warningBorder/warningBtnBg/warningBtnBgHover`
+
+### Changed
+
+- **`tokens.ts`**: `SOL_MINT` derived from `NATIVE_MINT.toBase58()` instead of hardcoded string; `USDC_MINT`/`USDT_MINT`/`QQ_MINT` annotated as having no available library source
+- **`cn()` enforcement**: all `className` strings longer than ~80 chars across the entire codebase now use `cn()` split by logical group (layout, color, border, spacing) — `footer.tsx`, `header.tsx`, `tx-history.tsx`, `quick-amounts.tsx`, `slippage-popover.tsx`, `swap-panel.tsx`, `token-selector.tsx`, `qq-hex-sphere.tsx`, `hero-stat.tsx`, `swap-input.tsx`
+- **Zero hardcoded color strings**: all remaining `#hex` and `rgba(...)` literals removed from JSX/components and replaced with `COLORS.tw.*` or `COLORS.raw.*` — `app.tsx` (Sonner toast config), `slippage-popover.tsx`, `qq-hex-sphere.tsx`, `swap-panel.tsx`
+
 ## [Unreleased] - 2026-03-31 (QQAlpha)
 
 ### Added

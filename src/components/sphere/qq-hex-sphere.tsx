@@ -52,7 +52,11 @@ function Detail({ data, onClose }: DetailProps) {
          </div>
          <button
             onClick={onClose}
-            className="shrink-0 rounded-md bg-white/[0.04] border border-white/[0.06] text-text-muted text-base px-2 py-1 leading-none hover:text-white transition-colors"
+            className={cn(
+               "shrink-0 rounded-md px-2 py-1 leading-none",
+               "bg-white/[0.04] border border-white/[0.06]",
+               "text-text-muted text-base hover:text-white transition-colors"
+            )}
             aria-label="Close detail"
          >
             &times;
@@ -71,7 +75,7 @@ function DimChips({ active }: { active: SortKey }) {
             className={cn(
                "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-mono font-bold text-xs",
                isC
-                  ? "bg-accent/[0.15] border border-accent/40 text-accent shadow-[0_0_10px_rgba(253,1,90,0.12)]"
+                  ? cn("bg-accent/[0.15] border border-accent/40 text-accent", COLORS.tw.accentGlowSm)
                   : "bg-white/[0.03] border border-white/[0.06] text-text-muted"
             )}
          >
@@ -228,7 +232,10 @@ export function QQHexSphere() {
    const sel = selected !== null ? ranked[selected] : null
 
    return (
-      <div className="glass-panel rounded-[12px] flex flex-col overflow-hidden relative landscape:max-h-[320px] landscape:overflow-hidden">
+      <div className={cn(
+         "glass-panel rounded-[12px] flex flex-col overflow-hidden relative",
+         "landscape:max-h-[320px] landscape:overflow-hidden"
+      )}>
          {/* Header */}
          <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
             <div className="flex items-baseline gap-2">
@@ -269,7 +276,11 @@ export function QQHexSphere() {
 
             <svg
                viewBox="0 0 600 520"
-               className="w-full h-auto cursor-grab active:cursor-grabbing relative z-[1] landscape:max-h-[260px]"
+               className={cn(
+                  "w-full h-auto relative z-[1]",
+                  "cursor-grab active:cursor-grabbing",
+                  "landscape:max-h-[260px]"
+               )}
                style={{ touchAction: "none" }}
                onPointerDown={onDown}
                onTouchStart={onDown}

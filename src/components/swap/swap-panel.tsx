@@ -6,13 +6,14 @@ import { Loader2, ArrowUpRight, AlertTriangle, X } from "lucide-react"
 import { toast } from "sonner"
 
 import { useSwap } from "./use-swap"
+import { useWalletBalances } from "./use-wallet-balances"
 import { SwapInput } from "./swap-input"
 import { QuickAmounts } from "./quick-amounts"
 import { SlippagePopover } from "./slippage-popover"
 import { Button } from "@/components/ui/button"
 
 import { cn, truncateAddress, parseTokenAmount } from "@/lib/utils"
-import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY } from "@/config/const"
+import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY, COLORS } from "@/config/const"
 import { SOL_MINT, QQ_MINT, QUICK_AMOUNTS, getToken } from "@/config/tokens"
 
 /** @dev Re-fetch the quote if older than this threshold before executing */
@@ -25,6 +26,7 @@ const QUOTE_STALE_MS = 30_000
 export function SwapPanel() {
    const { connected } = useWallet()
    const { setShowModal } = useUnifiedWalletContext()
+   const walletBalances = useWalletBalances()
    const {
       quote,
       getQuote,
@@ -124,8 +126,25 @@ export function SwapPanel() {
       return isSell ? "Sell QQ" : "Secure Your Seat"
    }
 
-   const ctaDisabled = loading || quoteLoading || success || (connected && (!inputAmount || parseFloat(inputAmount) <= 0))
+   const ctaDisabled =
+      loading || quoteLoading || success || (connected && (!inputAmount || parseFloat(inputAmount) <= 0))
    const quickAmounts = !isSell ? (QUICK_AMOUNTS[selectedPayMint] ?? []) : []
+
+   const inputBalance = connected ? walletBalances[inputMint] : undefined
+
+   const handleHalf = () => {
+      if (inputBalance == null || inputBalance <= 0) return
+      // Leave a small SOL reserve for fees when paying with SOL
+      const half = inputMint === SOL_MINT ? Math.max(0, (inputBalance - 0.005) / 2) : inputBalance / 2
+      setInputAmount(half > 0 ? String(parseFloat(half.toFixed(inputDecimals))) : "")
+   }
+
+   const handleMax = () => {
+      if (inputBalance == null || inputBalance <= 0) return
+      // Reserve 0.005 SOL for fees when paying with SOL
+      const max = inputMint === SOL_MINT ? Math.max(0, inputBalance - 0.005) : inputBalance
+      setInputAmount(max > 0 ? String(parseFloat(max.toFixed(inputDecimals))) : "")
+   }
 
    const routeLabel = () => {
       if (!quote) return null
@@ -140,27 +159,34 @@ export function SwapPanel() {
       <div className="glass-panel rounded-[12px] p-5 landscape:p-3">
          {/* Partial execution warning — shown when leg 1 succeeded but leg 2 failed */}
          {partialExecution && (
-            <div className="mb-4 bg-[rgba(255,200,0,0.08)] border border-[rgba(255,200,0,0.3)] rounded-[8px] p-3 text-xs">
+            <div className={cn("mb-4 border rounded-[8px] p-3 text-xs", COLORS.tw.warningBg, COLORS.tw.warningBorder)}>
                <div className="flex items-start gap-2">
-                  <AlertTriangle size={14} className="text-[#ffc800] shrink-0 mt-0.5" />
+                  <AlertTriangle size={14} className={cn(COLORS.tw.warningText, "shrink-0 mt-0.5")} />
                   <div className="flex-1">
-                     <p className="text-[#ffc800] font-medium mb-1">Step 1 complete, step 2 failed</p>
+                     <p className={cn(COLORS.tw.warningText, "font-medium mb-1")}>Step 1 complete, step 2 failed</p>
                      <p className="text-text-muted mb-2">
-                        You received ~
-                        {(Number(partialExecution.estimatedUsdcAmount.toString()) / 1e6).toFixed(2)} USDC. Retry to
-                        complete the swap.
+                        You received ~{(Number(partialExecution.estimatedUsdcAmount.toString()) / 1e6).toFixed(2)} USDC.
+                        Retry to complete the swap.
                      </p>
                      <div className="flex gap-2">
                         <button
                            onClick={handleRetry}
                            disabled={loading}
-                           className="bg-[rgba(255,200,0,0.15)] hover:bg-[rgba(255,200,0,0.25)] text-[#ffc800] rounded-[6px] px-3 py-1.5 min-h-[44px] transition-colors disabled:opacity-50"
+                           className={cn(
+                              COLORS.tw.warningBtnBg,
+                              COLORS.tw.warningBtnBgHover,
+                              COLORS.tw.warningText,
+                              "rounded-[6px] px-3 py-1.5 min-h-[44px] transition-colors disabled:opacity-50"
+                           )}
                         >
                            {loading ? <Loader2 size={12} className="animate-spin inline" /> : "Retry"}
                         </button>
                         <button
                            onClick={dismissPartialExecution}
-                           className="text-text-muted hover:text-text-secondary transition-colors p-1.5 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                           className={cn(
+                              "text-text-muted hover:text-text-secondary transition-colors",
+                              "p-1.5 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                           )}
                            aria-label="Dismiss"
                         >
                            <X size={14} />
@@ -205,6 +231,9 @@ export function SwapPanel() {
             tokenMint={inputMint}
             onTokenSelect={isSell ? undefined : setSelectedPayMint}
             excludeMint={QQ_MINT}
+            balance={inputBalance}
+            onHalf={handleHalf}
+            onMax={handleMax}
          />
 
          {/* Quick amounts */}
@@ -222,6 +251,7 @@ export function SwapPanel() {
                tokenMint={outputMint}
                onTokenSelect={isSell ? setSelectedReceiveMint : undefined}
                excludeMint={QQ_MINT}
+               balance={connected ? walletBalances[outputMint] : undefined}
             />
          </div>
 
@@ -232,14 +262,8 @@ export function SwapPanel() {
             </div>
             {routeLabel() && <p className="text-text-muted text-xs text-center">{routeLabel()}</p>}
             {showPriceImpact && (
-               <p
-                  className={cn(
-                     "text-xs text-center",
-                     priceImpact >= 5 ? "text-red" : "text-[#ff9db8]"
-                  )}
-               >
-                  Price impact: {priceImpact.toFixed(2)}%
-                  {priceImpact >= 5 && " — High impact"}
+               <p className={cn("text-xs text-center", priceImpact >= 5 ? "text-red" : COLORS.tw.fomoSoft)}>
+                  Price impact: {priceImpact.toFixed(2)}%{priceImpact >= 5 && " — High impact"}
                </p>
             )}
          </div>
@@ -248,7 +272,11 @@ export function SwapPanel() {
          <button
             onClick={handleSwap}
             disabled={!!ctaDisabled}
-            className="btn-cta w-full mt-5 landscape:mt-3 rounded-[12px] px-6 py-3.5 text-white text-base font-semibold tracking-wide disabled:cursor-not-allowed"
+            className={cn(
+               "btn-cta w-full mt-5 landscape:mt-3 rounded-[12px]",
+               "px-6 py-3.5 text-white text-base font-semibold tracking-wide",
+               "disabled:cursor-not-allowed"
+            )}
          >
             {(loading || quoteLoading) && <Loader2 size={16} className="animate-spin -ml-1 mr-2 inline" />}
             {ctaText()}
@@ -263,7 +291,10 @@ export function SwapPanel() {
                href={DEXSCREENER_URL}
                target="_blank"
                rel="noopener noreferrer"
-               className="text-text-muted text-xs hover:text-accent transition-colors inline-flex items-center gap-1"
+               className={cn(
+                  "text-text-muted text-xs hover:text-accent transition-colors",
+                  "inline-flex items-center gap-1"
+               )}
             >
                or buy on DexScreener <ArrowUpRight size={11} />
             </a>
