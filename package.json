@@ -45,6 +45,14 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0"
   },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "ws>utf-8-validate": "6",
+        "eslint-plugin-react-hooks>eslint": "10"
+      }
+    }
+  },
   "devDependencies": {
     "@eslint/js": "^10",
     "@tailwindcss/vite": "^4",
