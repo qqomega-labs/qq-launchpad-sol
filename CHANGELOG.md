@@ -11,14 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Wallet balance display**: connected wallet balances shown in swap inputs (pay and receive sides), matching standard DEX UX; `use-wallet-balances.ts` hook fetches SOL via `getBalance` and SPL tokens (USDC, USDT, QQ) via `getParsedTokenAccountsByOwner`; resets on disconnect
 - **HALF / MAX buttons**: appear on the pay input when wallet is connected; MAX reserves 0.005 SOL for fees when paying with SOL
-- **`@solana/spl-token` dependency**: added explicitly; `NATIVE_MINT` now derives `SOL_MINT` in `tokens.ts`, `TOKEN_PROGRAM_ID` used in `use-wallet-balances.ts` — no more hardcoded program addresses
+- **`@solana/spl-token` dependency**: added as explicit dep for future token account operations; `SOL_MINT` and `TOKEN_PROGRAM_ID` defined as named constants (not imported at module level — see Changed)
+- **`pnpm.peerDependencyRules`**: suppressed two known-safe peer dep warnings — `ws>utf-8-validate@6` (Node addon, irrelevant in browser) and `eslint-plugin-react-hooks>eslint@10` (compatible in practice, plugin range not yet updated)
+- **Background aura**: increased radial glow opacity and spread across all breakpoints; responsive per screen size — mobile glow positioned higher (`50% 30%`), tablet (`50% 38%`), desktop (`50% 45%`) with extra top-edge layer; landscape phone override with wider horizontal ellipse; vignette reduced from `0.65` to `0.50/0.45` to let aura breathe
 - **`COLORS` expansions**: `textPrimary` (`#f0e8f0`); `tw.accentGlowSm`, `tw.successBorder`, `tw.errorBorder`; `raw.accentBorderStrong`, `raw.glassBg`; `warning` (`#ffc800`) with `tw.warningText/warningBg/warningBorder/warningBtnBg/warningBtnBgHover`
 
 ### Changed
 
-- **`tokens.ts`**: `SOL_MINT` derived from `NATIVE_MINT.toBase58()` instead of hardcoded string; `USDC_MINT`/`USDT_MINT`/`QQ_MINT` annotated as having no available library source
-- **`cn()` enforcement**: all `className` strings longer than ~80 chars across the entire codebase now use `cn()` split by logical group (layout, color, border, spacing) — `footer.tsx`, `header.tsx`, `tx-history.tsx`, `quick-amounts.tsx`, `slippage-popover.tsx`, `swap-panel.tsx`, `token-selector.tsx`, `qq-hex-sphere.tsx`, `hero-stat.tsx`, `swap-input.tsx`
-- **Zero hardcoded color strings**: all remaining `#hex` and `rgba(...)` literals removed from JSX/components and replaced with `COLORS.tw.*` or `COLORS.raw.*` — `app.tsx` (Sonner toast config), `slippage-popover.tsx`, `qq-hex-sphere.tsx`, `swap-panel.tsx`
+- **`tokens.ts`**: `SOL_MINT` defined as a named constant with inline doc — not imported from `@solana/spl-token` to avoid module-level `Buffer` dependency that triggers Vite 8 externalization
+- **`use-wallet-balances.ts`**: `TOKEN_PROGRAM_ID` defined as a local `PublicKey` constant — same reason; `@solana/spl-token` import removed from critical path
+- **`vite.config.ts`**: restored `resolve.alias: { buffer: "buffer" }` and `optimizeDeps.include: ["buffer"]`; removed `vite-plugin-node-polyfills` (incompatible with Vite 8 oxc — esbuild banner option is ignored)
+- **`main.tsx`**: restored `window.Buffer = Buffer` polyfill (works for runtime code; module-level spl-token Buffer issue resolved by removing eager import)
+- **`cn()` enforcement**: all `className` strings longer than ~80 chars across the entire codebase now use `cn()` split by logical group — `footer.tsx`, `header.tsx`, `tx-history.tsx`, `quick-amounts.tsx`, `slippage-popover.tsx`, `swap-panel.tsx`, `token-selector.tsx`, `qq-hex-sphere.tsx`, `hero-stat.tsx`, `swap-input.tsx`
+- **Zero hardcoded color strings**: all remaining `#hex` and `rgba(...)` literals removed from JSX/components and replaced with `COLORS.tw.*` or `COLORS.raw.*` — `app.tsx`, `slippage-popover.tsx`, `qq-hex-sphere.tsx`, `swap-panel.tsx`
 
 ## [Unreleased] - 2026-03-31 (QQAlpha)
 

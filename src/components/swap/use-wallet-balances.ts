@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token"
+import { PublicKey } from "@solana/web3.js"
 
 import { SOL_MINT, USDC_MINT, USDT_MINT, QQ_MINT } from "@/config/tokens"
+
+/**
+ * @dev Canonical SPL Token Program ID — immutable Solana protocol constant.
+ * Equivalent to TOKEN_PROGRAM_ID from @solana/spl-token (not imported to avoid
+ * module-level Buffer dependency triggering Vite 8 externalization).
+ */
+const TOKEN_PROGRAM_ID = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
 
 /** @dev Returns a map of mint address -> human-readable balance for the connected wallet */
 export type WalletBalances = Record<string, number>

@@ -21,6 +21,9 @@ export default defineConfig({
          },
       },
    },
+   optimizeDeps: {
+      include: ["buffer"],
+   },
    define: {
       "process.env": {},
       global: "globalThis",
