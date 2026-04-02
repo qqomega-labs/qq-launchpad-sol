@@ -4,6 +4,21 @@ import { VersionedTransaction } from "@solana/web3.js"
 import { Buffer } from "buffer"
 import BN from "bn.js"
 import { POOL_ADDRESS } from "@/config/const"
+
+/** @dev Map raw SDK/RPC error messages to user-friendly strings */
+function friendlySwapError(msg: string, fallback: string): string {
+   const lower = msg.toLowerCase()
+   if (lower.includes("user rejected")) return "Transaction cancelled"
+   if (lower.includes("insufficient")) return "Insufficient balance"
+   if (lower.includes("blockhash")) return "Transaction expired, please retry"
+   if (lower.includes("slippage") || lower.includes("exceeds desired")) return "Slippage exceeded, try a higher tolerance"
+   if (lower.includes("timeout") || lower.includes("timed out")) return "Network timeout, please retry"
+   if (lower.includes("simulation failed")) return "Transaction simulation failed"
+   if (lower.includes("not found") || lower.includes("account does not exist")) return "Token account not found"
+   // Log unrecognized errors for debugging, show generic message to user
+   console.error("[Swap]", msg)
+   return fallback
+}
 import { isDirectPath, isQQ, USDC_MINT } from "@/config/tokens"
 import { fetchJupiterQuote, fetchJupiterSwapTx } from "@/lib/jupiter"
 import type { JupiterQuoteResponse } from "@/lib/jupiter"
@@ -68,8 +83,8 @@ export function useSwap() {
          // SOL/USDT <-> QQ: two-leg hybrid (Jupiter + DBC)
          return await getHybridQuote(amountIn, inputMint, outputMint, slippageBps)
       } catch (e) {
-         const msg = e instanceof Error ? e.message : "Quote failed"
-         setError(msg)
+         const raw = e instanceof Error ? e.message : ""
+         setError(friendlySwapError(raw, "Quote failed"))
          setQuote(null)
          return null
       } finally {
@@ -89,8 +104,8 @@ export function useSwap() {
          }
          return await executeHybridSwap(amountIn, inputMint, outputMint, currentQuote)
       } catch (e) {
-         const msg = e instanceof Error ? e.message : "Transaction failed"
-         setError(msg)
+         const raw = e instanceof Error ? e.message : ""
+         setError(friendlySwapError(raw, "Transaction failed"))
          throw e
       } finally {
          setLoading(false)
@@ -126,8 +141,8 @@ export function useSwap() {
             return sig
          }
       } catch (e) {
-         const msg = e instanceof Error ? e.message : "Retry failed"
-         setError(msg)
+         const raw = e instanceof Error ? e.message : ""
+         setError(friendlySwapError(raw, "Retry failed"))
          throw e
       } finally {
          setLoading(false)

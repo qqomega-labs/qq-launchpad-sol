@@ -50,6 +50,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CSP wallet adapter domains** (`index.html`): added `connect-src` entries for Phantom
   (`*.phantom.app`), Solflare (`*.solflare.com`), WalletConnect relay (`relay.walletconnect.com`,
   `relay.walletconnect.org`), and Backpack (`*.backpack.app`) to prevent silent connection failures
+- **CSP hardening** (`index.html`): added `base-uri 'self'` and `form-action 'none'` directives
+- **SDK error sanitization** (`use-swap.ts`): raw Solana/Meteora SDK error messages no longer
+  rendered in UI; `friendlySwapError` maps known patterns (user rejected, insufficient balance,
+  blockhash expired, slippage exceeded, timeout, simulation failed) to user-friendly strings;
+  unrecognized errors logged to console, generic fallback shown to user
 
 ### Changed
 
