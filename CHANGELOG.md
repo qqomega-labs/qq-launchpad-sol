@@ -17,6 +17,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   organization + social `sameAs`)
 - **OG image + apple-touch-icon assets**: `public/og-image.png` (1200x630) and
   `public/apple-touch-icon.png` (180x180) copied from `qq-omega-landing` for brand consistency
+- **PWA manifest** (`public/manifest.json`): app name, 192x192 + 512x512 maskable icons,
+  `theme_color`/`background_color` `#282828`, standalone display
+- **`robots.txt`** + **`sitemap.xml`**: allow all crawlers, single canonical URL with weekly
+  changefreq
+- **PNG fallback favicons**: `favicon-32x32.png` and `favicon-16x16.png` for older browsers
+
+### Fixed
+
+- **JSON-LD `offers` block removed**: `"price": "0"` was misleading for a token launchpad
+- **JSON-LD `url` trailing slash**: now consistent with canonical and `og:url`
+- **`viewport-fit=cover`** added for iPhone notch-safe rendering
+- **`theme-color` meta tag** added (`#282828`, matching `qq-omega-landing` and `qq-docs`)
+- **`apple-mobile-web-app-title` + `apple-mobile-web-app-capable`** added for iOS home screen
+- **`<link rel="manifest">`** added to `index.html`
 
 ### Changed
 

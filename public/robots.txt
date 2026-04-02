@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://launchpad.qqomega.xyz/sitemap.xml
