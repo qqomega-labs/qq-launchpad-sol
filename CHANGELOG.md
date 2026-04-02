@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-04-02 (QQAlpha)
 
+### Changed
+
+- **Hex sphere tile size** (`qq-hex-sphere.tsx`): `hexR` multiplier increased `0.56 → 0.70` to
+  eliminate triangular gaps that appeared between Fibonacci sphere tile trios; the Fibonacci
+  distribution is only approximately hexagonal, so some neighbor groups are spaced wider than the
+  average angular separation — the higher factor covers the worst-case gap with natural overlap
+
 ### Added
 
 - **Timeframe scoring system**: `TimeframeKey` type (`daily`, `weekly`, `monthly`, `yearly`),

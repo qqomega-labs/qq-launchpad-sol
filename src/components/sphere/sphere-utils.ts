@@ -47,7 +47,7 @@ export function fibSphere(n: number): Point3D[] {
       })
    }
 
-   // Surface repulsion to fix north-pole crowding
+   // Surface repulsion: iterative passes to push close neighbours apart
    const minArc = Math.sqrt((4 * Math.PI) / n) * 0.95
    for (let pass = 0; pass < 8; pass++) {
       for (let i = 0; i < pts.length; i++) {

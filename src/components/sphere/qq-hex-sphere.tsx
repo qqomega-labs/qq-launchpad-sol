@@ -291,7 +291,7 @@ export function QQHexSphere() {
    // Tighter sphere for side-by-side layout
    const sphereR = 190
    const angularSep = Math.sqrt((4 * Math.PI) / TOTAL)
-   const hexR = sphereR * angularSep * 0.56
+   const hexR = sphereR * angularSep * 0.70
    const cx = 300
    const cy = 260
 
