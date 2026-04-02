@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton"
+import { FlipNumber } from "@/components/ui/flip-number"
 import { COLORS } from "@/config/const"
 import { cn } from "@/lib/utils"
 
@@ -26,14 +27,13 @@ export function HeroStat({ value, label, loading = false, color = "default" }: H
          {loading ? (
             <Skeleton className="h-8 w-20 mb-1" />
          ) : (
-            <span
+            <FlipNumber
+               value={value}
                className={cn(
                   "font-mono text-2xl md:text-3xl font-bold tabular-nums tracking-tight",
                   colorClasses[color]
                )}
-            >
-               {value ?? "\u2014"}
-            </span>
+            />
          )}
          <span className={cn(
             "text-text-muted text-[10px] md:text-xs",

@@ -22,6 +22,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Sphere mobile layout**: chips (`DimChips`, `TimeframeChips`) reduced to `text-[10px]` with `px-2 py-1` on mobile for uniform sizing; header padding tightened; vertical gap between chip rows increased to `pb-2`; "drag to explore" label reduced to `text-[10px]` on mobile; detail card text and padding compacted on mobile
 - **Sphere `touchmove` passive fix**: removed `onTouchMove` from JSX (React 17+ registers it passive, blocking `preventDefault`); imperative `addEventListener("touchmove", handler, { passive: false })` attached via `sphereContainerRef` in a `useEffect`; `onMove` simplified to pointer-only; `getXY` helper removed
 - **Swap panel fallback link**: replaced DexScreener link with GeckoTerminal; label changed from "or buy on DexScreener" to "see on GeckoTerminal"; import switched from `DEXSCREENER_URL` to `GECKOTERMINAL_URL`
+- **`FlipNumber` overlap fix**: static layer now uses `visibility: hidden` (not `display: none`) while the flip panel is active, preserving layout dimensions and eliminating simultaneous render of old and new values; `displayed` is updated at the animation midpoint via a dedicated timer so the static layer already holds the new value when the flip panel is removed
+- **`FlipNumber` memory leak prevention**: `mounted` boolean flag prevents timer callbacks from calling `setState` on unmounted instances; both `midTimerRef` and `endTimerRef` are nulled immediately after firing; cleanup function cancels both timers and nulls refs on unmount or rapid re-trigger
+
+### Added
+
+- **`FlipNumber` component** (`src/components/ui/flip-number.tsx`): split-flap flip animation for any string value; skips animation on initial mount (`null` → first real value); two-timer approach (midpoint + end) prevents overlap between static and animated layers; `perspective: 400px` on wrapper enables 3D `rotateX` effect
+- **`@keyframes flip-down` + `.animate-flip-down`** in `src/styles/index.css`: `rotateX(-90deg → 0deg)` with `cubic-bezier(0.23, 1, 0.32, 1)` over 300ms, `transform-origin: top center`
+- **`FlipNumber` on `hero-stat.tsx`**: hero counter values (remaining seats, holders, trades) now flip-animate on change
+- **`FlipNumber` on `bonding-progress.tsx`**: bonding curve percentage and tokens sold counter animate on each on-chain update
+
+### Removed
+
+- **`FlipNumber` from `swap-input.tsx`**: reverted wallet balance display to a plain `<span>` — the balance updates too frequently during input interaction, causing animation lag on mobile
 
 ## [Unreleased] - 2026-04-01 (QQAlpha)
 
