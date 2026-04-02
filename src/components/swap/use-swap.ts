@@ -3,7 +3,6 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import { VersionedTransaction } from "@solana/web3.js"
 import { Buffer } from "buffer"
 import BN from "bn.js"
-import { PublicKey } from "@solana/web3.js"
 import { POOL_ADDRESS } from "@/config/const"
 import { isDirectPath, isQQ, USDC_MINT } from "@/config/tokens"
 import { fetchJupiterQuote, fetchJupiterSwapTx } from "@/lib/jupiter"
@@ -288,11 +287,10 @@ export function useSwap() {
          // Step 1: Jupiter SOL/USDT -> USDC
          const leg1Sig = await executeJupiterLeg(currentQuote.jupiterQuote)
 
-         // Step 2: DBC USDC -> QQ (use actual on-chain USDC balance, not estimate)
+         // Step 2: DBC USDC -> QQ
          try {
-            const actualUsdc = await getUsdcBalance(wallet.publicKey!)
-            const dbcQ = await getDbcQuoteRaw(actualUsdc, false, currentQuote.slippageBps)
-            return await executeDbcSwap(actualUsdc, dbcQ.minimumAmountOut, false)
+            const usdcAmount = currentQuote.intermediateUsdcAmount!
+            return await executeDbcSwap(usdcAmount, currentQuote.minimumAmountOut, false)
          } catch (e) {
             setPartialExecution({
                direction: "buy",
@@ -306,16 +304,10 @@ export function useSwap() {
          // Step 1: DBC QQ -> USDC
          const dbcSig = await executeDbcSwap(amountIn, currentQuote.intermediateUsdcAmount!, true)
 
-         // Step 2: Jupiter USDC -> SOL/USDT (use actual on-chain USDC balance, not estimate)
+         // Step 2: Jupiter USDC -> SOL/USDT
          try {
-            const actualUsdc = await getUsdcBalance(wallet.publicKey!)
-            const jupQ = await fetchJupiterQuote({
-               inputMint: USDC_MINT,
-               outputMint,
-               amount: actualUsdc.toString(),
-               slippageBps: currentQuote.slippageBps,
-            })
-            return await executeJupiterLeg(jupQ)
+            await executeJupiterLeg(currentQuote.jupiterQuote)
+            return dbcSig
          } catch (e) {
             setPartialExecution({
                direction: "sell",
@@ -327,17 +319,6 @@ export function useSwap() {
             throw e
          }
       }
-   }
-
-   /**
-    * @dev Fetch actual USDC token balance for the connected wallet.
-    * Used after hybrid swap leg 1 to get real on-chain amount instead of estimate.
-    */
-   async function getUsdcBalance(owner: PublicKey): Promise<BN> {
-      const { getAssociatedTokenAddress } = await import("@solana/spl-token")
-      const ata = await getAssociatedTokenAddress(new PublicKey(USDC_MINT), owner)
-      const info = await connection.getTokenAccountBalance(ata)
-      return new BN(info.value.amount)
    }
 
    /** @dev Execute a single Jupiter swap leg. Deserializes, signs, and sends. */

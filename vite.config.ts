@@ -1,10 +1,27 @@
-import { defineConfig } from "vite"
+import { defineConfig, type Plugin } from "vite"
 import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
 import path from "path"
 
+/**
+ * @dev Appends `globalThis.Buffer = Buffer` to the buffer module itself, so the
+ * polyfill runs the moment any chunk first imports buffer - not in the app entry.
+ * Fixes "Can't find variable: Buffer" where wallet/meteora chunks initialize
+ * before the main entry body executes.
+ */
+function bufferGlobalPlugin(): Plugin {
+   return {
+      name: "buffer-global",
+      transform(code, id) {
+         if (id.includes("node_modules/buffer/index.js")) {
+            return code + "\nglobalThis.Buffer = Buffer;\n"
+         }
+      },
+   }
+}
+
 export default defineConfig({
-   plugins: [react(), tailwindcss()],
+   plugins: [react(), tailwindcss(), bufferGlobalPlugin()],
    server: {
       proxy: {
          "/gt-proxy": {

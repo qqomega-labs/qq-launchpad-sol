@@ -1,5 +1,4 @@
-import { Buffer } from "buffer"
-if (!globalThis.Buffer) globalThis.Buffer = Buffer
+import "./polyfills"
 
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
