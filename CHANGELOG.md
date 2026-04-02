@@ -5,17 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2026-04-02 (QQAlpha)
+## [Unreleased] - 2026-04-03 (QQAlpha)
 
 ### Changed
 
-- **Hex sphere tile size** (`qq-hex-sphere.tsx`): `hexR` multiplier increased `0.56 → 0.70` to
-  eliminate triangular gaps that appeared between Fibonacci sphere tile trios; the Fibonacci
-  distribution is only approximately hexagonal, so some neighbor groups are spaced wider than the
-  average angular separation — the higher factor covers the worst-case gap with natural overlap
+- **Suspense skeleton fallbacks extracted**: moved inline fallback JSX from `launchpad.tsx` into
+  dedicated components co-located with their lazy-loaded counterparts
+  - `sphere/sphere-skeleton.tsx`: header row, dim chips, timeframe chips, circular sphere placeholder
+  - `chart/chart-skeleton.tsx`: timeframe tab row + chart area placeholder
+  - `data/data-skeleton.tsx`: header + 8 table row placeholders
+- **Component architecture refactor**: split large monolithic components into smaller, maintainable
+  chunks following feature-based folder conventions
+  - `qq-hex-sphere.tsx` (510 -> ~230 lines): extracted `use-sphere-rotation.ts` (drag/momentum/idle
+    rotation hook with `hasMoved()` API), `sphere-detail.tsx` (selected asset detail card),
+    `dim-chips.tsx` (dimension filter chips), `timeframe-chips.tsx` (timeframe selector chips)
+  - `swap-panel.tsx` (304 -> ~270 lines): extracted `partial-execution-banner.tsx` (hybrid swap
+    leg 2 failure warning with retry UI)
+  - `app.tsx` (170 -> 15 lines): extracted `providers.tsx` (wallet providers + `Toaster` config)
+    and moved `LaunchpadPage` to `pages/launchpad.tsx`
+  - `header.tsx` refactored into `header/` folder: extracted `brand-icons.tsx` (SVG brand icons +
+    `socialLinks` array) and `header.tsx` (wallet connect + navigation)
+
+## [Previous] - 2026-04-02 (QQAlpha)
 
 ### Added
 
+- **Suspense skeleton fallbacks** (`app.tsx`): all three lazy-loaded panels now show shaped
+  `Skeleton` placeholders instead of blank/null fallbacks during code-split load
+   - `QQHexSphere`: header row, dim chips, timeframe chips, and circular sphere skeleton
+   - `ChartPanel`: timeframe tab row + chart area skeleton matching the panel's actual layout
+   - `DataTabs`: header skeleton + 8 row skeletons matching the `TxHistory` table structure
 - **Timeframe scoring system**: `TimeframeKey` type (`daily`, `weekly`, `monthly`, `yearly`),
   `Timeframe` interface, and `TIMEFRAMES` constant in `sphere-data.ts` with per-dimension weights
   from QQ Omega architecture; order is `1Y → 1M → 1W → 1D` (long-term first)
@@ -47,6 +66,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Hex sphere tile size** (`qq-hex-sphere.tsx`): `hexR` multiplier increased `0.56 → 0.70` to
+  eliminate triangular gaps that appeared between Fibonacci sphere tile trios; the Fibonacci
+  distribution is only approximately hexagonal, so some neighbor groups are spaced wider than the
+  average angular separation — the higher factor covers the worst-case gap with natural overlap
 - **Cross-widget text and spacing consistency**: all glass panels now use `p-4 md:p-5` padding
   (mobile 16px / desktop 20px) matching the hero section — `bonding-progress.tsx`,
   `swap-panel.tsx`, `data-tabs.tsx` aligned from flat `p-5`; sphere header sections changed from

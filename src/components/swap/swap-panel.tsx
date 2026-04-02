@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { useUnifiedWalletContext } from "@jup-ag/wallet-adapter"
-import { Loader2, ArrowUpRight, AlertTriangle, X } from "lucide-react"
+import { Loader2, ArrowUpRight } from "lucide-react"
 
 import { toast } from "sonner"
 
@@ -10,6 +10,7 @@ import { useWalletBalances } from "./use-wallet-balances"
 import { SwapInput } from "./swap-input"
 import { QuickAmounts } from "./quick-amounts"
 import { SlippagePopover } from "./slippage-popover"
+import { PartialExecutionBanner } from "./partial-execution-banner"
 import { Button } from "@/components/ui/button"
 
 import { cn, truncateAddress, parseTokenAmount } from "@/lib/utils"
@@ -159,42 +160,12 @@ export function SwapPanel() {
       <div className="glass-panel rounded-[12px] p-4 md:p-5 landscape:p-3">
          {/* Partial execution warning - shown when leg 1 succeeded but leg 2 failed */}
          {partialExecution && (
-            <div className={cn("mb-4 border rounded-[8px] p-3 text-xs", COLORS.tw.warningBg, COLORS.tw.warningBorder)}>
-               <div className="flex items-start gap-2">
-                  <AlertTriangle size={14} className={cn(COLORS.tw.warningText, "shrink-0 mt-0.5")} />
-                  <div className="flex-1">
-                     <p className={cn(COLORS.tw.warningText, "font-medium mb-1")}>Step 1 complete, step 2 failed</p>
-                     <p className="text-text-muted mb-2">
-                        You received ~{(Number(partialExecution.estimatedUsdcAmount.toString()) / 1e6).toFixed(2)} USDC.
-                        Retry to complete the swap.
-                     </p>
-                     <div className="flex gap-2">
-                        <button
-                           onClick={handleRetry}
-                           disabled={loading}
-                           className={cn(
-                              COLORS.tw.warningBtnBg,
-                              COLORS.tw.warningBtnBgHover,
-                              COLORS.tw.warningText,
-                              "rounded-[6px] px-3 py-1.5 min-h-[44px] transition-colors disabled:opacity-50"
-                           )}
-                        >
-                           {loading ? <Loader2 size={12} className="animate-spin inline" /> : "Retry"}
-                        </button>
-                        <button
-                           onClick={dismissPartialExecution}
-                           className={cn(
-                              "text-text-muted hover:text-text-secondary transition-colors",
-                              "p-1.5 min-h-[44px] min-w-[44px] flex items-center justify-center"
-                           )}
-                           aria-label="Dismiss"
-                        >
-                           <X size={14} />
-                        </button>
-                     </div>
-                  </div>
-               </div>
-            </div>
+            <PartialExecutionBanner
+               partialExecution={partialExecution}
+               loading={loading}
+               onRetry={handleRetry}
+               onDismiss={dismissPartialExecution}
+            />
          )}
 
          {/* Buy / Sell tabs */}
