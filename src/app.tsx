@@ -6,6 +6,7 @@ import { HeroSection } from "@/components/hero/hero-section"
 import { SwapPanel } from "@/components/swap/swap-panel"
 import { BondingProgress } from "@/components/progress/bonding-progress"
 import { Footer } from "@/components/footer"
+import { NotFoundPage } from "@/pages/not-found"
 import { Toaster } from "sonner"
 import { COLORS } from "@/config/const"
 
@@ -70,9 +71,13 @@ function LaunchpadPage() {
 }
 
 /**
- * @dev App.
+ * @dev App - renders NotFoundPage for any path other than "/".
  */
 export default function App() {
+   if (typeof window !== "undefined" && window.location.pathname !== "/") {
+      return <NotFoundPage />
+   }
+
    const endpoint =
       import.meta.env.VITE_RPC_ENDPOINT ||
       (() => {

@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **404 not-found page** (`src/pages/not-found.tsx`): full-screen error page reusing the app design system (`bg-radial-deep`, `bg-filigree`, `bg-vignette`, `glass-panel` background layers, `text-accent` for the heading); `App` renders it for any path other than `/` via a `typeof window !== "undefined" && window.location.pathname !== "/"` guard before mounting the wallet providers
+
 - **Timeframe scoring system**: `TimeframeKey` type (`daily`, `weekly`, `monthly`, `yearly`), `Timeframe` interface, and `TIMEFRAMES` constant in `sphere-data.ts` with per-dimension weights from QQ Omega architecture; order is `1Y → 1M → 1W → 1D` (long-term first)
 - **Timeframe chips UI**: `TimeframeChips` component in `qq-hex-sphere.tsx` rendered below dimension chips; only Yearly is selectable, others show lock icon and `cursor-not-allowed`; selected state defaults to `yearly`
 - **`Dimension.enabled` flag**: `enabled` property added to `Dimension` interface; QQ composite added as first `DIMS` entry (`key: "comp"`, `enabled: true`); all five scoring dimensions set to `enabled: false`; `SCORE_DIMS` derived constant filters out the composite entry for use in calculations
