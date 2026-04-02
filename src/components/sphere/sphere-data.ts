@@ -4,16 +4,18 @@
 
 // PUBLIC
 
+export type DimKey = "macro" | "fund" | "token" | "chain" | "tech"
+export type SortKey = DimKey | "comp"
+
 export interface Dimension {
-   key: DimKey
+   key: SortKey
    label: string
    short: string
    weight: number
    color: string
+   /** @dev Whether this dimension is selectable in the current build */
+   enabled: boolean
 }
-
-export type DimKey = "macro" | "fund" | "token" | "chain" | "tech"
-export type SortKey = DimKey | "comp"
 
 export interface Category {
    l: string
@@ -21,6 +23,54 @@ export interface Category {
 }
 
 export type CatKey = "sov" | "l1" | "l2" | "defi" | "pay" | "cex" | "meme" | "infra" | "ai" | "rwa" | "lsd" | "game"
+
+export type TimeframeKey = "daily" | "weekly" | "monthly" | "yearly"
+
+export interface Timeframe {
+   key: TimeframeKey
+   label: string
+   short: string
+   /** @dev Whether this timeframe is accessible in the current build */
+   enabled: boolean
+   /** @dev Dimension weights for this timeframe (must sum to 1.0) */
+   weights: Record<DimKey, number>
+}
+
+/**
+ * @dev Timeframe definitions with per-dimension weights from QQ Omega architecture.
+ * QQ Score = sum(dimension_score * timeframe_weight) per timeframe.
+ * Short-term timeframes weight Technical/On-Chain heavier; long-term weights Macro/Fundamentals.
+ */
+export const TIMEFRAMES: Timeframe[] = [
+   {
+      key: "yearly",
+      label: "Yearly - Holder",
+      short: "1Y",
+      enabled: true,
+      weights: { macro: 0.3, fund: 0.35, token: 0.2, chain: 0.1, tech: 0.05 },
+   },
+   {
+      key: "monthly",
+      label: "Monthly - Swing",
+      short: "1M",
+      enabled: false,
+      weights: { macro: 0.2, fund: 0.3, token: 0.25, chain: 0.15, tech: 0.1 },
+   },
+   {
+      key: "weekly",
+      label: "Weekly - Tactical",
+      short: "1W",
+      enabled: false,
+      weights: { macro: 0.1, fund: 0.2, token: 0.25, chain: 0.25, tech: 0.2 },
+   },
+   {
+      key: "daily",
+      label: "Daily - Scalper",
+      short: "1D",
+      enabled: false,
+      weights: { macro: 0.1, fund: 0.1, token: 0.2, chain: 0.3, tech: 0.3 },
+   },
+]
 
 export interface RawAsset {
    s: string
@@ -41,36 +91,16 @@ export interface RankedAsset extends RawAsset {
 }
 
 export const DIMS: Dimension[] = [
-   { key: "macro", label: "Macro", short: "MAC", weight: 0.2, color: "#ff4d94" },
-   {
-      key: "fund",
-      label: "Fundamentals",
-      short: "FND",
-      weight: 0.2,
-      color: "#ffd700",
-   },
-   {
-      key: "token",
-      label: "Tokenomics",
-      short: "TKN",
-      weight: 0.25,
-      color: "#66d9ff",
-   },
-   {
-      key: "chain",
-      label: "On-Chain",
-      short: "OCH",
-      weight: 0.2,
-      color: "#b388ff",
-   },
-   {
-      key: "tech",
-      label: "Technical",
-      short: "TEC",
-      weight: 0.15,
-      color: "#69f0ae",
-   },
+   { key: "comp", label: "QQ Score", short: "QQ", weight: 1, color: "#fd015a", enabled: true },
+   { key: "macro", label: "Macro", short: "MAC", weight: 0.2, color: "#ff4d94", enabled: false },
+   { key: "fund", label: "Fundamentals", short: "FND", weight: 0.2, color: "#ffd700", enabled: false },
+   { key: "token", label: "Tokenomics", short: "TKN", weight: 0.25, color: "#66d9ff", enabled: false },
+   { key: "chain", label: "On-Chain", short: "OCH", weight: 0.2, color: "#b388ff", enabled: false },
+   { key: "tech", label: "Technical", short: "TEC", weight: 0.15, color: "#69f0ae", enabled: false },
 ]
+
+/** @dev Only the actual scoring dimensions (excludes QQ composite). Used by composite(). */
+export const SCORE_DIMS = DIMS.filter((d): d is Dimension & { key: DimKey } => d.key !== "comp")
 
 export const CATS: Record<CatKey, Category> = {
    sov: { l: "Store of Value", c: "#ffd700" },

@@ -7,8 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-04-02 (QQAlpha)
 
+### Added
+
+- **Timeframe scoring system**: `TimeframeKey` type (`daily`, `weekly`, `monthly`, `yearly`), `Timeframe` interface, and `TIMEFRAMES` constant in `sphere-data.ts` with per-dimension weights from QQ Omega architecture; order is `1Y → 1M → 1W → 1D` (long-term first)
+- **Timeframe chips UI**: `TimeframeChips` component in `qq-hex-sphere.tsx` rendered below dimension chips; only Yearly is selectable, others show lock icon and `cursor-not-allowed`; selected state defaults to `yearly`
+- **`Dimension.enabled` flag**: `enabled` property added to `Dimension` interface; QQ composite added as first `DIMS` entry (`key: "comp"`, `enabled: true`); all five scoring dimensions set to `enabled: false`; `SCORE_DIMS` derived constant filters out the composite entry for use in calculations
+- **Dimension chips lock UI**: disabled dims show lock icon, reduced opacity, and `cursor-not-allowed`; enabled dims are clickable
+
 ### Changed
 
+- **`DimChips`**: renders all entries from `DIMS` uniformly (no hardcoded QQ chip); accepts `onSelect` callback; `sortKey` is now component state (was hardcoded `"comp"`)
+- **`composite()` / `rankAll()`**: use `SCORE_DIMS` to exclude the composite entry from weight calculations; accept optional `timeframe` parameter for timeframe-specific dimension weights
+- **Detail card scores**: individual dimension values blurred (`filter: blur(3px)`) — demo preview, real data gated behind QQ access; final `=` value now shows `data.qq` to match the score on the sphere tile
 - **Swap panel fallback link**: replaced DexScreener link with GeckoTerminal; label changed from "or buy on DexScreener" to "see on GeckoTerminal"; import switched from `DEXSCREENER_URL` to `GECKOTERMINAL_URL`
 
 ## [Unreleased] - 2026-04-01 (QQAlpha)

@@ -9,20 +9,12 @@ import { Footer } from "@/components/footer"
 import { Toaster } from "sonner"
 import { COLORS } from "@/config/const"
 
-const QQHexSphere = lazy(() =>
-   import("@/components/sphere/qq-hex-sphere").then((m) => ({ default: m.QQHexSphere }))
-)
-const ChartPanel = lazy(() =>
-   import("@/components/chart/chart-panel").then((m) => ({ default: m.ChartPanel }))
-)
-const DataTabs = lazy(() =>
-   import("@/components/data/data-tabs").then((m) => ({ default: m.DataTabs }))
-)
+const QQHexSphere = lazy(() => import("@/components/sphere/qq-hex-sphere").then((m) => ({ default: m.QQHexSphere })))
+const ChartPanel = lazy(() => import("@/components/chart/chart-panel").then((m) => ({ default: m.ChartPanel })))
+const DataTabs = lazy(() => import("@/components/data/data-tabs").then((m) => ({ default: m.DataTabs })))
 
 /**
- * @dev LaunchpadPage - sphere hero + swap-first layout.
- * Mobile: hero banner, swap, sphere, then data sections.
- * Desktop: sphere left + swap right, hero banner above, data below.
+ * @dev LaunchpadPage.
  */
 function LaunchpadPage() {
    return (
@@ -81,10 +73,14 @@ function LaunchpadPage() {
  * @dev App.
  */
 export default function App() {
-   const endpoint = import.meta.env.VITE_RPC_ENDPOINT || (() => {
-      console.warn("[QQ] VITE_RPC_ENDPOINT not set — falling back to rate-limited public RPC. Set a dedicated endpoint in .env.")
-      return "https://api.mainnet-beta.solana.com"
-   })()
+   const endpoint =
+      import.meta.env.VITE_RPC_ENDPOINT ||
+      (() => {
+         console.warn(
+            "[QQ] VITE_RPC_ENDPOINT not set — falling back to rate-limited public RPC. Set a dedicated endpoint in .env."
+         )
+         return "https://api.mainnet-beta.solana.com"
+      })()
 
    return (
       <ConnectionProvider endpoint={endpoint}>

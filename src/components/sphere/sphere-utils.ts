@@ -2,7 +2,17 @@
  * @dev Utility functions for the QQ Hex Sphere: geometry, scoring, ranking, coloring.
  */
 
-import { DIMS, RAW, TOTAL, type RawAsset, type RankedAsset, type SortKey } from "./sphere-data"
+import {
+   SCORE_DIMS,
+   RAW,
+   TOTAL,
+   TIMEFRAMES,
+   type RawAsset,
+   type RankedAsset,
+   type SortKey,
+   type TimeframeKey,
+   type DimKey,
+} from "./sphere-data"
 
 // PUBLIC
 
@@ -89,9 +99,17 @@ export function hexPath(r: number): string {
    return `M ${pts.join(" L ")} Z`
 }
 
-/** @dev Weighted composite score across all dimensions. */
-export function composite(c: RawAsset): number {
-   return DIMS.reduce((s, d) => s + (c[d.key] || 0) * d.weight, 0)
+/**
+ * @dev Weighted composite score across scoring dimensions (excludes QQ composite entry).
+ * When a timeframe is specified, uses the timeframe-specific dimension weights.
+ * Falls back to the default SCORE_DIMS weights when no timeframe is given.
+ */
+export function composite(c: RawAsset, timeframe?: TimeframeKey): number {
+   if (timeframe) {
+      const tf = TIMEFRAMES.find((t) => t.key === timeframe)
+      if (tf) return SCORE_DIMS.reduce((s, d) => s + (c[d.key] || 0) * tf.weights[d.key as DimKey], 0)
+   }
+   return SCORE_DIMS.reduce((s, d) => s + (c[d.key] || 0) * d.weight, 0)
 }
 
 /** @dev QQ Score: normalized 0-99 scale, calibrated so top rank ~ 93. */
@@ -99,11 +117,11 @@ export function qqScore(comp: number): number {
    return Math.min(99, Math.round(comp * 1.07))
 }
 
-/** @dev Rank all assets by a given sort key. Returns RankedAsset[]. */
-export function rankAll(sk: SortKey): RankedAsset[] {
-   const sc = RAW.map((c) => ({ ...c, comp: composite(c) }))
+/** @dev Rank all assets by a given sort key, optionally using timeframe-specific weights. */
+export function rankAll(sk: SortKey, timeframe?: TimeframeKey): RankedAsset[] {
+   const sc = RAW.map((c) => ({ ...c, comp: composite(c, timeframe) }))
    sc.sort((a, b) => (sk === "comp" ? b.comp - a.comp : (b[sk] || 0) - (a[sk] || 0)))
-   return sc.map((c, i) => ({ ...c, rank: i + 1, qq: qqScore(composite(c)) }))
+   return sc.map((c, i) => ({ ...c, rank: i + 1, qq: qqScore(composite(c, timeframe)) }))
 }
 
 /** @dev HSL color based on rank position: top = vibrant pink, bottom = desaturated. */

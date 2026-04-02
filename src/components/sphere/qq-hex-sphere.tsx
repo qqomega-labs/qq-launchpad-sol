@@ -1,5 +1,15 @@
 import { useState, useRef, useEffect } from "react"
-import { DIMS, CATS, TOTAL, type SortKey, type RankedAsset, type CatKey } from "./sphere-data"
+import {
+   DIMS,
+   SCORE_DIMS,
+   CATS,
+   TOTAL,
+   TIMEFRAMES,
+   type SortKey,
+   type RankedAsset,
+   type CatKey,
+   type TimeframeKey,
+} from "./sphere-data"
 import { fibSphere, rotate3D, hexPath, rankAll, getHexColor } from "./sphere-utils"
 import { COLORS } from "@/config/const"
 import { cn } from "@/lib/utils"
@@ -40,13 +50,15 @@ function Detail({ data, onClose }: DetailProps) {
                   {ci?.l}
                </span>
             </div>
+            {/* Dimension scores: seed values blurred (demo preview real data gated behind QQ access).
+                Final score uses data.qq to match the value shown on the sphere tile. */}
             <div className="flex gap-1.5 mb-1 flex-wrap">
-               {DIMS.map((d) => (
+               {SCORE_DIMS.map((d) => (
                   <span key={d.key} className="font-mono text-xs opacity-80" style={{ color: d.color }}>
-                     {d.short}:{data[d.key]}
+                     {d.short}:<span style={{ filter: "blur(3px)" }}>{data[d.key]}</span>
                   </span>
                ))}
-               <span className="font-mono text-xs font-bold text-accent">= {data.comp.toFixed(1)}</span>
+               <span className="font-mono text-xs font-bold text-accent">= {data.qq}</span>
             </div>
             <p className="text-xs text-text-muted m-0 leading-snug font-sans">{data.note}</p>
          </div>
@@ -65,40 +77,82 @@ function Detail({ data, onClose }: DetailProps) {
    )
 }
 
-/** @dev Compact horizontal dimension chips (display-only, demo preview). */
-function DimChips({ active }: { active: SortKey }) {
-   const isC = active === "comp"
-
+/** @dev Horizontal dimension chips. Renders all entries from DIMS uniformly; respects `enabled` flag. */
+function DimChips({ active, onSelect }: { active: SortKey; onSelect: (key: SortKey) => void }) {
    return (
-      <div className="flex items-center gap-1.5 flex-wrap cursor-not-allowed">
-         <span
-            className={cn(
-               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-mono font-bold text-xs",
-               isC
-                  ? cn("bg-accent/[0.15] border border-accent/40 text-accent", COLORS.tw.accentGlowSm)
-                  : "bg-white/[0.03] border border-white/[0.06] text-text-muted"
-            )}
-         >
-            <span className={cn("w-1.5 h-1.5 rounded-full", isC ? "bg-accent" : "bg-text-muted")} />
-            QQ
-         </span>
+      <div className="flex items-center gap-1.5 flex-wrap">
          {DIMS.map((d) => {
             const isA = active === d.key
             return (
                <span
                   key={d.key}
-                  className="flex items-center gap-1.5 rounded-md font-mono text-xs"
+                  onClick={() => d.enabled && onSelect(d.key)}
+                  className={cn(
+                     "flex items-center gap-1.5 rounded-md font-mono text-xs select-none",
+                     d.enabled ? "cursor-pointer" : "cursor-not-allowed"
+                  )}
                   style={{
                      padding: "6px 10px",
-                     background: isA ? `${d.color}15` : `${d.color}08`,
-                     border: isA ? `1px solid ${d.color}44` : `1px solid ${d.color}18`,
-                     color: isA ? d.color : `${d.color}77`,
+                     background: !d.enabled ? `${d.color}04` : isA ? `${d.color}15` : `${d.color}08`,
+                     border: !d.enabled
+                        ? `1px solid ${d.color}0a`
+                        : isA
+                          ? `1px solid ${d.color}44`
+                          : `1px solid ${d.color}18`,
+                     color: !d.enabled ? `${d.color}33` : isA ? d.color : `${d.color}77`,
                      fontWeight: isA ? 700 : 500,
                      boxShadow: isA ? `0 0 8px ${d.color}18` : "none",
                   }}
+                  title={d.enabled ? d.label : `${d.label} (coming soon)`}
                >
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: d.color, opacity: isA ? 1 : 0.4 }} />
+                  {!d.enabled && (
+                     <svg viewBox="0 0 16 16" fill="currentColor" className="w-2.5 h-2.5">
+                        <path d="M11 7V5a3 3 0 0 0-6 0v2H4v7h8V7h-1ZM6 5a2 2 0 1 1 4 0v2H6V5Zm6 8H4V8h8v5Z" />
+                     </svg>
+                  )}
+                  {d.enabled && (
+                     <span
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ background: d.color, opacity: isA ? 1 : 0.4 }}
+                     />
+                  )}
                   {d.short}
+               </span>
+            )
+         })}
+      </div>
+   )
+}
+
+/** @dev Timeframe selector chips. Only enabled timeframes are clickable; others show a lock icon. */
+function TimeframeChips({ active, onSelect }: { active: TimeframeKey; onSelect: (key: TimeframeKey) => void }) {
+   return (
+      <div className="flex items-center gap-1.5 flex-wrap">
+         {TIMEFRAMES.map((tf) => {
+            const isA = active === tf.key
+            return (
+               <span
+                  key={tf.key}
+                  onClick={() => tf.enabled && onSelect(tf.key)}
+                  className={cn(
+                     "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-mono text-xs select-none",
+                     tf.enabled
+                        ? isA
+                           ? cn(
+                                "bg-accent/[0.15] border border-accent/40 text-accent cursor-pointer",
+                                COLORS.tw.accentGlowSm
+                             )
+                           : "bg-white/[0.03] border border-white/[0.06] text-text-muted cursor-pointer hover:bg-white/[0.06] transition-colors"
+                        : "bg-white/[0.02] border border-white/[0.04] text-text-muted/40 cursor-not-allowed"
+                  )}
+                  title={tf.enabled ? tf.label : `${tf.label} (coming soon)`}
+               >
+                  {!tf.enabled && (
+                     <svg viewBox="0 0 16 16" fill="currentColor" className="w-2.5 h-2.5 opacity-40">
+                        <path d="M11 7V5a3 3 0 0 0-6 0v2H4v7h8V7h-1ZM6 5a2 2 0 1 1 4 0v2H6V5Zm6 8H4V8h8v5Z" />
+                     </svg>
+                  )}
+                  <span className={cn(isA && tf.enabled ? "font-bold" : "font-medium")}>{tf.short}</span>
                </span>
             )
          })}
@@ -110,7 +164,8 @@ function DimChips({ active }: { active: SortKey }) {
 
 /** @dev 3D interactive hex sphere displaying crypto assets ranked by QQ Score dimensions. */
 export function QQHexSphere() {
-   const sortKey: SortKey = "comp"
+   const [sortKey, setSortKey] = useState<SortKey>("comp")
+   const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeKey>("yearly")
    const [selected, setSelected] = useState<number | null>(null)
    const [rot, setRot] = useState({ x: -0.25, y: 0 })
    const dragRef = useRef({
@@ -232,10 +287,12 @@ export function QQHexSphere() {
    const sel = selected !== null ? ranked[selected] : null
 
    return (
-      <div className={cn(
-         "glass-panel rounded-[12px] flex flex-col overflow-hidden relative",
-         "landscape:max-h-[320px] landscape:overflow-hidden"
-      )}>
+      <div
+         className={cn(
+            "glass-panel rounded-[12px] flex flex-col overflow-hidden relative",
+            "landscape:max-h-[320px] landscape:overflow-hidden"
+         )}
+      >
          {/* Header */}
          <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
             <div className="flex items-baseline gap-2">
@@ -248,8 +305,13 @@ export function QQHexSphere() {
          </div>
 
          {/* Dimension chips */}
+         <div className="px-4 pb-1">
+            <DimChips active={sortKey} onSelect={setSortKey} />
+         </div>
+
+         {/* Timeframe chips */}
          <div className="px-4 pb-2">
-            <DimChips active={sortKey} />
+            <TimeframeChips active={selectedTimeframe} onSelect={setSelectedTimeframe} />
          </div>
 
          {/* SVG Sphere */}
