@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react"
 import {
    createChart,
    type IChartApi,
+   type ISeriesApi,
    type UTCTimestamp,
    CrosshairMode,
    LineStyle,
@@ -16,16 +17,22 @@ interface TradingChartProps {
 }
 
 /**
- * @dev TradingView Lightweight Charts v5 candlestick + volume chart
+ * @dev TradingView Lightweight Charts v5 candlestick + volume chart.
+ * Chart and series are created once on mount; data is updated in a separate
+ * effect to avoid destroying/recreating the canvas on every poll tick.
  */
 export function TradingChart({ candles }: TradingChartProps) {
    const containerRef = useRef<HTMLDivElement>(null)
    const chartRef = useRef<IChartApi | null>(null)
+   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null)
+   const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null)
 
+   // Create chart and series once on mount
    useEffect(() => {
       if (!containerRef.current) return
 
       const chart = createChart(containerRef.current, {
+         autoSize: true,
          layout: {
             background: { color: "transparent" },
             textColor: COLORS.raw.textSecondary,
@@ -47,11 +54,7 @@ export function TradingChart({ candles }: TradingChartProps) {
             secondsVisible: false,
          },
          rightPriceScale: { borderColor: COLORS.raw.accentBorder },
-         width: containerRef.current.clientWidth,
-         height: containerRef.current.clientHeight,
       })
-
-      chartRef.current = chart
 
       const candleSeries = chart.addSeries(CandlestickSeries, {
          upColor: COLORS.accent,
@@ -71,40 +74,44 @@ export function TradingChart({ candles }: TradingChartProps) {
          scaleMargins: { top: 0.8, bottom: 0 },
       })
 
-      if (candles.length > 0) {
-         candleSeries.setData(
-            candles.map((c) => ({
-               time: c.time as UTCTimestamp,
-               open: c.open,
-               high: c.high,
-               low: c.low,
-               close: c.close,
-            }))
-         )
-
-         volumeSeries.setData(
-            candles.map((c) => ({
-               time: c.time as UTCTimestamp,
-               value: c.volume,
-               color: c.close >= c.open ? COLORS.raw.volumeUp : COLORS.raw.volumeDown,
-            }))
-         )
-
-         chart.timeScale().fitContent()
-      }
-
-      const handleResize = () => {
-         if (containerRef.current) {
-            chart.applyOptions({ width: containerRef.current.clientWidth })
-         }
-      }
-      window.addEventListener("resize", handleResize)
+      chartRef.current = chart
+      candleSeriesRef.current = candleSeries
+      volumeSeriesRef.current = volumeSeries
 
       return () => {
-         window.removeEventListener("resize", handleResize)
          chart.remove()
          chartRef.current = null
+         candleSeriesRef.current = null
+         volumeSeriesRef.current = null
       }
+   }, [])
+
+   // Update data whenever candles change (poll ticks, timeframe switches)
+   useEffect(() => {
+      const candleSeries = candleSeriesRef.current
+      const volumeSeries = volumeSeriesRef.current
+      const chart = chartRef.current
+      if (!candleSeries || !volumeSeries || !chart || candles.length === 0) return
+
+      candleSeries.setData(
+         candles.map((c) => ({
+            time: c.time as UTCTimestamp,
+            open: c.open,
+            high: c.high,
+            low: c.low,
+            close: c.close,
+         }))
+      )
+
+      volumeSeries.setData(
+         candles.map((c) => ({
+            time: c.time as UTCTimestamp,
+            value: c.volume,
+            color: c.close >= c.open ? COLORS.raw.volumeUp : COLORS.raw.volumeDown,
+         }))
+      )
+
+      chart.timeScale().fitContent()
    }, [candles])
 
    return <div ref={containerRef} className="w-full h-[400px] md:h-[350px] lg:h-[400px] landscape:h-[240px]" />

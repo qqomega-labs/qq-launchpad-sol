@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react"
+import { Lock } from "lucide-react"
 import {
    DIMS,
    SCORE_DIMS,
@@ -88,7 +89,7 @@ function DimChips({ active, onSelect }: { active: SortKey; onSelect: (key: SortK
                   key={d.key}
                   onClick={() => d.enabled && onSelect(d.key)}
                   className={cn(
-                     "flex items-center gap-1 md:gap-1.5 px-2 py-1 md:px-2.5 md:py-1.5 rounded-md font-mono text-[10px] md:text-xs select-none",
+                     "flex items-center gap-1 md:gap-1.5 px-2 py-0.5 md:px-2.5 md:py-1.5 rounded-md font-mono text-[10px] md:text-xs select-none",
                      d.enabled ? "cursor-pointer" : "cursor-not-allowed"
                   )}
                   style={{
@@ -104,11 +105,7 @@ function DimChips({ active, onSelect }: { active: SortKey; onSelect: (key: SortK
                   }}
                   title={d.enabled ? d.label : `${d.label} (coming soon)`}
                >
-                  {!d.enabled && (
-                     <svg viewBox="0 0 16 16" fill="currentColor" className="w-2.5 h-2.5">
-                        <path d="M11 7V5a3 3 0 0 0-6 0v2H4v7h8V7h-1ZM6 5a2 2 0 1 1 4 0v2H6V5Zm6 8H4V8h8v5Z" />
-                     </svg>
-                  )}
+                  {!d.enabled && <Lock className="w-2.5 h-2.5" />}
                   {d.enabled && (
                      <span
                         className="w-1.5 h-1.5 rounded-full"
@@ -134,7 +131,7 @@ function TimeframeChips({ active, onSelect }: { active: TimeframeKey; onSelect: 
                   key={tf.key}
                   onClick={() => tf.enabled && onSelect(tf.key)}
                   className={cn(
-                     "flex items-center gap-1 md:gap-1.5 px-2 py-1 md:px-2.5 md:py-1.5 rounded-md font-mono text-[10px] md:text-xs select-none",
+                     "flex items-center gap-1 md:gap-1.5 px-2 py-0.5 md:px-2.5 md:py-1.5 rounded-md font-mono text-[10px] md:text-xs select-none",
                      tf.enabled
                         ? isA
                            ? cn(
@@ -146,10 +143,12 @@ function TimeframeChips({ active, onSelect }: { active: TimeframeKey; onSelect: 
                   )}
                   title={tf.enabled ? tf.label : `${tf.label} (coming soon)`}
                >
-                  {!tf.enabled && (
-                     <svg viewBox="0 0 16 16" fill="currentColor" className="w-2.5 h-2.5 opacity-40">
-                        <path d="M11 7V5a3 3 0 0 0-6 0v2H4v7h8V7h-1ZM6 5a2 2 0 1 1 4 0v2H6V5Zm6 8H4V8h8v5Z" />
-                     </svg>
+                  {!tf.enabled && <Lock className="w-2.5 h-2.5 opacity-40" />}
+                  {tf.enabled && (
+                     <span
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ background: "currentColor", opacity: isA ? 1 : 0.4 }}
+                     />
                   )}
                   <span className={cn(isA && tf.enabled ? "font-bold" : "font-medium")}>{tf.short}</span>
                </span>
@@ -314,7 +313,7 @@ export function QQHexSphere() {
          )}
       >
          {/* Header */}
-         <div className="flex items-center justify-between px-3 md:px-4 pt-2.5 md:pt-3.5 pb-1 md:pb-2">
+         <div className="flex items-center justify-between px-3 md:px-4 pt-2 md:pt-3.5 pb-1 md:pb-2">
             <div className="flex items-baseline gap-2">
                <span className="font-mono font-bold text-sm md:text-base text-white tracking-tight">
                   QQ Score preview
@@ -325,7 +324,7 @@ export function QQHexSphere() {
          </div>
 
          {/* Dimension chips */}
-         <div className="px-3 md:px-4 pb-2 md:pb-2.5">
+         <div className="px-3 md:px-4 pb-1.5 md:pb-2.5">
             <DimChips active={sortKey} onSelect={setSortKey} />
          </div>
 

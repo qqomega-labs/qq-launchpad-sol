@@ -18,6 +18,9 @@ export function ChartPanel() {
       pollMs: tf.pollMs,
    })
 
+   // Show skeleton until we have actual data — prevents blank canvas on 429 / first load
+   const noData = candles.length === 0
+
    return (
       <div className="glass-panel rounded-[12px] overflow-hidden">
          {/* Timeframe selector */}
@@ -30,10 +33,15 @@ export function ChartPanel() {
          </div>
 
          {/* Chart */}
-         <div className="p-0">
-            {loading && candles.length === 0 ? (
+         <div className="p-0 relative">
+            {noData ? (
                <div className="flex items-center justify-center h-[400px] landscape:h-[240px]">
                   <Skeleton className="w-full h-full" />
+                  {!loading && (
+                     <span className="absolute text-xs text-text-muted font-mono animate-pulse">
+                        Rate limited — retrying…
+                     </span>
+                  )}
                </div>
             ) : (
                <TradingChart candles={candles} />
