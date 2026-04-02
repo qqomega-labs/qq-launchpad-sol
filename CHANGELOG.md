@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-04-02 (QQAlpha)
 
+### Fixed
+
+- **Vite 8 `buffer` externalization warning**: `resolve.alias.buffer` changed from bare `"buffer"` to `path.resolve(__dirname, "node_modules/buffer/index.js")` — Vite 8 re-runs the Node.js built-in check on the alias target, so a bare `"buffer"` alias is a no-op and still triggers externalization; an absolute file path bypasses the check entirely; restart with `--force` required to clear the pre-bundled cache
+- **`main.tsx` Buffer guard**: `window.Buffer = Buffer` replaced with `if (!globalThis.Buffer) globalThis.Buffer = Buffer` for idempotent global setup
+
 ### Added
 
 - **Timeframe scoring system**: `TimeframeKey` type (`daily`, `weekly`, `monthly`, `yearly`), `Timeframe` interface, and `TIMEFRAMES` constant in `sphere-data.ts` with per-dimension weights from QQ Omega architecture; order is `1Y → 1M → 1W → 1D` (long-term first)

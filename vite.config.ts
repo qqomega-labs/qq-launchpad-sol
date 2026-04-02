@@ -40,7 +40,9 @@ export default defineConfig({
    resolve: {
       alias: {
          "@": path.resolve(__dirname, "src"),
-         buffer: "buffer",
+         // Absolute path forces Vite 8 to treat this as an npm package,
+         // bypassing the Node.js built-in externalization check.
+         buffer: path.resolve(__dirname, "node_modules/buffer/index.js"),
       },
    },
 })
