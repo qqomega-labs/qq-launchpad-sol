@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-04-03 (QQAlpha)
 
+### Added
+
+- **Full SEO + Open Graph support** (`index.html`): added `keywords`, `author`, `robots` meta tags,
+  `<link rel="canonical">` to `https://launchpad.qqomega.xyz/`, Open Graph tags (`og:type`,
+  `og:site_name`, `og:title`, `og:description`, `og:url`, `og:image` 1200x630, `og:locale`),
+  Twitter Card tags (`summary_large_image`, `twitter:site`/`twitter:creator` `@QQomega_labs`),
+  `<link rel="apple-touch-icon">`, and JSON-LD structured data (`WebApplication` schema with
+  organization + social `sameAs`)
+- **OG image + apple-touch-icon assets**: `public/og-image.png` (1200x630) and
+  `public/apple-touch-icon.png` (180x180) copied from `qq-omega-landing` for brand consistency
+
 ### Changed
 
 - **Suspense skeleton fallbacks extracted**: moved inline fallback JSX from `launchpad.tsx` into
