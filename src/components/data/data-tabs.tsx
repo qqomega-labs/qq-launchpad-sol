@@ -12,7 +12,7 @@ import { TxHistory } from "./tx-history"
  */
 export function DataTabs() {
    return (
-      <div className="glass-panel rounded-[12px] p-5">
+      <div className="glass-panel rounded-[12px] p-4 md:p-5">
          {/* TODO: Re-enable tab bar when multiple tabs are active */}
          {/* <div className="flex gap-1 mb-4 bg-bg-input rounded-[8px] p-1"> */}
          {/*   {TABS.map((tab) => ( */}

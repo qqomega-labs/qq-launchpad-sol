@@ -12,7 +12,7 @@ export function BondingProgress() {
 
    if (loading) {
       return (
-         <div className="glass-panel rounded-[12px] p-5">
+         <div className="glass-panel rounded-[12px] p-4 md:p-5">
             <Skeleton className="h-4 w-32 mb-3" />
             <Skeleton className="h-6 w-full mb-2" />
             <Skeleton className="h-3 w-48" />
@@ -21,9 +21,9 @@ export function BondingProgress() {
    }
 
    return (
-      <div className="glass-panel rounded-[12px] p-5 h-full flex flex-col justify-center">
+      <div className="glass-panel rounded-[12px] p-4 md:p-5 h-full flex flex-col justify-center">
          <div className="flex items-center justify-between mb-3">
-            <span className="text-text-secondary text-sm font-medium">Bonding Curve</span>
+            <span className="text-sm font-semibold text-white">Bonding Curve</span>
             <span className="text-text-muted text-xs font-mono">
                <FlipNumber value={progressPct.toFixed(1)} />%
             </span>

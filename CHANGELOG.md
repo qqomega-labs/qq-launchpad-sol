@@ -40,6 +40,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Cross-widget text and spacing consistency**: all glass panels now use `p-4 md:p-5` padding
+  (mobile 16px / desktop 20px) matching the hero section — `bonding-progress.tsx`,
+  `swap-panel.tsx`, `data-tabs.tsx` aligned from flat `p-5`; sphere header sections changed from
+  `px-3 md:px-4 pt-2 md:pt-3.5` to `px-4 md:px-5 pt-4 md:pt-5`
+- **Panel header text standard**: all widget section labels now use `text-sm font-semibold
+  text-white`; "Bonding Curve" changed from `font-medium text-text-secondary`; "QQ Score preview"
+  changed from `font-mono font-bold text-sm md:text-base` — `font-mono` and `md:text-base` scaling
+  removed; "drag to explore" hint standardized from `text-[10px] md:text-xs font-mono` to `text-xs`
+- **Sphere panel label hierarchy**: "QQ Score preview" bumped from `text-sm` to `text-base` —
+  larger than other panel labels, smaller than the hero `h1` (`text-2xl md:text-3xl`); "50 assets"
+  bumped from `text-xs` to `text-sm` to maintain proportion
+- **Sphere order on small screens**: sphere moved before swap panel on mobile/tablet (below `lg`)
+  by changing `order-2 lg:order-1` to `order-1 lg:order-1`; desktop two-column layout unchanged
 - **Sphere chip vertical spacing (mobile)**: chip `py-1` tightened to `py-0.5` on mobile to reduce
   inflated chip height and recover vertical space for the sphere canvas; header top padding reduced
   from `pt-2.5` to `pt-2`; `DimChips` section bottom padding reduced from `pb-2` to `pb-1.5` on

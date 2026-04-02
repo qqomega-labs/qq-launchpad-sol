@@ -34,13 +34,13 @@ function LaunchpadPage() {
 
                {/* Sphere + Swap side by side, stretched to equal height */}
                <div className="flex flex-col lg:flex-row lg:items-stretch gap-5">
-                  <div className="lg:w-[55%] order-2 lg:order-1 animate-fade-up" style={{ animationDelay: "0.1s" }}>
+                  <div className="lg:w-[55%] order-1 lg:order-1 animate-fade-up" style={{ animationDelay: "0.1s" }}>
                      <Suspense fallback={<div className="glass-panel rounded-[12px] aspect-square" />}>
                         <QQHexSphere />
                      </Suspense>
                   </div>
                   <div
-                     className="lg:w-[45%] order-1 lg:order-2 flex flex-col gap-5 animate-fade-up"
+                     className="lg:w-[45%] order-2 lg:order-2 flex flex-col gap-5 animate-fade-up"
                      style={{ animationDelay: "0s" }}
                   >
                      <SwapPanel />

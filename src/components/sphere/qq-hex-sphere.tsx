@@ -313,23 +313,21 @@ export function QQHexSphere() {
          )}
       >
          {/* Header */}
-         <div className="flex items-center justify-between px-3 md:px-4 pt-2 md:pt-3.5 pb-1 md:pb-2">
+         <div className="flex items-center justify-between px-4 md:px-5 pt-4 md:pt-5 pb-1 md:pb-2">
             <div className="flex items-baseline gap-2">
-               <span className="font-mono font-bold text-sm md:text-base text-white tracking-tight">
-                  QQ Score preview
-               </span>
-               <span className="text-xs text-text-muted">{TOTAL} assets</span>
+               <span className="text-base font-semibold text-white">QQ Score preview</span>
+               <span className="text-sm text-text-muted">{TOTAL} assets</span>
             </div>
-            <span className="text-[10px] md:text-xs text-text-muted font-mono">drag to explore</span>
+            <span className="text-xs text-text-muted">drag to explore</span>
          </div>
 
          {/* Dimension chips */}
-         <div className="px-3 md:px-4 pb-1.5 md:pb-2.5">
+         <div className="px-4 md:px-5 pb-1.5 md:pb-2.5">
             <DimChips active={sortKey} onSelect={setSortKey} />
          </div>
 
          {/* Timeframe chips */}
-         <div className="px-3 md:px-4 pb-1 md:pb-2">
+         <div className="px-4 md:px-5 pb-1 md:pb-2">
             <TimeframeChips active={selectedTimeframe} onSelect={setSelectedTimeframe} />
          </div>
 

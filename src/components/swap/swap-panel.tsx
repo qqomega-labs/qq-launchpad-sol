@@ -156,7 +156,7 @@ export function SwapPanel() {
    const showPriceImpact = priceImpact >= 1
 
    return (
-      <div className="glass-panel rounded-[12px] p-5 landscape:p-3">
+      <div className="glass-panel rounded-[12px] p-4 md:p-5 landscape:p-3">
          {/* Partial execution warning - shown when leg 1 succeeded but leg 2 failed */}
          {partialExecution && (
             <div className={cn("mb-4 border rounded-[8px] p-3 text-xs", COLORS.tw.warningBg, COLORS.tw.warningBorder)}>
