@@ -13,7 +13,7 @@ import { SlippagePopover } from "./slippage-popover"
 import { Button } from "@/components/ui/button"
 
 import { cn, truncateAddress, parseTokenAmount } from "@/lib/utils"
-import { DEXSCREENER_URL, DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY, COLORS } from "@/config/const"
+import { DEFAULT_SLIPPAGE_BPS, SLIPPAGE_STORAGE_KEY, COLORS, GECKOTERMINAL_URL } from "@/config/const"
 import { SOL_MINT, QQ_MINT, QUICK_AMOUNTS, getToken } from "@/config/tokens"
 
 /** @dev Re-fetch the quote if older than this threshold before executing */
@@ -157,7 +157,7 @@ export function SwapPanel() {
 
    return (
       <div className="glass-panel rounded-[12px] p-5 landscape:p-3">
-         {/* Partial execution warning — shown when leg 1 succeeded but leg 2 failed */}
+         {/* Partial execution warning - shown when leg 1 succeeded but leg 2 failed */}
          {partialExecution && (
             <div className={cn("mb-4 border rounded-[8px] p-3 text-xs", COLORS.tw.warningBg, COLORS.tw.warningBorder)}>
                <div className="flex items-start gap-2">
@@ -288,7 +288,7 @@ export function SwapPanel() {
          {/* Fallback */}
          <div className="mt-4 landscape:mt-2 text-center">
             <a
-               href={DEXSCREENER_URL}
+               href={GECKOTERMINAL_URL}
                target="_blank"
                rel="noopener noreferrer"
                className={cn(
@@ -296,7 +296,7 @@ export function SwapPanel() {
                   "inline-flex items-center gap-1"
                )}
             >
-               or buy on DexScreener <ArrowUpRight size={11} />
+               see on GeckoTerminal <ArrowUpRight size={11} />
             </a>
          </div>
       </div>
