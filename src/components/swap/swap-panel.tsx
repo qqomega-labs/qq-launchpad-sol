@@ -45,11 +45,14 @@ export function SwapPanel() {
    const [selectedReceiveMint, setSelectedReceiveMint] = useState(SOL_MINT)
    const [slippage, setSlippage] = useState(() => {
       const stored = localStorage.getItem(SLIPPAGE_STORAGE_KEY)
-      return stored ? Number(stored) : DEFAULT_SLIPPAGE_BPS
+      const parsed = stored ? Number(stored) : DEFAULT_SLIPPAGE_BPS
+      // Validate stored value against same bounds as SlippagePopover (0 < bps <= 1000)
+      return !isNaN(parsed) && parsed > 0 && parsed <= 1000 ? parsed : DEFAULT_SLIPPAGE_BPS
    })
    const [success, setSuccess] = useState(false)
 
    const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+   const swapInFlight = useRef(false)
 
    const inputMint = isSell ? QQ_MINT : selectedPayMint
    const outputMint = isSell ? selectedReceiveMint : QQ_MINT
@@ -87,16 +90,25 @@ export function SwapPanel() {
          return
       }
       if (!inputAmount) return
+      if (swapInFlight.current) return
 
-      // Re-fetch quote if stale (older than QUOTE_STALE_MS) to avoid executing on outdated pricing
-      let activeQuote = quote
-      if (!activeQuote || Date.now() - activeQuote.quotedAt > QUOTE_STALE_MS) {
-         const amountIn = parseTokenAmount(inputAmount, inputDecimals)
-         activeQuote = await getQuote(amountIn, inputMint, outputMint, slippage)
-         if (!activeQuote) return
+      // Validate balance before signing to avoid wasting fees on guaranteed-to-fail txs
+      const parsedInput = parseFloat(inputAmount)
+      if (inputBalance !== undefined && parsedInput > inputBalance) {
+         toast.error("Insufficient balance")
+         return
       }
 
+      swapInFlight.current = true
       try {
+         // Re-fetch quote if stale (older than QUOTE_STALE_MS) to avoid executing on outdated pricing
+         let activeQuote = quote
+         if (!activeQuote || Date.now() - activeQuote.quotedAt > QUOTE_STALE_MS) {
+            const amountIn = parseTokenAmount(inputAmount, inputDecimals)
+            activeQuote = await getQuote(amountIn, inputMint, outputMint, slippage)
+            if (!activeQuote) return
+         }
+
          const amountIn = parseTokenAmount(inputAmount, inputDecimals)
          const sig = await executeSwap(amountIn, inputMint, outputMint, activeQuote)
          toast.success(`Transaction confirmed: ${truncateAddress(sig, 8)}`)
@@ -105,6 +117,8 @@ export function SwapPanel() {
          setTimeout(() => setSuccess(false), 2000)
       } catch {
          toast.error(error || "Transaction failed")
+      } finally {
+         swapInFlight.current = false
       }
    }
 

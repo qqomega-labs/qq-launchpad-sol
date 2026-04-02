@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-04-03 (QQAlpha)
 
+### Security
+
+- **Double-submit guard** (`swap-panel.tsx`): added `useRef`-based `swapInFlight` guard to prevent
+  concurrent swap execution from fast double-clicks (race condition where React state update lag
+  allowed two `handleSwap` calls before `loading` was set)
+- **localStorage slippage validation** (`swap-panel.tsx`): stored slippage value now clamped to
+  `0 < bps <= 1000` on load, preventing tampered values from bypassing the 10% UI cap
+- **Balance pre-check** (`swap-panel.tsx`): `handleSwap` now validates `inputBalance >= inputAmount`
+  before signing, avoiding wasted fees on guaranteed-to-fail transactions
+- **Hybrid swap actual balance** (`use-swap.ts`): leg 2 of hybrid swaps now reads actual on-chain
+  USDC balance via `getTokenAccountBalance` instead of using the estimated amount from quote time,
+  preventing failures from slippage drift between legs
+- **CSP wallet adapter domains** (`index.html`): added `connect-src` entries for Phantom
+  (`*.phantom.app`), Solflare (`*.solflare.com`), WalletConnect relay (`relay.walletconnect.com`,
+  `relay.walletconnect.org`), and Backpack (`*.backpack.app`) to prevent silent connection failures
+
 ### Added
 
 - **Full SEO + Open Graph support** (`index.html`): added `keywords`, `author`, `robots` meta tags,
