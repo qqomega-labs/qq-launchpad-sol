@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`DimChips`**: renders all entries from `DIMS` uniformly (no hardcoded QQ chip); accepts `onSelect` callback; `sortKey` is now component state (was hardcoded `"comp"`)
 - **`composite()` / `rankAll()`**: use `SCORE_DIMS` to exclude the composite entry from weight calculations; accept optional `timeframe` parameter for timeframe-specific dimension weights
 - **Detail card scores**: individual dimension values blurred (`filter: blur(3px)`) — demo preview, real data gated behind QQ access; final `=` value now shows `data.qq` to match the score on the sphere tile
+- **Sphere mobile layout**: chips (`DimChips`, `TimeframeChips`) reduced to `text-[10px]` with `px-2 py-1` on mobile for uniform sizing; header padding tightened; vertical gap between chip rows increased to `pb-2`; "drag to explore" label reduced to `text-[10px]` on mobile; detail card text and padding compacted on mobile
+- **Sphere `touchmove` passive fix**: removed `onTouchMove` from JSX (React 17+ registers it passive, blocking `preventDefault`); imperative `addEventListener("touchmove", handler, { passive: false })` attached via `sphereContainerRef` in a `useEffect`; `onMove` simplified to pointer-only; `getXY` helper removed
 - **Swap panel fallback link**: replaced DexScreener link with GeckoTerminal; label changed from "or buy on DexScreener" to "see on GeckoTerminal"; import switched from `DEXSCREENER_URL` to `GECKOTERMINAL_URL`
 
 ## [Unreleased] - 2026-04-01 (QQAlpha)

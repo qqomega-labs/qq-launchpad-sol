@@ -28,19 +28,19 @@ function Detail({ data, onClose }: DetailProps) {
 
    return (
       <div
-         className="glass-panel animate-fade-up rounded-xl px-3 py-2 flex items-center gap-3"
+         className="glass-panel animate-fade-up rounded-xl px-2 py-1.5 md:px-3 md:py-2 flex items-center gap-2 md:gap-3"
          style={{
             borderColor: `${catColor}33`,
             boxShadow: `0 0 20px ${catColor}12, 0 4px 16px ${COLORS.raw.shadow}`,
          }}
       >
          <div className="flex-1 min-w-0">
-            <div className="flex items-baseline gap-1.5 mb-0.5 flex-wrap">
-               <span className="font-mono font-extrabold text-lg text-white">#{data.rank}</span>
-               <span className="font-mono font-bold text-base text-white">{data.s}</span>
-               <span className="text-xs text-text-muted">{data.n}</span>
+            <div className="flex items-baseline gap-1 md:gap-1.5 mb-0.5 flex-wrap">
+               <span className="font-mono font-extrabold text-sm md:text-lg text-white">#{data.rank}</span>
+               <span className="font-mono font-bold text-sm md:text-base text-white">{data.s}</span>
+               <span className="text-[10px] md:text-xs text-text-muted">{data.n}</span>
                <span
-                  className="font-mono font-semibold text-[10px] md:text-xs px-1.5 py-px rounded-sm"
+                  className="font-mono font-semibold text-[10px] px-1 py-px rounded-sm"
                   style={{
                      background: `${catColor}12`,
                      color: catColor,
@@ -50,24 +50,24 @@ function Detail({ data, onClose }: DetailProps) {
                   {ci?.l}
                </span>
             </div>
-            {/* Dimension scores: seed values blurred (demo preview real data gated behind QQ access).
+            {/* Dimension scores: seed values blurred (demo preview — real data gated behind QQ access).
                 Final score uses data.qq to match the value shown on the sphere tile. */}
-            <div className="flex gap-1.5 mb-1 flex-wrap">
+            <div className="flex gap-1 md:gap-1.5 mb-0.5 md:mb-1 flex-wrap">
                {SCORE_DIMS.map((d) => (
-                  <span key={d.key} className="font-mono text-xs opacity-80" style={{ color: d.color }}>
+                  <span key={d.key} className="font-mono text-[10px] md:text-xs opacity-80" style={{ color: d.color }}>
                      {d.short}:<span style={{ filter: "blur(3px)" }}>{data[d.key]}</span>
                   </span>
                ))}
-               <span className="font-mono text-xs font-bold text-accent">= {data.qq}</span>
+               <span className="font-mono text-[10px] md:text-xs font-bold text-accent">= {data.qq}</span>
             </div>
-            <p className="text-xs text-text-muted m-0 leading-snug font-sans">{data.note}</p>
+            <p className="text-[10px] md:text-xs text-text-muted m-0 leading-snug font-sans">{data.note}</p>
          </div>
          <button
             onClick={onClose}
             className={cn(
-               "shrink-0 rounded-md px-2 py-1 leading-none",
+               "shrink-0 rounded-md px-1.5 py-0.5 md:px-2 md:py-1 leading-none",
                "bg-white/[0.04] border border-white/[0.06]",
-               "text-text-muted text-base hover:text-white transition-colors"
+               "text-text-muted text-sm md:text-base hover:text-white transition-colors"
             )}
             aria-label="Close detail"
          >
@@ -80,7 +80,7 @@ function Detail({ data, onClose }: DetailProps) {
 /** @dev Horizontal dimension chips. Renders all entries from DIMS uniformly; respects `enabled` flag. */
 function DimChips({ active, onSelect }: { active: SortKey; onSelect: (key: SortKey) => void }) {
    return (
-      <div className="flex items-center gap-1.5 flex-wrap">
+      <div className="flex items-center gap-1 md:gap-1.5 flex-wrap">
          {DIMS.map((d) => {
             const isA = active === d.key
             return (
@@ -88,11 +88,10 @@ function DimChips({ active, onSelect }: { active: SortKey; onSelect: (key: SortK
                   key={d.key}
                   onClick={() => d.enabled && onSelect(d.key)}
                   className={cn(
-                     "flex items-center gap-1.5 rounded-md font-mono text-xs select-none",
+                     "flex items-center gap-1 md:gap-1.5 px-2 py-1 md:px-2.5 md:py-1.5 rounded-md font-mono text-[10px] md:text-xs select-none",
                      d.enabled ? "cursor-pointer" : "cursor-not-allowed"
                   )}
                   style={{
-                     padding: "6px 10px",
                      background: !d.enabled ? `${d.color}04` : isA ? `${d.color}15` : `${d.color}08`,
                      border: !d.enabled
                         ? `1px solid ${d.color}0a`
@@ -127,7 +126,7 @@ function DimChips({ active, onSelect }: { active: SortKey; onSelect: (key: SortK
 /** @dev Timeframe selector chips. Only enabled timeframes are clickable; others show a lock icon. */
 function TimeframeChips({ active, onSelect }: { active: TimeframeKey; onSelect: (key: TimeframeKey) => void }) {
    return (
-      <div className="flex items-center gap-1.5 flex-wrap">
+      <div className="flex items-center gap-1 md:gap-1.5 flex-wrap">
          {TIMEFRAMES.map((tf) => {
             const isA = active === tf.key
             return (
@@ -135,7 +134,7 @@ function TimeframeChips({ active, onSelect }: { active: TimeframeKey; onSelect: 
                   key={tf.key}
                   onClick={() => tf.enabled && onSelect(tf.key)}
                   className={cn(
-                     "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-mono text-xs select-none",
+                     "flex items-center gap-1 md:gap-1.5 px-2 py-1 md:px-2.5 md:py-1.5 rounded-md font-mono text-[10px] md:text-xs select-none",
                      tf.enabled
                         ? isA
                            ? cn(
@@ -179,6 +178,7 @@ export function QQHexSphere() {
       lastTime: 0,
    })
    const rafRef = useRef<number>(0)
+   const sphereContainerRef = useRef<HTMLDivElement>(null)
 
    const ranked = rankAll(sortKey)
    const sphere = fibSphere(TOTAL)
@@ -214,16 +214,37 @@ export function QQHexSphere() {
       return () => cancelAnimationFrame(rafRef.current)
    }, [])
 
-   const getXY = (e: React.PointerEvent | React.TouchEvent) => {
-      if ("touches" in e) {
+   // Imperative touchmove with { passive: false } so preventDefault() is allowed.
+   // React registers onTouchMove as passive by default (React 17+), blocking preventDefault.
+   useEffect(() => {
+      const el = sphereContainerRef.current
+      if (!el) return
+      const handler = (e: TouchEvent) => {
+         const d = dragRef.current
+         if (!d.active) return
+         e.preventDefault()
          const t = e.touches[0]
-         return { x: t.clientX, y: t.clientY }
+         const dx = t.clientX - d.lx
+         const dy = t.clientY - d.ly
+         if (Math.abs(dx) > 2 || Math.abs(dy) > 2) d.moved = true
+         const now = performance.now()
+         const elapsed = Math.max(now - d.lastTime, 1)
+         d.vx = dx * 0.006 * (16 / elapsed)
+         d.vy = -dy * 0.006 * (16 / elapsed)
+         d.lx = t.clientX
+         d.ly = t.clientY
+         d.lastTime = now
+         setRot((r) => ({ x: r.x - dy * 0.006, y: r.y + dx * 0.006 }))
       }
-      return { x: e.clientX, y: e.clientY }
-   }
+      el.addEventListener("touchmove", handler, { passive: false })
+      return () => el.removeEventListener("touchmove", handler)
+   }, [])
+
+   const getXY = (e: React.PointerEvent) => ({ x: e.clientX, y: e.clientY })
 
    const onDown = (e: React.PointerEvent | React.TouchEvent) => {
-      const { x, y } = getXY(e)
+      const x = "touches" in e ? e.touches[0].clientX : e.clientX
+      const y = "touches" in e ? e.touches[0].clientY : e.clientY
       dragRef.current = {
          active: true,
          hovering: true,
@@ -236,10 +257,9 @@ export function QQHexSphere() {
       }
    }
 
-   const onMove = (e: React.PointerEvent | React.TouchEvent) => {
+   const onMove = (e: React.PointerEvent) => {
       const d = dragRef.current
       if (!d.active) return
-      if ("touches" in e) e.preventDefault()
       const { x, y } = getXY(e)
       const dx = x - d.lx
       const dy = y - d.ly
@@ -294,34 +314,34 @@ export function QQHexSphere() {
          )}
       >
          {/* Header */}
-         <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
+         <div className="flex items-center justify-between px-3 md:px-4 pt-2.5 md:pt-3.5 pb-1 md:pb-2">
             <div className="flex items-baseline gap-2">
                <span className="font-mono font-bold text-sm md:text-base text-white tracking-tight">
                   QQ Score preview
                </span>
                <span className="text-xs text-text-muted">{TOTAL} assets</span>
             </div>
-            <span className="text-xs text-text-muted font-mono">drag to explore</span>
+            <span className="text-[10px] md:text-xs text-text-muted font-mono">drag to explore</span>
          </div>
 
          {/* Dimension chips */}
-         <div className="px-4 pb-1">
+         <div className="px-3 md:px-4 pb-2 md:pb-2.5">
             <DimChips active={sortKey} onSelect={setSortKey} />
          </div>
 
          {/* Timeframe chips */}
-         <div className="px-4 pb-2">
+         <div className="px-3 md:px-4 pb-1 md:pb-2">
             <TimeframeChips active={selectedTimeframe} onSelect={setSelectedTimeframe} />
          </div>
 
          {/* SVG Sphere */}
          <div
+            ref={sphereContainerRef}
             className="relative select-none flex-1"
             onPointerMove={onMove}
             onPointerUp={onUp}
             onPointerLeave={onSphereLeave}
             onPointerEnter={onSphereEnter}
-            onTouchMove={onMove}
             onTouchEnd={onUp}
             onTouchCancel={onUp}
          >
