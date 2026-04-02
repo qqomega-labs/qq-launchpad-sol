@@ -5,6 +5,15 @@ import path from "path"
 
 export default defineConfig({
    plugins: [react(), tailwindcss()],
+   server: {
+      proxy: {
+         "/gt-proxy": {
+            target: "https://api.geckoterminal.com",
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/gt-proxy/, "/api/v2"),
+         },
+      },
+   },
    build: {
       target: "es2020",
       // Meteora SDK is ~700 kB minified - inherent to the dependency, cannot be reduced

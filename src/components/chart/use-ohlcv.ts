@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef } from "react"
 import { fetchOhlcv, type Candle } from "@/lib/gecko"
 
 interface UseOhlcvOptions {
@@ -9,49 +9,52 @@ interface UseOhlcvOptions {
 
 /**
  * @dev Polls GeckoTerminal for OHLCV data with exponential backoff on rate limit.
- * Uses a setTimeout chain so each tick respects the current backoff delay.
+ * Uses a ref-based tick loop to avoid stale closures — params are read from
+ * paramsRef on every tick so timeframe switches are always reflected immediately
+ * without recreating the effect or the scheduling closure.
  */
 export function useOhlcv({ timeframe, aggregate, pollMs }: UseOhlcvOptions) {
    const [candles, setCandles] = useState<Candle[]>([])
    const [loading, setLoading] = useState(true)
-   const backoffRef = useRef<number>(pollMs)
-   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
    const mountedRef = useRef(true)
-
-   const scheduleNext = useCallback(() => {
-      timerRef.current = setTimeout(() => {
-         loadAndSchedule()
-      }, backoffRef.current)
-   }, [])
-
-   const loadAndSchedule = useCallback(async () => {
-      try {
-         const data = await fetchOhlcv(timeframe, aggregate)
-         if (mountedRef.current) {
-            setCandles(data)
-            setLoading(false)
-            backoffRef.current = pollMs
-         }
-      } catch (e) {
-         if (e instanceof Error && e.message === "RATE_LIMITED") {
-            backoffRef.current = Math.min(backoffRef.current * 2, 30_000)
-         }
-         if (mountedRef.current) setLoading(false)
-      }
-      if (mountedRef.current) scheduleNext()
-   }, [timeframe, aggregate, pollMs, scheduleNext])
+   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+   const backoffRef = useRef<number>(pollMs)
+   // Always holds the latest params; tick() reads from here so no stale closure
+   const paramsRef = useRef({ timeframe, aggregate, pollMs })
+   paramsRef.current = { timeframe, aggregate, pollMs }
 
    useEffect(() => {
       mountedRef.current = true
-      backoffRef.current = pollMs
+      backoffRef.current = paramsRef.current.pollMs
       setLoading(true)
-      loadAndSchedule()
+
+      async function tick() {
+         const { timeframe: tf, aggregate: agg, pollMs: ms } = paramsRef.current
+         try {
+            const data = await fetchOhlcv(tf, agg)
+            if (mountedRef.current) {
+               setCandles(data)
+               setLoading(false)
+               backoffRef.current = ms
+            }
+         } catch (e) {
+            if (e instanceof Error && e.message === "RATE_LIMITED") {
+               backoffRef.current = Math.min(backoffRef.current * 2, 30_000)
+            }
+            if (mountedRef.current) setLoading(false)
+         }
+         if (mountedRef.current) {
+            timerRef.current = setTimeout(tick, backoffRef.current)
+         }
+      }
+
+      tick()
 
       return () => {
          mountedRef.current = false
-         if (timerRef.current) clearTimeout(timerRef.current)
+         clearTimeout(timerRef.current)
       }
-   }, [loadAndSchedule])
+   }, [timeframe, aggregate]) // eslint-disable-line react-hooks/exhaustive-deps
 
    return { candles, loading }
 }

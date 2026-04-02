@@ -36,6 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`FlipNumber` from `swap-input.tsx`**: reverted wallet balance display to a plain `<span>` — the balance updates too frequently during input interaction, causing animation lag on mobile
 
+### Fixed
+
+- **GeckoTerminal CORS in dev**: `vite.config.ts` now exposes a `/gt-proxy` dev server proxy that forwards to `https://api.geckoterminal.com/api/v2`; `gecko.ts` uses `/gt-proxy` when `import.meta.env.DEV` is true and the real URL in production — browser never touches the cross-origin host in dev, bypassing the missing `Access-Control-Allow-Origin` header on 429 responses
+- **`use-ohlcv` stale closure bug**: `scheduleNext` had empty `useCallback` deps, permanently closing over the initial `loadAndSchedule`; after a timeframe switch the first fetch was correct but every subsequent poll used the old timeframe, hitting extra endpoints and burning rate-limit quota; rewritten as a single `tick()` function reading params from `paramsRef.current` on each iteration — no stale closure possible; `useCallback` wrappers removed (React Compiler project)
+
 ## [Unreleased] - 2026-04-01 (QQAlpha)
 
 ### Added

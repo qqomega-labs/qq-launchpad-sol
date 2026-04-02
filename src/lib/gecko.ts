@@ -1,5 +1,8 @@
 import { GT_BASE, GT_POOL_ADDR } from "@/config/const"
 
+// In dev, route through the Vite proxy to avoid CORS (GT omits the header on 429 responses)
+const GT_API_BASE = import.meta.env.DEV ? "/gt-proxy" : GT_BASE
+
 export interface Candle {
    time: number
    open: number
@@ -19,7 +22,7 @@ export async function fetchOhlcv(
    aggregate: number,
    limit = 300
 ): Promise<Candle[]> {
-   const url = `${GT_BASE}/networks/solana/pools/${GT_POOL_ADDR}/ohlcv/${timeframe}?aggregate=${aggregate}&limit=${limit}&currency=usd&token=base`
+   const url = `${GT_API_BASE}/networks/solana/pools/${GT_POOL_ADDR}/ohlcv/${timeframe}?aggregate=${aggregate}&limit=${limit}&currency=usd&token=base`
 
    let res: Response
    try {

@@ -74,7 +74,7 @@ export function Header() {
          <div className="flex items-center gap-3">
             <img src="/logo.svg" alt="QQ" className="h-8 w-8" />
             <span className="hidden md:inline text-text-muted text-sm font-medium tracking-wide">Launchpad</span>
-            <span className="hidden md:inline text-text-muted text-sm font-medium tracking-wide">-</span>
+            <span className="hidden md:inline text-text-muted text-sm font-medium tracking-wide">|</span>
             <div className="flex items-center gap-3 ml-1">
                {socialLinks.map((link) => (
                   <a
