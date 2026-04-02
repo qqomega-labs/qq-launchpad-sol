@@ -16,7 +16,7 @@ const MAX_TRADES = 100
 const MAX_RECONNECT_DELAY = 30_000
 
 /** @dev Runtime type guard — rejects malformed/injected WebSocket messages before they reach state */
-function isValidTrade(obj: unknown): obj is Trade {
+export function isValidTrade(obj: unknown): obj is Trade {
    if (!obj || typeof obj !== "object") return false
    const t = obj as Record<string, unknown>
    return (

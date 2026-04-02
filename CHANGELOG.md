@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Test suite** (`test/`, `vitest.config.ts`): added Vitest with jsdom, 10 test files, 235 tests
+  covering all critical paths; extracted `friendlySwapError` to `src/lib/errors.ts` and exported
+  `isValidTrade` for testability
+   - `parse-token-amount` (18): float-to-BN precision for SOL/USDC/QQ, decimal truncation,
+     quick-amount presets
+   - `friendly-swap-error` (21): SDK error sanitization, wallet rejections, on-chain errors,
+     info leakage prevention (RPC URLs, pool addresses, tx signatures)
+   - `is-valid-trade` (29): WebSocket message type guard, missing fields, type confusion attacks
+   - `slippage-validation` (19): localStorage tamper protection, sandwich attack boundary values
+   - `swap-input-validation` (25): regex sanitization, script injection, scientific notation
+   - `token-routing` (27): mint constants, DBC direct vs hybrid routing, decimal registry
+   - `tokenomics` (12): supply allocation math, remaining seats formula integrity
+   - `csp` (19): CSP meta tag validation, no unsafe-eval, wallet domains, base-uri/form-action
+   - `utils` (27): formatPrice boundaries, formatNumber, truncateAddress, lamports conversion
+   - `sphere-scoring` (58): TIMEFRAMES weight sums, composite scoring, qqScore cap, rankAll
+     ordering, SCORE_DIMS integrity, RAW asset data validation
 - **Full SEO + Open Graph support** (`index.html`): added `keywords`, `author`, `robots` meta tags,
   `<link rel="canonical">` to `https://launchpad.qqomega.xyz/`, Open Graph tags (`og:type`,
   `og:site_name`, `og:title`, `og:description`, `og:url`, `og:image` 1200x630, `og:locale`),
