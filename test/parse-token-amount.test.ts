@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { parseTokenAmount } from "@/lib/utils"
+import { TOKEN_DECIMALS, QUOTE_DECIMALS } from "@/config/const"
 
 /**
  * @dev parseTokenAmount converts human-readable token strings to BN (base units)
@@ -12,7 +13,7 @@ import { parseTokenAmount } from "@/lib/utils"
  */
 describe("parseTokenAmount", () => {
    describe("SOL (9 decimals)", () => {
-      const D = 9
+      const D = TOKEN_DECIMALS
 
       it("1 SOL = 1_000_000_000 lamports", () => {
          expect(parseTokenAmount("1", D).toString()).toBe("1000000000")
@@ -33,7 +34,7 @@ describe("parseTokenAmount", () => {
    })
 
    describe("USDC (6 decimals)", () => {
-      const D = 6
+      const D = QUOTE_DECIMALS
 
       it("100 USDC = 100_000_000 base units", () => {
          expect(parseTokenAmount("100", D).toString()).toBe("100000000")
@@ -53,7 +54,7 @@ describe("parseTokenAmount", () => {
    })
 
    describe("QQ (9 decimals)", () => {
-      const D = 9
+      const D = TOKEN_DECIMALS
 
       it("0.3 QQ avoids JS 0.3 * 1e9 = 299999999.99999994 bug", () => {
          expect(parseTokenAmount("0.3", D).toString()).toBe("300000000")

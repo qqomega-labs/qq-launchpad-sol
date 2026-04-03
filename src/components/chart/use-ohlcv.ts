@@ -9,7 +9,7 @@ interface UseOhlcvOptions {
 
 /**
  * @dev Polls GeckoTerminal for OHLCV data with exponential backoff on rate limit.
- * Uses a ref-based tick loop to avoid stale closures — params are read from
+ * Uses a ref-based tick loop to avoid stale closures - params are read from
  * paramsRef on every tick so timeframe switches are always reflected immediately
  * without recreating the effect or the scheduling closure.
  */

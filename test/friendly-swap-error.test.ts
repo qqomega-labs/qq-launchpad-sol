@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest"
-import { friendlySwapError } from "@/lib/errors"
+import { friendlySwapError, SWAP_ERROR } from "@/lib/errors"
+import { HELIUS_RPC_BASE } from "@/config/const"
 
 /**
  * @dev friendlySwapError sanitizes raw SDK/RPC error messages before rendering.
@@ -21,19 +22,19 @@ describe("friendlySwapError", () => {
    describe("wallet errors", () => {
       it("maps Phantom rejection", () => {
          expect(friendlySwapError("User rejected the request.", "fail"))
-            .toBe("Transaction cancelled")
+            .toBe(SWAP_ERROR.CANCELLED)
       })
 
       it("maps Solflare rejection", () => {
          // Solflare message doesn't contain "user rejected" - hits fallback.
          // To support it, we'd add "was rejected" to friendlySwapError.
          expect(friendlySwapError("User rejected the transaction", "fail"))
-            .toBe("Transaction cancelled")
+            .toBe(SWAP_ERROR.CANCELLED)
       })
 
       it("maps generic wallet rejection (case insensitive)", () => {
          expect(friendlySwapError("USER REJECTED REQUEST", "fail"))
-            .toBe("Transaction cancelled")
+            .toBe(SWAP_ERROR.CANCELLED)
       })
    })
 
@@ -42,56 +43,56 @@ describe("friendlySwapError", () => {
          expect(friendlySwapError(
             "Attempt to debit an account but found no record of a prior credit. insufficient lamports 0, need 5000",
             "fail"
-         )).toBe("Insufficient balance")
+         )).toBe(SWAP_ERROR.INSUFFICIENT_BALANCE)
       })
 
       it("maps insufficient token balance", () => {
          expect(friendlySwapError(
             "Error: insufficient funds for transfer",
             "fail"
-         )).toBe("Insufficient balance")
+         )).toBe(SWAP_ERROR.INSUFFICIENT_BALANCE)
       })
 
       it("maps expired blockhash", () => {
          expect(friendlySwapError(
             "TransactionExpiredBlockheightExceededError: Blockhash not found",
             "fail"
-         )).toBe("Transaction expired, please retry")
+         )).toBe(SWAP_ERROR.EXPIRED)
       })
 
       it("maps slippage exceeded (Meteora SDK)", () => {
          expect(friendlySwapError(
             "Slippage tolerance exceeded",
             "fail"
-         )).toBe("Slippage exceeded, try a higher tolerance")
+         )).toBe(SWAP_ERROR.SLIPPAGE)
       })
 
       it("maps exceeds desired limit (Jupiter/Anchor)", () => {
          expect(friendlySwapError(
             "Amount exceeds desired slippage limit",
             "fail"
-         )).toBe("Slippage exceeded, try a higher tolerance")
+         )).toBe(SWAP_ERROR.SLIPPAGE)
       })
 
       it("maps simulation failure", () => {
          expect(friendlySwapError(
             "Transaction simulation failed: Error processing Instruction 0: custom program error: 0x1",
             "fail"
-         )).toBe("Transaction simulation failed")
+         )).toBe(SWAP_ERROR.SIMULATION_FAILED)
       })
 
       it("maps missing token account", () => {
          expect(friendlySwapError(
             "Account does not exist or has no data: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
             "fail"
-         )).toBe("Token account not found")
+         )).toBe(SWAP_ERROR.ACCOUNT_NOT_FOUND)
       })
 
       it("maps account not found", () => {
          expect(friendlySwapError(
             "could not find account not found",
             "fail"
-         )).toBe("Token account not found")
+         )).toBe(SWAP_ERROR.ACCOUNT_NOT_FOUND)
       })
    })
 
@@ -100,14 +101,14 @@ describe("friendlySwapError", () => {
          expect(friendlySwapError(
             "Transaction confirmation timeout",
             "fail"
-         )).toBe("Network timeout, please retry")
+         )).toBe(SWAP_ERROR.TIMEOUT)
       })
 
       it("maps fetch timeout", () => {
          expect(friendlySwapError(
             "Request timed out after 30000ms",
             "fail"
-         )).toBe("Network timeout, please retry")
+         )).toBe(SWAP_ERROR.TIMEOUT)
       })
    })
 
@@ -127,7 +128,7 @@ describe("friendlySwapError", () => {
 
       it("never exposes RPC URLs with API keys", () => {
          vi.spyOn(console, "error").mockImplementation(() => {})
-         const raw = "failed to send transaction to https://mainnet.helius-rpc.com/?api-key=SECRET_KEY_123"
+         const raw = `failed to send transaction to ${HELIUS_RPC_BASE}?api-key=SECRET_KEY_123`
          const result = friendlySwapError(raw, "Transaction failed")
          expect(result).not.toContain("helius")
          expect(result).not.toContain("SECRET")
@@ -151,10 +152,10 @@ describe("friendlySwapError", () => {
       })
 
       it("handles simulation failure containing RPC URL (matched pattern)", () => {
-         const raw = "Transaction simulation failed at https://mainnet.helius-rpc.com/?api-key=SECRET"
+         const raw = `Transaction simulation failed at ${HELIUS_RPC_BASE}?api-key=SECRET`
          const result = friendlySwapError(raw, "fail")
          // Matches "simulation failed" pattern, so returns friendly string (not the raw URL)
-         expect(result).toBe("Transaction simulation failed")
+         expect(result).toBe(SWAP_ERROR.SIMULATION_FAILED)
          expect(result).not.toContain("SECRET")
       })
 

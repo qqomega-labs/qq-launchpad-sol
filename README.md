@@ -42,14 +42,11 @@ pnpm test:watch
 
 ## Environment Variables
 
-| Variable            | Description             | Default                               |
-| ------------------- | ----------------------- | ------------------------------------- |
-| `VITE_RPC_ENDPOINT` | Solana RPC endpoint URL | `https://api.mainnet-beta.solana.com` |
-
 Create a `.env` file at the project root:
 
 ```env
-VITE_RPC_ENDPOINT=https://mainnet.helius-rpc.com/?api-key=YOUR_KEY
+VITE_RPC_API_KEY=your-helius-api-key
+VITE_JUPITER_API_KEY=your-jupiter-api-key
 ```
 
 ## Key Constants
@@ -64,7 +61,7 @@ Defined in `src/config/const.ts`:
 
 ## Testing
 
-Vitest 4 with jsdom. **10 test files, 235 tests**, all pure-function unit tests (no mocks, no flaky renders).
+Vitest 4 with jsdom. **10 test files, 234 tests**, all pure-function unit tests (no mocks, no flaky renders).
 
 | Test file               | Tests | What it covers                                                               |
 | ----------------------- | ----: | ---------------------------------------------------------------------------- |

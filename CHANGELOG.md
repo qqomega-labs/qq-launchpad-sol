@@ -9,13 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Test suite** (`test/`, `vitest.config.ts`): added Vitest with jsdom, 10 test files, 235 tests
+- **Test suite** (`test/`, `vitest.config.ts`): added Vitest with jsdom, 10 test files, 234 tests
   covering all critical paths; extracted `friendlySwapError` to `src/lib/errors.ts` and exported
   `isValidTrade` for testability
    - `parse-token-amount` (18): float-to-BN precision for SOL/USDC/QQ, decimal truncation,
-     quick-amount presets
+     quick-amount presets; uses `TOKEN_DECIMALS`/`QUOTE_DECIMALS` constants
    - `friendly-swap-error` (21): SDK error sanitization, wallet rejections, on-chain errors,
-     info leakage prevention (RPC URLs, pool addresses, tx signatures)
+     info leakage prevention (RPC URLs, pool addresses, tx signatures); uses `SWAP_ERROR` constants
    - `is-valid-trade` (29): WebSocket message type guard, missing fields, type confusion attacks
    - `slippage-validation` (19): localStorage tamper protection, sandwich attack boundary values
    - `swap-input-validation` (25): regex sanitization, script injection, scientific notation
@@ -74,6 +74,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **RPC endpoint refactor** (`src/providers.tsx`, `src/config/const.ts`): removed `VITE_RPC_ENDPOINT`
+  env var; Helius base URL promoted to `HELIUS_RPC_BASE` constant; only `VITE_RPC_API_KEY` is
+  required at runtime -- endpoint composed as `${HELIUS_RPC_BASE}?api-key=${VITE_RPC_API_KEY}`;
+  `friendly-swap-error` test mock strings now reference `HELIUS_RPC_BASE` instead of hardcoded URL
+- **`SWAP_ERROR` constants extracted** (`src/lib/errors.ts`): friendly error strings moved from
+  inline return literals into an exported `SWAP_ERROR` const object; `friendlySwapError` now
+  references the constants; test assertions import and use `SWAP_ERROR` instead of string literals
+- **Test suite: `tsconfig.json` includes `test/`**: added `"test"` to `include` array so TypeScript
+  resolves `@/*` path aliases in test files
+- **`sphere-scoring` test cleaned up**: removed redundant `d.key !== "comp"` assertion that
+  TypeScript already enforces statically via `DimKey` union type
+- **`parse-token-amount` test uses `TOKEN_DECIMALS`/`QUOTE_DECIMALS`**: replaced hardcoded `9`/`6`
+  with imported constants from `@/config/const`
+- **`slippage-validation` test uses `DEFAULT_SLIPPAGE_BPS`**: replaced hardcoded `100` with the
+  imported constant for the "nothing stored" default behavior assertion
 - **Suspense skeleton fallbacks extracted**: moved inline fallback JSX from `launchpad.tsx` into
   dedicated components co-located with their lazy-loaded counterparts
   - `sphere/sphere-skeleton.tsx`: header row, dim chips, timeframe chips, circular sphere placeholder

@@ -12,10 +12,6 @@ describe("SCORE_DIMS integrity", () => {
       expect(SCORE_DIMS).toHaveLength(5)
    })
 
-   it("excludes 'comp' (QQ composite) from scoring dims", () => {
-      expect(SCORE_DIMS.every((d) => d.key !== "comp")).toBe(true)
-   })
-
    it("includes macro, fund, token, chain, tech", () => {
       const keys = SCORE_DIMS.map((d) => d.key).sort()
       expect(keys).toEqual(["chain", "fund", "macro", "tech", "token"])

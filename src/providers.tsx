@@ -2,18 +2,18 @@ import type { ReactNode } from "react"
 import { ConnectionProvider } from "@solana/wallet-adapter-react"
 import { UnifiedWalletProvider } from "@jup-ag/wallet-adapter"
 import { Toaster } from "sonner"
-import { COLORS } from "@/config/const"
+import { COLORS, HELIUS_RPC_BASE } from "@/config/const"
 
 /** @dev Wallet + UI providers wrapper. */
 export function Providers({ children }: { children: ReactNode }) {
-   const endpoint =
-      import.meta.env.VITE_RPC_ENDPOINT ||
-      (() => {
-         console.warn(
-            "[QQ] VITE_RPC_ENDPOINT not set - falling back to rate-limited public RPC. Set a dedicated endpoint in .env."
-         )
-         return "https://api.mainnet-beta.solana.com"
-      })()
+   const endpoint = (() => {
+      const apiKey = import.meta.env.VITE_RPC_API_KEY
+      if (apiKey) return `${HELIUS_RPC_BASE}?api-key=${apiKey}`
+      console.warn(
+         "[QQ] VITE_RPC_API_KEY not set - falling back to rate-limited public RPC. Set a Helius API key in .env."
+      )
+      return "https://api.mainnet-beta.solana.com"
+   })()
 
    return (
       <ConnectionProvider endpoint={endpoint}>

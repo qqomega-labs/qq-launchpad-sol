@@ -19,7 +19,7 @@ function loadSlippage(stored: string | null): number {
 describe("slippage localStorage validation", () => {
    describe("default behavior", () => {
       it("returns 100 bps (1%) when nothing stored", () => {
-         expect(loadSlippage(null)).toBe(100)
+         expect(loadSlippage(null)).toBe(DEFAULT_SLIPPAGE_BPS)
       })
 
       it("DEFAULT_SLIPPAGE_BPS is 100", () => {

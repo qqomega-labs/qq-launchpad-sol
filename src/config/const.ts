@@ -15,6 +15,8 @@ export const TOKEN_DECIMALS = 9
 export const QUOTE_DECIMALS = 6 // DBC quote token is USDC (6 decimals)
 export const GRADUATION_THRESHOLD_USDC = 20_000
 
+export const HELIUS_RPC_BASE = "https://mainnet.helius-rpc.com/"
+
 export const GT_BASE = "https://api.geckoterminal.com/api/v2"
 export const GT_POOL_ADDR = "FHRTNJD3p3fSyHovubo8oBvRaowVQfLVdzaSota11X1U"
 
