@@ -22,21 +22,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a flag to `true` in `const.ts` is the only change needed to re-enable a tab post-graduation
 
 ### Test suite (`test/`, `vitest.config.ts`): added Vitest with jsdom, 10 test files, 234 tests
-  covering all critical paths; extracted `friendlySwapError` to `src/lib/errors.ts` and exported
-  `isValidTrade` for testability
-   - `parse-token-amount` (18): float-to-BN precision for SOL/USDC/QQ, decimal truncation,
-     quick-amount presets; uses `TOKEN_DECIMALS`/`QUOTE_DECIMALS` constants
-   - `friendly-swap-error` (21): SDK error sanitization, wallet rejections, on-chain errors,
-     info leakage prevention (RPC URLs, pool addresses, tx signatures); uses `SWAP_ERROR` constants
-   - `is-valid-trade` (29): WebSocket message type guard, missing fields, type confusion attacks
-   - `slippage-validation` (19): localStorage tamper protection, sandwich attack boundary values
-   - `swap-input-validation` (25): regex sanitization, script injection, scientific notation
-   - `token-routing` (27): mint constants, DBC direct vs hybrid routing, decimal registry
-   - `tokenomics` (12): supply allocation math, remaining seats formula integrity
-   - `csp` (19): CSP meta tag validation, no unsafe-eval, wallet domains, base-uri/form-action
-   - `utils` (27): formatPrice boundaries, formatNumber, truncateAddress, lamports conversion
-   - `sphere-scoring` (58): TIMEFRAMES weight sums, composite scoring, qqScore cap, rankAll
-     ordering, SCORE_DIMS integrity, RAW asset data validation
+
+covering all critical paths; extracted `friendlySwapError` to `src/lib/errors.ts` and exported
+`isValidTrade` for testability
+
+- `parse-token-amount` (18): float-to-BN precision for SOL/USDC/QQ, decimal truncation,
+  quick-amount presets; uses `TOKEN_DECIMALS`/`QUOTE_DECIMALS` constants
+- `friendly-swap-error` (21): SDK error sanitization, wallet rejections, on-chain errors,
+  info leakage prevention (RPC URLs, pool addresses, tx signatures); uses `SWAP_ERROR` constants
+- `is-valid-trade` (29): WebSocket message type guard, missing fields, type confusion attacks
+- `slippage-validation` (19): localStorage tamper protection, sandwich attack boundary values
+- `swap-input-validation` (25): regex sanitization, script injection, scientific notation
+- `token-routing` (27): mint constants, DBC direct vs hybrid routing, decimal registry
+- `tokenomics` (12): supply allocation math, remaining seats formula integrity
+- `csp` (19): CSP meta tag validation, no unsafe-eval, wallet domains, base-uri/form-action
+- `utils` (27): formatPrice boundaries, formatNumber, truncateAddress, lamports conversion
+- `sphere-scoring` (58): TIMEFRAMES weight sums, composite scoring, qqScore cap, rankAll
+  ordering, SCORE_DIMS integrity, RAW asset data validation
 - **Full SEO + Open Graph support** (`index.html`): added `keywords`, `author`, `robots` meta tags,
   `<link rel="canonical">` to `https://launchpad.qqomega.xyz/`, Open Graph tags (`og:type`,
   `og:site_name`, `og:title`, `og:description`, `og:url`, `og:image` 1200x630, `og:locale`),
@@ -140,9 +142,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Suspense skeleton fallbacks** (`app.tsx`): all three lazy-loaded panels now show shaped
   `Skeleton` placeholders instead of blank/null fallbacks during code-split load
-   - `QQHexSphere`: header row, dim chips, timeframe chips, and circular sphere skeleton
-   - `ChartPanel`: timeframe tab row + chart area skeleton matching the panel's actual layout
-   - `DataTabs`: header skeleton + 8 row skeletons matching the `TxHistory` table structure
+  - `QQHexSphere`: header row, dim chips, timeframe chips, and circular sphere skeleton
+  - `ChartPanel`: timeframe tab row + chart area skeleton matching the panel's actual layout
+  - `DataTabs`: header skeleton + 8 row skeletons matching the `TxHistory` table structure
 - **Timeframe scoring system**: `TimeframeKey` type (`daily`, `weekly`, `monthly`, `yearly`),
   `Timeframe` interface, and `TIMEFRAMES` constant in `sphere-data.ts` with per-dimension weights
   from QQ Omega architecture; order is `1Y → 1M → 1W → 1D` (long-term first)
@@ -183,7 +185,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `swap-panel.tsx`, `data-tabs.tsx` aligned from flat `p-5`; sphere header sections changed from
   `px-3 md:px-4 pt-2 md:pt-3.5` to `px-4 md:px-5 pt-4 md:pt-5`
 - **Panel header text standard**: all widget section labels now use `text-sm font-semibold
-  text-white`; "Bonding Curve" changed from `font-medium text-text-secondary`; "QQ Score preview"
+text-white`; "Bonding Curve" changed from `font-medium text-text-secondary`; "QQ Score preview"
   changed from `font-mono font-bold text-sm md:text-base` — `font-mono` and `md:text-base` scaling
   removed; "drag to explore" hint standardized from `text-[10px] md:text-xs font-mono` to `text-xs`
 - **Sphere panel label hierarchy**: "QQ Score preview" bumped from `text-sm` to `text-base` —
