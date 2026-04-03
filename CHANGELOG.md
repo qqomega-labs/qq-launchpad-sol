@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-04-03 (QQAlpha)
+
+### Changed
+
+- **License**: switched from proprietary to MIT + Trademark and Brand Assets notice;
+  `package.json` `license` field updated to `"MIT"`
+- **Version**: bumped to `0.1.0` (first release)
+- **Deploy scripts** (`package.json`): `deploy` and `deploy:preview` now run `pnpm test`
+  before build, blocking deploys on test failure
+
+### Security
+
+- **`Strict-Transport-Security` header** (`public/_headers`): added HSTS with
+  `max-age=63072000; includeSubDomains; preload`
+- **`Permissions-Policy` header** (`public/_headers`): restricted `camera=()`,
+  `microphone=()`, `geolocation=()`
+- **gitleaks**: added `.gitleaks.toml` config and pre-commit hook to block secrets
+  from being committed
+- **`.claude/` gitignored**: prevents AI config from being tracked
+
 ## [0.1.0] - 2026-04-03 (QQAlpha)
 
 ### Added
