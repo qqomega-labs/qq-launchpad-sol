@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Cloudflare Workers deployment** (`wrangler.toml`): static assets config with
+  `not_found_handling = "single-page-application"` for client-side routing; build
+  output served from `./dist`
+- **Security headers** (`public/_headers`): `X-Content-Type-Options: nosniff`,
+  `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`
+- **Deploy scripts** (`package.json`): `deploy` and `deploy:preview` scripts using
+  `wrangler deploy`; `wrangler` added as devDependency
+- **`.dev.vars`** template for local Wrangler development with `VITE_RPC_API_KEY`
+  and `VITE_JUPITER_API_KEY` placeholders; excluded from git via `.gitignore`
+
+## [Previous]
+
+### Added
+
 - **`src/lib/dexscreener.ts`** (new): `fetchSpotPrice()` hits the DexScreener public API
   (no key, ~300 req/min) and returns the current USD spot price for the QQ pool; used as
   a live fallback when GeckoTerminal is rate-limited to keep the last candle's close fresh;
