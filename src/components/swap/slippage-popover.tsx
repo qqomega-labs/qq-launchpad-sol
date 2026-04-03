@@ -95,7 +95,7 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
                {value > 200 && (
                   <p className={cn("mt-1.5 text-xs flex items-center gap-1", COLORS.tw.warningText)}>
                      <AlertTriangle size={11} />
-                     High slippage — sandwich attack risk
+                     High slippage: sandwich attack risk
                   </p>
                )}
             </div>

@@ -9,7 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Test suite** (`test/`, `vitest.config.ts`): added Vitest with jsdom, 10 test files, 234 tests
+- **`src/lib/dexscreener.ts`** (new): `fetchSpotPrice()` hits the DexScreener public API
+  (no key, ~300 req/min) and returns the current USD spot price for the QQ pool; used as
+  a live fallback when GeckoTerminal is rate-limited to keep the last candle's close fresh;
+  guarded with a 5s `AbortController` timeout and rejects zero/negative/NaN prices
+- **`FEATURES` flags** (`src/config/const.ts`): boolean flags to enable/disable sections
+  without redeploying; `FEATURES.CHART` (default `true`) guards the chart lazy import and
+  polling; `FEATURES.LIVE_TRADES` and `FEATURES.TOP_HOLDERS` (both `false` pre-graduation)
+  gate the Jupiter WebSocket feed and on-chain holder data tabs in `data-tabs.tsx`
+- **`data-tabs.tsx` driven by feature flags**: replaced commented-out dead code with live
+  conditional rendering; tab bar appears automatically only when 2+ tabs are active; setting
+  a flag to `true` in `const.ts` is the only change needed to re-enable a tab post-graduation
+
+### Test suite (`test/`, `vitest.config.ts`): added Vitest with jsdom, 10 test files, 234 tests
   covering all critical paths; extracted `friendlySwapError` to `src/lib/errors.ts` and exported
   `isValidTrade` for testability
    - `parse-token-amount` (18): float-to-BN precision for SOL/USDC/QQ, decimal truncation,
@@ -74,6 +86,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Chart polling hardened** (`src/lib/gecko.ts`, `src/components/chart/use-ohlcv.ts`):
+  - GeckoTerminal `pollMs` raised to candle-formation intervals (1m: 30s, 5m/15m: 60s,
+    1h: 2min, 4h/1D: 5min) to stop burning free-tier quota
+  - Module-level 3s throttle prevents concurrent callers (React Strict Mode double-mounts,
+    rapid timeframe switches) from bypassing the rate limit gate; slot claimed before `await`
+    to close the race condition
+  - In-memory candle cache: first visit fetches 300 candles, subsequent polls fetch only 5
+    (tail merge); timeframe switch back to a visited tab costs 0 requests
+  - localStorage persistence: candles survive page reload; schema-versioned (`v: 1`),
+    per-candle shape validation (`isValidCandle`), availability probed once at module init
+    (handles iOS WebViews and Safari private mode), corrupted entries removed on read,
+    capped at 300 entries on write; stale entries (>4h) trigger a 20-candle catch-up fetch
+  - DexScreener fallback wired in `use-ohlcv.ts`: on `RATE_LIMITED` patches last candle
+    close with spot price so the chart stays live; `RATE_LIMITED` always thrown (never
+    returns stale data silently) so exponential backoff applies correctly
+  - GT response shape guarded with optional chaining + per-row validation before mapping
 - **RPC endpoint refactor** (`src/providers.tsx`, `src/config/const.ts`): removed `VITE_RPC_ENDPOINT`
   env var; Helius base URL promoted to `HELIUS_RPC_BASE` constant; only `VITE_RPC_API_KEY` is
   required at runtime -- endpoint composed as `${HELIUS_RPC_BASE}?api-key=${VITE_RPC_API_KEY}`;

@@ -18,7 +18,7 @@ export function ChartPanel() {
       pollMs: tf.pollMs,
    })
 
-   // Show skeleton until we have actual data — prevents blank canvas on 429 / first load
+   // Show skeleton until we have actual data - prevents blank canvas on 429 / first load
    const noData = candles.length === 0
 
    return (
@@ -39,7 +39,7 @@ export function ChartPanel() {
                   <Skeleton className="w-full h-full" />
                   {!loading && (
                      <span className="absolute text-xs text-text-muted font-mono animate-pulse">
-                        Rate limited — retrying…
+                        Not available, retrying…
                      </span>
                   )}
                </div>

@@ -248,7 +248,7 @@ export function SwapPanel() {
             {routeLabel() && <p className="text-text-muted text-xs text-center">{routeLabel()}</p>}
             {showPriceImpact && (
                <p className={cn("text-xs text-center", priceImpact >= 5 ? "text-red" : COLORS.tw.fomoSoft)}>
-                  Price impact: {priceImpact.toFixed(2)}%{priceImpact >= 5 && " — High impact"}
+                  Price impact: {priceImpact.toFixed(2)}%{priceImpact >= 5 && " (High impact)"}
                </p>
             )}
          </div>

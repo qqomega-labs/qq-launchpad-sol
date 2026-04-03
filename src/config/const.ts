@@ -43,17 +43,24 @@ export const AUTHOR = {
 } as const
 
 export const TIMEFRAMES = [
-   { label: "1m", timeframe: "minute" as const, aggregate: 1, pollMs: 10_000 },
-   { label: "5m", timeframe: "minute" as const, aggregate: 5, pollMs: 15_000 },
-   { label: "15m", timeframe: "minute" as const, aggregate: 15, pollMs: 30_000 },
-   { label: "1h", timeframe: "hour" as const, aggregate: 1, pollMs: 30_000 },
-   { label: "4h", timeframe: "hour" as const, aggregate: 4, pollMs: 60_000 },
-   { label: "1D", timeframe: "day" as const, aggregate: 1, pollMs: 60_000 },
+   { label: "1m", timeframe: "minute" as const, aggregate: 1, pollMs: 30_000 },
+   { label: "5m", timeframe: "minute" as const, aggregate: 5, pollMs: 60_000 },
+   { label: "15m", timeframe: "minute" as const, aggregate: 15, pollMs: 60_000 },
+   { label: "1h", timeframe: "hour" as const, aggregate: 1, pollMs: 120_000 },
+   { label: "4h", timeframe: "hour" as const, aggregate: 4, pollMs: 300_000 },
+   { label: "1D", timeframe: "day" as const, aggregate: 1, pollMs: 300_000 },
 ] as const
 
 export const DEFAULT_SLIPPAGE_BPS = 100 // 1%
 
 export const SLIPPAGE_STORAGE_KEY = "qq-slippage"
+
+// Feature flags: set to false to disable a section entirely (no lazy load, no polling)
+export const FEATURES = {
+   CHART: true,
+   LIVE_TRADES: false, // re-enable post-graduation (Jupiter WebSocket feed)
+   TOP_HOLDERS: false, // re-enable post-graduation (on-chain holder data)
+} as const
 
 // PRIVATE - Design tokens (raw values for JS contexts where Tailwind classes aren't usable)
 

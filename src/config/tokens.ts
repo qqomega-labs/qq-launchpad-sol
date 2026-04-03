@@ -11,7 +11,7 @@ export interface SupportedToken {
 }
 
 /**
- * @dev Canonical wrapped SOL mint — immutable Solana protocol constant.
+ * @dev Canonical wrapped SOL mint: immutable Solana protocol constant.
  * Equivalent to NATIVE_MINT from @solana/spl-token (not imported to avoid
  * module-level Buffer dependency triggering Vite 8 externalization).
  */

@@ -5,7 +5,7 @@ import { PublicKey } from "@solana/web3.js"
 import { SOL_MINT, USDC_MINT, USDT_MINT, QQ_MINT } from "@/config/tokens"
 
 /**
- * @dev Canonical SPL Token Program ID — immutable Solana protocol constant.
+ * @dev Canonical SPL Token Program ID: immutable Solana protocol constant.
  * Equivalent to TOKEN_PROGRAM_ID from @solana/spl-token (not imported to avoid
  * module-level Buffer dependency triggering Vite 8 externalization).
  */
@@ -60,7 +60,7 @@ export function useWalletBalances(): WalletBalances {
 
             setBalances(result)
          } catch {
-            // silently ignore — balance display is non-critical
+            // silently ignore: balance display is non-critical
          }
       }
 

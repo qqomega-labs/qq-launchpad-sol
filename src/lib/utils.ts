@@ -52,7 +52,7 @@ export function solToLamports(sol: number): number {
 
 /**
  * @dev Convert a human-readable token amount string to BN without floating-point arithmetic.
- * Parses the decimal string directly — avoids JS float precision issues like 0.1 * 1e9 = 100000000.00000001.
+ * Parses the decimal string directly: avoids JS float precision issues like 0.1 * 1e9 = 100000000.00000001.
  */
 export function parseTokenAmount(amount: string, decimals: number): BN {
    const [intPart = "0", fracPart = ""] = amount.split(".")

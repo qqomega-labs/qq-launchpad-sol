@@ -7,8 +7,11 @@ import { Footer } from "@/components/footer"
 import { SphereSkeleton } from "@/components/sphere/sphere-skeleton"
 import { ChartSkeleton } from "@/components/chart/chart-skeleton"
 import { DataSkeleton } from "@/components/data/data-skeleton"
+import { FEATURES } from "@/config/const"
 
 const QQHexSphere = lazy(() => import("@/components/sphere/qq-hex-sphere").then((m) => ({ default: m.QQHexSphere })))
+// Lazy import is guarded by FEATURES.CHART; when false the module is never loaded
+// and useOhlcv never starts polling
 const ChartPanel = lazy(() => import("@/components/chart/chart-panel").then((m) => ({ default: m.ChartPanel })))
 const DataTabs = lazy(() => import("@/components/data/data-tabs").then((m) => ({ default: m.DataTabs })))
 
@@ -48,11 +51,13 @@ export function LaunchpadPage() {
 
                <div className="accent-divider my-6" />
 
-               <div className="animate-fade-up" style={{ animationDelay: "0.3s" }}>
-                  <Suspense fallback={<ChartSkeleton />}>
-                     <ChartPanel />
-                  </Suspense>
-               </div>
+               {FEATURES.CHART && (
+                  <div className="animate-fade-up" style={{ animationDelay: "0.3s" }}>
+                     <Suspense fallback={<ChartSkeleton />}>
+                        <ChartPanel />
+                     </Suspense>
+                  </div>
+               )}
 
                <div className="mt-6 animate-fade-up" style={{ animationDelay: "0.4s" }}>
                   <Suspense fallback={<DataSkeleton />}>
