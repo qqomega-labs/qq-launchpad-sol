@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
 import path from "path"
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 /**
  * @dev Appends `globalThis.Buffer = Buffer` to the buffer module itself, so the
  * polyfill runs the moment any chunk first imports buffer - not in the app entry.
@@ -21,7 +23,7 @@ function bufferGlobalPlugin(): Plugin {
 }
 
 export default defineConfig({
-   plugins: [react(), tailwindcss(), bufferGlobalPlugin()],
+   plugins: [react(), tailwindcss(), bufferGlobalPlugin(), cloudflare()],
    server: {
       proxy: {
          "/gt-proxy": {
