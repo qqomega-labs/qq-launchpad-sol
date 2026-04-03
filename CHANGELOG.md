@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2026-04-03 (QQAlpha)
+## [0.1.0] - 2026-04-03 (QQAlpha)
 
 ### Added
 
@@ -18,11 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `wrangler deploy`; `wrangler` added as devDependency
 - **`.dev.vars`** template for local Wrangler development with `VITE_RPC_API_KEY`
   and `VITE_JUPITER_API_KEY` placeholders; excluded from git via `.gitignore`
-
-## [Previous]
-
-### Added
-
 - **`src/lib/dexscreener.ts`** (new): `fetchSpotPrice()` hits the DexScreener public API
   (no key, ~300 req/min) and returns the current USD spot price for the QQ pool; used as
   a live fallback when GeckoTerminal is rate-limited to keep the last candle's close fresh;
@@ -150,7 +145,7 @@ covering all critical paths; extracted `friendlySwapError` to `src/lib/errors.ts
   - `header.tsx` refactored into `header/` folder: extracted `brand-icons.tsx` (SVG brand icons +
     `socialLinks` array) and `header.tsx` (wallet connect + navigation)
 
-## [Previous] - 2026-04-02 (QQAlpha)
+## [Unreleased] - 2026-04-02 (QQAlpha)
 
 ### Added
 
