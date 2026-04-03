@@ -94,14 +94,6 @@ A custom Vite plugin (`bufferGlobalPlugin`) injects the `Buffer` polyfill direct
 
 Path alias `@/` maps to `src/` for clean imports.
 
-## Responsive Layout
-
-Mobile-first design:
-
-- **Desktop** (> 1024px): Hero and Swap panels side-by-side
-- **Mobile**: Vertically stacked, full-width components
-- Touch targets minimum 44x44px
-
 ## License
 
-Proprietary - Copyright © 2026 QQ Omega Labs. All rights reserved. See [LICENSE](LICENSE) for details.
+Copyright © 2026 QQ Omega Labs. All rights reserved. See [LICENSE](LICENSE) for details.
