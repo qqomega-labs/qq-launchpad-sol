@@ -83,11 +83,7 @@ function readStorage(cacheKey: string): { candles: Candle[]; stale: boolean } | 
       const entry = JSON.parse(raw) as StoredEntry
 
       // Reject entries from a different schema version or missing required fields
-      if (
-         entry.v !== STORAGE_VERSION ||
-         !Array.isArray(entry.candles) ||
-         typeof entry.savedAt !== "number"
-      ) {
+      if (entry.v !== STORAGE_VERSION || !Array.isArray(entry.candles) || typeof entry.savedAt !== "number") {
          localStorage.removeItem(storageKey) // don't keep un-parseable data
          return null
       }
@@ -105,7 +101,11 @@ function readStorage(cacheKey: string): { candles: Candle[]; stale: boolean } | 
       }
    } catch {
       // JSON.parse failed or some other storage error; remove the broken entry
-      try { localStorage.removeItem(storageKey) } catch { /* ignore */ }
+      try {
+         localStorage.removeItem(storageKey)
+      } catch {
+         /* ignore */
+      }
       return null
    }
 }
@@ -114,9 +114,7 @@ function writeStorage(cacheKey: string, candles: Candle[]): void {
    if (!storageAvailable) return
    try {
       // Keep only the most recent MAX_STORED_CANDLES to bound storage size
-      const toStore = candles.length > MAX_STORED_CANDLES
-         ? candles.slice(-MAX_STORED_CANDLES)
-         : candles
+      const toStore = candles.length > MAX_STORED_CANDLES ? candles.slice(-MAX_STORED_CANDLES) : candles
       const entry: StoredEntry = { v: STORAGE_VERSION, candles: toStore, savedAt: Date.now() }
       localStorage.setItem(STORAGE_KEY_PREFIX + cacheKey, JSON.stringify(entry))
    } catch {
@@ -166,10 +164,7 @@ function mergeCandles(existing: Candle[], incoming: Candle[]): Candle[] {
  * cached data silently would reset the backoff and cause immediate re-polling
  * against a rate-limited API.
  */
-export async function fetchOhlcv(
-   timeframe: "minute" | "hour" | "day",
-   aggregate: number
-): Promise<Candle[]> {
+export async function fetchOhlcv(timeframe: "minute" | "hour" | "day", aggregate: number): Promise<Candle[]> {
    const cacheKey = `${timeframe}-${aggregate}`
 
    // --- resolve cache state ---

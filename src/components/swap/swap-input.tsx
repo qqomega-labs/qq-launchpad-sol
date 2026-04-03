@@ -62,7 +62,9 @@ export function SwapInput({
                {showBalance && (
                   <span className="flex items-center gap-1 text-text-muted text-xs">
                      <Wallet size={10} className="shrink-0" />
-                     <span>{formatBalance(balance)} {token?.symbol}</span>
+                     <span>
+                        {formatBalance(balance)} {token?.symbol}
+                     </span>
                   </span>
                )}
                {showActions && (

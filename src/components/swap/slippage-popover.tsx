@@ -58,11 +58,13 @@ export function SlippagePopover({ value, onChange }: SlippagePopoverProps) {
          </button>
 
          {open && (
-            <div className={cn(
-               "absolute right-0 bottom-full mb-2",
-               "glass-panel rounded-[8px] p-3 w-56 z-10",
-               "max-h-[50vh] overflow-y-auto"
-            )}>
+            <div
+               className={cn(
+                  "absolute right-0 bottom-full mb-2",
+                  "glass-panel rounded-[8px] p-3 w-56 z-10",
+                  "max-h-[50vh] overflow-y-auto"
+               )}
+            >
                <p className="text-text-secondary text-xs mb-2">Slippage Tolerance</p>
                <div className="flex gap-1.5 mb-2">
                   {PRESETS.map((bps) => (

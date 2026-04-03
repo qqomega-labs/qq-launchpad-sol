@@ -19,11 +19,7 @@ export function QuickAmounts({ amounts, onSelect, onMax }: QuickAmountsProps) {
    return (
       <div className="flex gap-2 mt-2">
          {amounts.map((amt) => (
-            <button
-               key={amt}
-               onClick={() => onSelect(amt)}
-               className={cn(btnClass, "font-mono")}
-            >
+            <button key={amt} onClick={() => onSelect(amt)} className={cn(btnClass, "font-mono")}>
                {amt}
             </button>
          ))}

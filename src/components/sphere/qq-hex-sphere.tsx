@@ -16,8 +16,7 @@ export function QQHexSphere() {
    const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeKey>("yearly")
    const [selected, setSelected] = useState<number | null>(null)
 
-   const { rot, sphereContainerRef, onDown, onMove, onUp, onSphereEnter, onSphereLeave, hasMoved } =
-      useSphereRotation()
+   const { rot, sphereContainerRef, onDown, onMove, onUp, onSphereEnter, onSphereLeave, hasMoved } = useSphereRotation()
 
    const ranked = rankAll(sortKey)
    const sphere = fibSphere(TOTAL)
@@ -25,7 +24,7 @@ export function QQHexSphere() {
    // Tighter sphere for side-by-side layout
    const sphereR = 190
    const angularSep = Math.sqrt((4 * Math.PI) / TOTAL)
-   const hexR = sphereR * angularSep * 0.70
+   const hexR = sphereR * angularSep * 0.7
    const cx = 300
    const cy = 260
 

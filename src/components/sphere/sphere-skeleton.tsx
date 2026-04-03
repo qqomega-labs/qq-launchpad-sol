@@ -9,10 +9,14 @@ export function SphereSkeleton() {
             <Skeleton className="h-4 w-16" />
          </div>
          <div className="flex gap-1.5 flex-wrap">
-            {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-6 w-14" />)}
+            {Array.from({ length: 6 }).map((_, i) => (
+               <Skeleton key={i} className="h-6 w-14" />
+            ))}
          </div>
          <div className="flex gap-1.5 flex-wrap">
-            {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-6 w-10" />)}
+            {Array.from({ length: 4 }).map((_, i) => (
+               <Skeleton key={i} className="h-6 w-10" />
+            ))}
          </div>
          <Skeleton className="flex-1 rounded-full" />
       </div>

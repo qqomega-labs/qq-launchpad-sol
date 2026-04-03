@@ -35,10 +35,7 @@ export function HeroStat({ value, label, loading = false, color = "default" }: H
                )}
             />
          )}
-         <span className={cn(
-            "text-text-muted text-[10px] md:text-xs",
-            "mt-1 uppercase tracking-[0.15em] font-medium"
-         )}>
+         <span className={cn("text-text-muted text-[10px] md:text-xs", "mt-1 uppercase tracking-[0.15em] font-medium")}>
             {label}
          </span>
       </div>

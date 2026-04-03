@@ -21,102 +21,87 @@ describe("friendlySwapError", () => {
 
    describe("wallet errors", () => {
       it("maps Phantom rejection", () => {
-         expect(friendlySwapError("User rejected the request.", "fail"))
-            .toBe(SWAP_ERROR.CANCELLED)
+         expect(friendlySwapError("User rejected the request.", "fail")).toBe(SWAP_ERROR.CANCELLED)
       })
 
       it("maps Solflare rejection", () => {
          // Solflare message doesn't contain "user rejected" - hits fallback.
          // To support it, we'd add "was rejected" to friendlySwapError.
-         expect(friendlySwapError("User rejected the transaction", "fail"))
-            .toBe(SWAP_ERROR.CANCELLED)
+         expect(friendlySwapError("User rejected the transaction", "fail")).toBe(SWAP_ERROR.CANCELLED)
       })
 
       it("maps generic wallet rejection (case insensitive)", () => {
-         expect(friendlySwapError("USER REJECTED REQUEST", "fail"))
-            .toBe(SWAP_ERROR.CANCELLED)
+         expect(friendlySwapError("USER REJECTED REQUEST", "fail")).toBe(SWAP_ERROR.CANCELLED)
       })
    })
 
    describe("on-chain errors", () => {
       it("maps insufficient lamports", () => {
-         expect(friendlySwapError(
-            "Attempt to debit an account but found no record of a prior credit. insufficient lamports 0, need 5000",
-            "fail"
-         )).toBe(SWAP_ERROR.INSUFFICIENT_BALANCE)
+         expect(
+            friendlySwapError(
+               "Attempt to debit an account but found no record of a prior credit. insufficient lamports 0, need 5000",
+               "fail"
+            )
+         ).toBe(SWAP_ERROR.INSUFFICIENT_BALANCE)
       })
 
       it("maps insufficient token balance", () => {
-         expect(friendlySwapError(
-            "Error: insufficient funds for transfer",
-            "fail"
-         )).toBe(SWAP_ERROR.INSUFFICIENT_BALANCE)
+         expect(friendlySwapError("Error: insufficient funds for transfer", "fail")).toBe(
+            SWAP_ERROR.INSUFFICIENT_BALANCE
+         )
       })
 
       it("maps expired blockhash", () => {
-         expect(friendlySwapError(
-            "TransactionExpiredBlockheightExceededError: Blockhash not found",
-            "fail"
-         )).toBe(SWAP_ERROR.EXPIRED)
+         expect(friendlySwapError("TransactionExpiredBlockheightExceededError: Blockhash not found", "fail")).toBe(
+            SWAP_ERROR.EXPIRED
+         )
       })
 
       it("maps slippage exceeded (Meteora SDK)", () => {
-         expect(friendlySwapError(
-            "Slippage tolerance exceeded",
-            "fail"
-         )).toBe(SWAP_ERROR.SLIPPAGE)
+         expect(friendlySwapError("Slippage tolerance exceeded", "fail")).toBe(SWAP_ERROR.SLIPPAGE)
       })
 
       it("maps exceeds desired limit (Jupiter/Anchor)", () => {
-         expect(friendlySwapError(
-            "Amount exceeds desired slippage limit",
-            "fail"
-         )).toBe(SWAP_ERROR.SLIPPAGE)
+         expect(friendlySwapError("Amount exceeds desired slippage limit", "fail")).toBe(SWAP_ERROR.SLIPPAGE)
       })
 
       it("maps simulation failure", () => {
-         expect(friendlySwapError(
-            "Transaction simulation failed: Error processing Instruction 0: custom program error: 0x1",
-            "fail"
-         )).toBe(SWAP_ERROR.SIMULATION_FAILED)
+         expect(
+            friendlySwapError(
+               "Transaction simulation failed: Error processing Instruction 0: custom program error: 0x1",
+               "fail"
+            )
+         ).toBe(SWAP_ERROR.SIMULATION_FAILED)
       })
 
       it("maps missing token account", () => {
-         expect(friendlySwapError(
-            "Account does not exist or has no data: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-            "fail"
-         )).toBe(SWAP_ERROR.ACCOUNT_NOT_FOUND)
+         expect(
+            friendlySwapError(
+               "Account does not exist or has no data: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+               "fail"
+            )
+         ).toBe(SWAP_ERROR.ACCOUNT_NOT_FOUND)
       })
 
       it("maps account not found", () => {
-         expect(friendlySwapError(
-            "could not find account not found",
-            "fail"
-         )).toBe(SWAP_ERROR.ACCOUNT_NOT_FOUND)
+         expect(friendlySwapError("could not find account not found", "fail")).toBe(SWAP_ERROR.ACCOUNT_NOT_FOUND)
       })
    })
 
    describe("network errors", () => {
       it("maps RPC timeout", () => {
-         expect(friendlySwapError(
-            "Transaction confirmation timeout",
-            "fail"
-         )).toBe(SWAP_ERROR.TIMEOUT)
+         expect(friendlySwapError("Transaction confirmation timeout", "fail")).toBe(SWAP_ERROR.TIMEOUT)
       })
 
       it("maps fetch timeout", () => {
-         expect(friendlySwapError(
-            "Request timed out after 30000ms",
-            "fail"
-         )).toBe(SWAP_ERROR.TIMEOUT)
+         expect(friendlySwapError("Request timed out after 30000ms", "fail")).toBe(SWAP_ERROR.TIMEOUT)
       })
    })
 
    describe("fallback and info leakage prevention", () => {
       it("returns fallback for unrecognized errors", () => {
          vi.spyOn(console, "error").mockImplementation(() => {})
-         expect(friendlySwapError("some unknown error 0xdeadbeef", "Transaction failed"))
-            .toBe("Transaction failed")
+         expect(friendlySwapError("some unknown error 0xdeadbeef", "Transaction failed")).toBe("Transaction failed")
       })
 
       it("logs unrecognized errors to console for debugging", () => {

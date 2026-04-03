@@ -47,11 +47,13 @@ export function TokenSelector({ selectedMint, onSelect, excludeMint }: TokenSele
          </button>
 
          {open && (
-            <div className={cn(
-               "absolute right-0 top-full mt-1",
-               "glass-panel rounded-[8px] p-1.5 w-44 z-20",
-               "max-h-[50vh] overflow-y-auto"
-            )}>
+            <div
+               className={cn(
+                  "absolute right-0 top-full mt-1",
+                  "glass-panel rounded-[8px] p-1.5 w-44 z-20",
+                  "max-h-[50vh] overflow-y-auto"
+               )}
+            >
                {availableTokens.map((mint) => {
                   const t = TOKENS[mint]
                   const isActive = mint === selectedMint

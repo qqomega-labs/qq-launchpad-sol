@@ -66,8 +66,15 @@ describe("TIMEFRAMES weight integrity", () => {
 
 describe("composite", () => {
    const mockAsset: RawAsset = {
-      s: "TEST", n: "Test", cat: "sov", note: "",
-      macro: 80, fund: 70, token: 60, chain: 50, tech: 40,
+      s: "TEST",
+      n: "Test",
+      cat: "sov",
+      note: "",
+      macro: 80,
+      fund: 70,
+      token: 60,
+      chain: 50,
+      tech: 40,
    }
 
    it("calculates weighted sum using default weights", () => {
@@ -79,7 +86,8 @@ describe("composite", () => {
    it("calculates with yearly timeframe weights", () => {
       const result = composite(mockAsset, "yearly")
       const y = TIMEFRAMES.find((t) => t.key === "yearly")!
-      const expected = 80 * y.weights.macro + 70 * y.weights.fund + 60 * y.weights.token + 50 * y.weights.chain + 40 * y.weights.tech
+      const expected =
+         80 * y.weights.macro + 70 * y.weights.fund + 60 * y.weights.token + 50 * y.weights.chain + 40 * y.weights.tech
       expect(result).toBeCloseTo(expected, 10)
    })
 
@@ -89,7 +97,17 @@ describe("composite", () => {
    })
 
    it("handles all-100 scores", () => {
-      const max: RawAsset = { s: "M", n: "M", cat: "sov", note: "", macro: 100, fund: 100, token: 100, chain: 100, tech: 100 }
+      const max: RawAsset = {
+         s: "M",
+         n: "M",
+         cat: "sov",
+         note: "",
+         macro: 100,
+         fund: 100,
+         token: 100,
+         chain: 100,
+         tech: 100,
+      }
       expect(composite(max)).toBeCloseTo(100, 10) // weights sum to 1.0, so max composite = 100
    })
 })

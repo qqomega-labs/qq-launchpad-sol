@@ -19,8 +19,8 @@ export function PartialExecutionBanner({ partialExecution, loading, onRetry, onD
             <div className="flex-1">
                <p className={cn(COLORS.tw.warningText, "font-medium mb-1")}>Step 1 complete, step 2 failed</p>
                <p className="text-text-muted mb-2">
-                  You received ~{(Number(partialExecution.estimatedUsdcAmount.toString()) / 1e6).toFixed(2)} USDC.
-                  Retry to complete the swap.
+                  You received ~{(Number(partialExecution.estimatedUsdcAmount.toString()) / 1e6).toFixed(2)} USDC. Retry
+                  to complete the swap.
                </p>
                <div className="flex gap-2">
                   <button
