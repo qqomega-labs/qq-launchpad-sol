@@ -1,13 +1,29 @@
 import { useState } from "react"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
-import { VersionedTransaction } from "@solana/web3.js"
+import { TransactionMessage, VersionedTransaction } from "@solana/web3.js"
 import { Buffer } from "buffer"
 import BN from "bn.js"
 import { POOL_ADDRESS } from "@/config/const"
 import { friendlySwapError } from "@/lib/errors"
-import { isDirectPath, isQQ, USDC_MINT } from "@/config/tokens"
+import { isDirectPath, isQQ, QQ_MINT, USDC_MINT } from "@/config/tokens"
+import { fetchSplBalance } from "@/lib/solana"
 import { fetchJupiterQuote, fetchJupiterSwapTx } from "@/lib/jupiter"
 import type { JupiterQuoteResponse } from "@/lib/jupiter"
+
+/**
+ * @dev Known program IDs that Jupiter swap transactions may invoke.
+ * Any program outside this set is rejected before signing.
+ */
+const JUPITER_ALLOWED_PROGRAMS = new Set([
+   "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4", // Jupiter v6 aggregator
+   "JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB", // Jupiter v4 (legacy routes)
+   "JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uN9oJ", // Jupiter v2 (legacy routes)
+   "11111111111111111111111111111111", // System Program
+   "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", // SPL Token
+   "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL", // Associated Token Account
+   "ComputeBudget111111111111111111111111111111", // Compute Budget
+   "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb", // SPL Token 2022
+])
 
 export interface SwapQuote {
    outputAmount: BN
@@ -100,26 +116,41 @@ export function useSwap() {
 
    /**
     * @dev Retry the second leg of a failed hybrid swap.
-    * Re-quotes fresh and re-executes with the stored intermediate USDC amount.
+    * Fetches actual on-chain USDC balance (not the estimate from the quote)
+    * and checks if leg 2 already landed to prevent double-swaps.
     */
    const retrySecondLeg = async (): Promise<string> => {
       if (!partialExecution) throw new Error("No partial execution to retry")
+      if (!wallet.publicKey) throw new Error("Wallet not connected")
       setLoading(true)
       setError(null)
       try {
-         const { direction, estimatedUsdcAmount, slippageBps, outputMint } = partialExecution
+         const { direction, slippageBps, outputMint } = partialExecution
+
+         // Idempotency guard: check if leg 2 already landed on-chain
          if (direction === "buy") {
-            // Re-quote DBC for USDC -> QQ with fresh pool state
-            const dbcQ = await getDbcQuoteRaw(estimatedUsdcAmount, false, slippageBps)
-            const sig = await executeDbcSwap(estimatedUsdcAmount, dbcQ.minimumAmountOut, false)
+            const qqBalance = await fetchSplBalance(connection, wallet.publicKey, QQ_MINT)
+            if (qqBalance.gt(new BN(0))) {
+               // User already has QQ; leg 2 likely succeeded but confirmation timed out
+               setPartialExecution(null)
+               return partialExecution.leg1Sig
+            }
+         }
+
+         // Use actual on-chain USDC balance, not the estimated amount
+         const actualUsdc = await fetchSplBalance(connection, wallet.publicKey, USDC_MINT)
+         if (actualUsdc.isZero()) throw new Error("insufficient")
+
+         if (direction === "buy") {
+            const dbcQ = await getDbcQuoteRaw(actualUsdc, false, slippageBps)
+            const sig = await executeDbcSwap(actualUsdc, dbcQ.minimumAmountOut, false)
             setPartialExecution(null)
             return sig
          } else {
-            // Re-quote Jupiter for USDC -> SOL/USDT
             const jupQ = await fetchJupiterQuote({
                inputMint: USDC_MINT,
                outputMint: outputMint!,
-               amount: estimatedUsdcAmount.toString(),
+               amount: actualUsdc.toString(),
                slippageBps,
             })
             const sig = await executeJupiterLeg(jupQ)
@@ -159,7 +190,7 @@ export function useSwap() {
       return result
    }
 
-   /** @dev Execute a DBC swap on-chain. Signs and sends the transaction. */
+   /** @dev Execute a DBC swap on-chain. Pre-simulates, then signs and sends. */
    async function executeDbcSwap(amountIn: BN, minimumAmountOut: BN, isSell: boolean): Promise<string> {
       const { DynamicBondingCurveClient } = await import("@meteora-ag/dynamic-bonding-curve-sdk")
       const client = new DynamicBondingCurveClient(connection, "confirmed")
@@ -172,6 +203,25 @@ export function useSwap() {
          referralTokenAccount: null,
       })
       const latestBlockhash = await connection.getLatestBlockhash()
+      tx.recentBlockhash = latestBlockhash.blockhash
+      tx.feePayer = wallet.publicKey!
+
+      // Compile to VersionedTransaction for the non-deprecated simulateTransaction overload
+      const simTx = new VersionedTransaction(
+         new TransactionMessage({
+            payerKey: wallet.publicKey!,
+            recentBlockhash: latestBlockhash.blockhash,
+            instructions: tx.instructions,
+         }).compileToV0Message()
+      )
+
+      // Pre-simulate without signature verification (Phantom recommendation)
+      const simResult = await connection.simulateTransaction(simTx, { sigVerify: false })
+      if (simResult.value.err) {
+         console.error("[DBC] Simulation failed:", simResult.value.err, simResult.value.logs)
+         throw new Error("simulation failed")
+      }
+
       const sig = await wallet.sendTransaction!(tx, connection)
       await connection.confirmTransaction({ signature: sig, ...latestBlockhash }, "confirmed")
       return sig
@@ -288,10 +338,11 @@ export function useSwap() {
          // Step 1: Jupiter SOL/USDT -> USDC
          const leg1Sig = await executeJupiterLeg(currentQuote.jupiterQuote)
 
-         // Step 2: DBC USDC -> QQ
+         // Step 2: DBC USDC -> QQ (use actual balance, not estimate)
          try {
-            const usdcAmount = currentQuote.intermediateUsdcAmount!
-            return await executeDbcSwap(usdcAmount, currentQuote.minimumAmountOut, false)
+            const actualUsdc = await fetchSplBalance(connection, wallet.publicKey!, USDC_MINT)
+            const dbcQ = await getDbcQuoteRaw(actualUsdc, false, currentQuote.slippageBps)
+            return await executeDbcSwap(actualUsdc, dbcQ.minimumAmountOut, false)
          } catch (e) {
             setPartialExecution({
                direction: "buy",
@@ -305,9 +356,16 @@ export function useSwap() {
          // Step 1: DBC QQ -> USDC
          const dbcSig = await executeDbcSwap(amountIn, currentQuote.intermediateUsdcAmount!, true)
 
-         // Step 2: Jupiter USDC -> SOL/USDT
+         // Step 2: Jupiter USDC -> SOL/USDT (use actual balance, not estimate)
          try {
-            await executeJupiterLeg(currentQuote.jupiterQuote)
+            const actualUsdc = await fetchSplBalance(connection, wallet.publicKey!, USDC_MINT)
+            const jupQ = await fetchJupiterQuote({
+               inputMint: USDC_MINT,
+               outputMint,
+               amount: actualUsdc.toString(),
+               slippageBps: currentQuote.slippageBps,
+            })
+            await executeJupiterLeg(jupQ)
             return dbcSig
          } catch (e) {
             setPartialExecution({
@@ -322,12 +380,23 @@ export function useSwap() {
       }
    }
 
-   /** @dev Execute a single Jupiter swap leg. Deserializes, signs, and sends. */
+   /** @dev Execute a single Jupiter swap leg. Validates programs, pre-simulates, then signs and sends. */
    async function executeJupiterLeg(jupQuote: JupiterQuoteResponse): Promise<string> {
       const { swapTransaction } = await fetchJupiterSwapTx(jupQuote, wallet.publicKey!.toBase58())
 
       const txBuf = Buffer.from(swapTransaction, "base64")
       const tx = VersionedTransaction.deserialize(txBuf)
+
+      // Validate: reject transactions invoking unknown programs
+      validateJupiterPrograms(tx)
+
+      // Pre-simulate without signature verification (Phantom recommendation)
+      const simResult = await connection.simulateTransaction(tx, { sigVerify: false })
+      if (simResult.value.err) {
+         console.error("[Jupiter] Simulation failed:", simResult.value.err, simResult.value.logs)
+         throw new Error("simulation failed")
+      }
+
       const signed = await wallet.signTransaction!(tx)
       const latestBlockhash = await connection.getLatestBlockhash()
       const sig = await connection.sendRawTransaction(signed.serialize(), {
@@ -336,6 +405,25 @@ export function useSwap() {
       })
       await connection.confirmTransaction({ signature: sig, ...latestBlockhash }, "confirmed")
       return sig
+   }
+
+   /**
+    * @dev Verify all program IDs in a Jupiter VersionedTransaction are known.
+    * Prevents signing a malicious transaction if the Jupiter API is compromised.
+    */
+   function validateJupiterPrograms(tx: VersionedTransaction): void {
+      const accountKeys = tx.message.staticAccountKeys
+      const instructions = tx.message.compiledInstructions
+
+      for (const ix of instructions) {
+         const programId = accountKeys[ix.programIdIndex]
+         if (!programId) throw new Error("Invalid transaction: missing program account")
+         const programStr = programId.toBase58()
+         if (!JUPITER_ALLOWED_PROGRAMS.has(programStr)) {
+            console.error("[Jupiter] Unknown program in transaction:", programStr)
+            throw new Error("Transaction contains unknown program")
+         }
+      }
    }
 
    return {

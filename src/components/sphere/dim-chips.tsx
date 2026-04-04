@@ -18,7 +18,7 @@ export function DimChips({ active, onSelect }: DimChipsProps) {
                   key={d.key}
                   onClick={() => d.enabled && onSelect(d.key)}
                   className={cn(
-                     "flex items-center gap-1 md:gap-1.5 px-2 py-0.5 md:px-2.5 md:py-1.5 rounded-md font-mono text-[10px] md:text-xs select-none",
+                     "flex items-center gap-0.5 md:gap-1.5 px-1.5 py-px md:px-2.5 md:py-1.5 rounded-md font-mono text-[9px] md:text-xs select-none",
                      d.enabled ? "cursor-pointer" : "cursor-not-allowed"
                   )}
                   style={{

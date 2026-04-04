@@ -110,9 +110,19 @@ async function fetchWithRetry(url: string, init?: RequestInit, retries = 1): Pro
       headers["x-api-key"] = JUPITER_API_KEY
    }
 
-   const res = await fetch(url, { ...init, headers })
+   let res: Response
+   try {
+      res = await fetch(url, { ...init, headers })
+   } catch {
+      // Network error (DNS failure, connection refused, etc.)
+      if (retries > 0) {
+         await new Promise((r) => setTimeout(r, 2000))
+         return fetchWithRetry(url, init, retries - 1)
+      }
+      throw new JupiterApiError("Network error, please retry", 0)
+   }
 
-   if (res.status === 429 && retries > 0) {
+   if ((res.status === 429 || res.status >= 500) && retries > 0) {
       await new Promise((r) => setTimeout(r, 2000))
       return fetchWithRetry(url, init, retries - 1)
    }
