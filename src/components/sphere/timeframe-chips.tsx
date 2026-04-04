@@ -19,7 +19,7 @@ export function TimeframeChips({ active, onSelect }: TimeframeChipsProps) {
                   key={tf.key}
                   onClick={() => tf.enabled && onSelect(tf.key)}
                   className={cn(
-                     "flex items-center gap-1 md:gap-1.5 px-2 py-0.5 md:px-2.5 md:py-1.5 rounded-md font-mono text-[10px] md:text-xs select-none",
+                     "flex items-center gap-0.5 md:gap-1.5 px-1.5 py-px md:px-2.5 md:py-1.5 rounded-md font-mono text-[9px] md:text-xs select-none",
                      tf.enabled
                         ? isA
                            ? cn(

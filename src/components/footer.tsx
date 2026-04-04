@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils"
 import { AUTHOR } from "@/config/const"
+import { version } from "../../package.json"
 
 /**
  * @dev Footer.
@@ -24,6 +25,7 @@ export function Footer() {
          >
             &copy; 2026 QQ Omega Labs
          </a>
+         <span className="ml-2 text-text-muted/60 font-mono">v{version}</span>
       </footer>
    )
 }

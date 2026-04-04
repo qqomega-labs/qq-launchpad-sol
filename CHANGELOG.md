@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lookup by mint and owner, returns raw `BN` amount
 - **New test suites**: `jupiter-tx-validation.test.ts` (program allowlist
   validation) and `fetch-spl-balance.test.ts` (on-chain balance lookup)
+- **App version in footer** (`footer.tsx`): displays `vX.Y.Z` pulled from
+  `package.json` next to the copyright line
+- **Smaller sphere chips on mobile** (`dim-chips.tsx`, `timeframe-chips.tsx`):
+  reduced font size, padding, and gap on mobile for tighter fit
 
 ### Changed
 
