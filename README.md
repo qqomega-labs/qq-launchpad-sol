@@ -61,22 +61,24 @@ Defined in `src/config/const.ts`:
 
 ## Testing
 
-Vitest 4 with jsdom. **10 test files, 234 tests**, all pure-function unit tests (no mocks, no flaky renders).
+Vitest 4 with jsdom. **12 test files, 245 tests**, all pure-function unit tests (no mocks, no flaky renders).
 
-| Test file               | Tests | What it covers                                                               |
-| ----------------------- | ----: | ---------------------------------------------------------------------------- |
-| `parse-token-amount`    |    18 | Float-to-BN precision (prevents 0.1 \* 1e9 bugs on-chain)                    |
-| `friendly-swap-error`   |    21 | SDK error sanitization (blocks RPC URL / key leakage in UI)                  |
-| `is-valid-trade`        |    29 | WebSocket type guard (rejects malformed / injected messages)                 |
-| `slippage-validation`   |    19 | localStorage tamper protection (caps at 10%, prevents sandwich attacks)      |
-| `swap-input-validation` |    25 | Input regex (blocks script injection, scientific notation, negative amounts) |
-| `token-routing`         |    27 | Mint constants, DBC direct vs hybrid routing, decimal registry               |
-| `tokenomics`            |    12 | Supply allocation math, remaining seats formula                              |
-| `csp`                   |    19 | CSP meta tag validation (no `unsafe-eval`, wallet domains, `base-uri`)       |
-| `utils`                 |    27 | `formatPrice` boundaries, `truncateAddress`, lamport conversion              |
-| `sphere-scoring`        |    58 | Timeframe weight sums, composite scoring, ranking, data integrity            |
+| Test file               | What it covers                                                               |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| `parse-token-amount`    | Float-to-BN precision (prevents 0.1 \* 1e9 bugs on-chain)                    |
+| `friendly-swap-error`   | SDK error sanitization (blocks RPC URL / key leakage in UI)                  |
+| `is-valid-trade`        | WebSocket type guard (rejects malformed / injected messages)                 |
+| `slippage-validation`   | localStorage tamper protection (caps at 10%, prevents sandwich attacks)      |
+| `swap-input-validation` | Input regex (blocks script injection, scientific notation, negative amounts) |
+| `token-routing`         | Mint constants, DBC direct vs hybrid routing, decimal registry               |
+| `tokenomics`            | Supply allocation math, remaining seats formula                              |
+| `csp`                   | CSP meta tag validation (no `unsafe-eval`, wallet domains, `base-uri`)       |
+| `utils`                 | `formatPrice` boundaries, `truncateAddress`, lamport conversion              |
+| `sphere-scoring`        | Timeframe weight sums, composite scoring, ranking, data integrity            |
+| `jupiter-tx-validation` | Program allowlist validation (rejects unknown programs before signing)       |
+| `fetch-spl-balance`     | On-chain SPL token balance lookup (actual vs estimated USDC)                 |
 
-Every security fix from the [2026-04-03 audit](CHANGELOG.md) has matching test coverage.
+Every security fix from the [2026-04-04 audit](CHANGELOG.md) has matching test coverage.
 
 ## Build Optimizations
 

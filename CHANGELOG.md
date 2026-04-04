@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-04-04 (QQAlpha)
+
+### Added
+
+- **Pre-simulation for Phantom** (`use-swap.ts`): both DBC and Jupiter swap paths
+  now call `simulateTransaction` with `sigVerify: false` before requesting the
+  wallet signature, preventing warnings;
+  DBC legacy `Transaction` is compiled to `VersionedTransaction` via
+  `TransactionMessage.compileToV0Message()` to use the non-deprecated overload
+- **Jupiter transaction validation** (`use-swap.ts`): `validateJupiterPrograms()`
+  checks all program IDs in deserialized `VersionedTransaction` against a known
+  allowlist before signing; rejects unknown programs to mitigate API compromise
+- **Actual USDC balance in hybrid swaps** (`use-swap.ts`): after leg 1,
+  `fetchSplBalance()` queries the real on-chain USDC balance instead of using the
+  quoted estimate; prevents TOCTOU issues where slippage causes underfunding
+- **Retry idempotency guard** (`use-swap.ts`): `retrySecondLeg()` checks QQ
+  balance before retrying a buy to detect if leg 2 already landed on-chain,
+  preventing double-swaps on confirmation timeouts
+- **`fetchSplBalance` helper** (`lib/solana.ts`): imperative SPL token balance
+  lookup by mint and owner, returns raw `BN` amount
+- **New test suites**: `jupiter-tx-validation.test.ts` (program allowlist
+  validation) and `fetch-spl-balance.test.ts` (on-chain balance lookup)
+
+### Changed
+
+- **Jupiter retry logic** (`lib/jupiter.ts`): `fetchWithRetry` now retries on
+  5xx status codes and network `TypeError` (DNS/connection failures), not just 429
+- **Buffer plugin match** (`vite.config.ts`): tightened from `includes()` to
+  `endsWith()` for defense-in-depth path matching
+
+### Security
+
+- **Pinned `@solana/*` dependencies** (`package.json`): removed caret ranges from
+  `@solana/spl-token`, `@solana/wallet-adapter-base`, `@solana/wallet-adapter-react`,
+  `@solana/web3.js` to prevent auto-installing compromised minor/patch releases
+- **Deprecated subdependencies** (`glob@7.2.3`, `inflight@1.0.6`, `rimraf@3.0.2`):
+  all transitive via `@solana-mobile/wallet-adapter-mobile` -> `react-native` ->
+  `chromium-edge-launcher`; not used at runtime in the web app, no action required
+  until upstream updates
+
 ## [0.1.1] - 2026-04-03 (QQAlpha)
 
 ### Changed

@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
 import path from "path"
 
-import { cloudflare } from "@cloudflare/vite-plugin";
+import { cloudflare } from "@cloudflare/vite-plugin"
 
 /**
  * @dev Appends `globalThis.Buffer = Buffer` to the buffer module itself, so the
@@ -15,7 +15,7 @@ function bufferGlobalPlugin(): Plugin {
    return {
       name: "buffer-global",
       transform(code, id) {
-         if (id.includes("node_modules/buffer/index.js")) {
+         if (id.endsWith("node_modules/buffer/index.js")) {
             return code + "\nglobalThis.Buffer = Buffer;\n"
          }
       },
