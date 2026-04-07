@@ -34,8 +34,6 @@ const SWAP_LEG = {
    DBC: "DBC",
 } as const
 
-type SwapLeg = (typeof SWAP_LEG)[keyof typeof SWAP_LEG]
-
 export interface SwapQuote {
    outputAmount: BN
    minimumAmountOut: BN
@@ -231,7 +229,7 @@ export function useSwap() {
       if (simResult.value.err) {
          console.error(`[${SWAP_LEG.DBC}] Simulation failed:`, simResult.value.err, simResult.value.logs)
          const rentMsg = simulationFailureMessageFromLogs(simResult.value.logs ?? undefined)
-         throw new Error(rentMsg ?? "Simulation failed")
+         throw new Error(rentMsg ?? "simulation failed")
       }
 
       const sig = await wallet.sendTransaction!(tx, connection)
@@ -392,15 +390,6 @@ export function useSwap() {
       }
    }
 
-   /**
-    * @dev Build a structured error message from a failed simulation.
-    * Embeds program logs so friendlySwapError can detect ATA-rent failures.
-    */
-   function buildSimError(tag: SwapLeg, logs: string[] | null): Error {
-      const joined = (logs ?? []).join(" | ")
-      return new Error(`${tag} simulation failed: ${joined}`)
-   }
-
    /** @dev Execute a single Jupiter swap leg. Validates programs, pre-simulates, then signs and sends. */
    async function executeJupiterLeg(jupQuote: JupiterQuoteResponse): Promise<string> {
       const { swapTransaction } = await fetchJupiterSwapTx(jupQuote, wallet.publicKey!.toBase58())
@@ -416,7 +405,7 @@ export function useSwap() {
       if (simResult.value.err) {
          console.error(`[${SWAP_LEG.JUPITER}] Simulation failed:`, simResult.value.err, simResult.value.logs)
          const rentMsg = simulationFailureMessageFromLogs(simResult.value.logs ?? undefined)
-         throw new Error(rentMsg ?? "Simulation failed")
+         throw new Error(rentMsg ?? "simulation failed")
       }
 
       const signed = await wallet.signTransaction!(tx)

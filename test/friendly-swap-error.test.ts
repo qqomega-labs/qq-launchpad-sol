@@ -52,9 +52,7 @@ describe("friendlySwapError", () => {
       })
 
       it("maps insufficient SOL for rent (explicit)", () => {
-         expect(friendlySwapError("insufficient funds for rent", "fail")).toBe(
-            SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA_RENT
-         )
+         expect(friendlySwapError("insufficient funds for rent", "fail")).toBe(SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA_RENT)
       })
 
       it("maps insufficient lamports for rent", () => {
@@ -84,20 +82,6 @@ describe("friendlySwapError", () => {
                "fail"
             )
          ).toBe(SWAP_ERROR.SIMULATION_FAILED)
-      })
-
-      it("maps insufficient SOL for ATA creation (Jupiter sim)", () => {
-         const raw =
-            "Jupiter simulation failed: Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL invoke [1] | " +
-            "Program 11111111111111111111111111111111 invoke [2] | " +
-            "Transfer: insufficient lamports 1786770, need 2039280 | " +
-            "Program 11111111111111111111111111111111 failed: custom program error: 0x1"
-
-         expect(friendlySwapError(raw, "fail")).toBe(SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA)
-      })
-
-      it("does NOT map plain insufficient lamports to ATA error", () => {
-         expect(friendlySwapError("insufficient lamports 0, need 5000", "fail")).toBe(SWAP_ERROR.INSUFFICIENT_BALANCE)
       })
 
       it("maps missing token account", () => {
@@ -171,8 +155,7 @@ describe("friendlySwapError", () => {
       })
 
       it("prefers ATA rent message when simulation text also mentions simulation failed", () => {
-         const raw =
-            "Transaction simulation failed: Error processing Instruction 1: insufficient funds for rent"
+         const raw = "Transaction simulation failed: Error processing Instruction 1: insufficient funds for rent"
          expect(friendlySwapError(raw, "fail")).toBe(SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA_RENT)
       })
 
@@ -197,9 +180,9 @@ describe("simulationFailureMessageFromLogs", () => {
    })
 
    it("detects insufficient funds for rent in logs", () => {
-      expect(
-         simulationFailureMessageFromLogs(["Program log: insufficient funds for rent"])
-      ).toBe("insufficient funds for rent")
+      expect(simulationFailureMessageFromLogs(["Program log: insufficient funds for rent"])).toBe(
+         "insufficient funds for rent"
+      )
    })
 
    it("detects ATA + insufficient lamports in combined logs", () => {

@@ -15,8 +15,6 @@ export const SWAP_ERROR = {
    TIMEOUT: "Network timeout, please retry",
    SIMULATION_FAILED: "Transaction simulation failed",
    ACCOUNT_NOT_FOUND: "Token account not found",
-   INSUFFICIENT_SOL_FOR_ATA:
-      "Not enough SOL to create the token account (~0.002 SOL needed for rent). Top up and retry.",
 } as const
 
 /**
