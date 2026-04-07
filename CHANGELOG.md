@@ -9,25 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Swap errors** (`lib/errors.ts`, `use-swap.ts`): detect insufficient SOL for ATA creation
-  in Jupiter/DBC simulation logs and surface a specific message
-  ("Not enough SOL to create the token account") instead of the generic
-  "Transaction simulation failed"; new `buildSimError()` helper embeds simulation logs
-  into thrown `Error.message` so `friendlySwapError()` can pattern-match on them
 - **Centralized swap leg labels** (`use-swap.ts`): introduced `SWAP_LEG` constant and
   `SwapLeg` type to replace scattered `"Jupiter"` / `"DBC"` string literals across
   console logs, error tags, and `buildSimError()` signature; prevents typos on maintenance
-- **MAX/HALF SOL reserve** (`swap-panel.tsx`): bumped fee reserve from `0.005` to
-  `0.01 SOL` and centralized as `SOL_FEE_RESERVE` module constant; covers worst-case
-  ATA rent (USDC + QQ) plus Jupiter priority fees on congested mainnet, preventing
-  the `MAX` button from producing inputs that fail pre-simulation; the reserved
-  amount stays on the user's wallet after the swap
 
 ### Tests
 
 - **`friendly-swap-error.test.ts`**: added coverage for the new `INSUFFICIENT_SOL_FOR_ATA`
   branch (positive case with ATA program ID in logs) and a non-regression test ensuring
   plain `insufficient lamports` still maps to `INSUFFICIENT_BALANCE`
+
+### Fixed
+
+- **Swap UI** (`lib/errors.ts`, `use-swap.ts`): when simulation fails because the
+  wallet lacks SOL for associated token account rent, the app now shows a dedicated
+  message instead of a generic simulation error; log lines from failed
+  `simulateTransaction` are scanned for rent/ATA hints ([#6](https://github.com/qqomega-labs/qq-launchpad-sol/issues/6))
+- **MAX/HALF SOL reserve** (`swap-panel.tsx`): bumped fee reserve from `0.005` to
+  `0.01 SOL` and centralized as `SOL_FEE_RESERVE` module constant; covers worst-case
+  ATA rent (USDC + QQ) plus Jupiter priority fees on congested mainnet, preventing
+  the `MAX` button from producing inputs that fail pre-simulation; the reserved
+  amount stays on the user's wallet after the swap
 
 ## [0.1.2] - 2026-04-04 (QQAlpha)
 
