@@ -25,6 +25,17 @@ const JUPITER_ALLOWED_PROGRAMS = new Set([
    "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb", // SPL Token 2022
 ])
 
+/**
+ * @dev Swap leg labels used in console logs and thrown error messages.
+ * Centralized to avoid typos and to keep prefixes consistent across the file.
+ */
+const SWAP_LEG = {
+   JUPITER: "Jupiter",
+   DBC: "DBC",
+} as const
+
+type SwapLeg = (typeof SWAP_LEG)[keyof typeof SWAP_LEG]
+
 export interface SwapQuote {
    outputAmount: BN
    minimumAmountOut: BN
@@ -218,8 +229,8 @@ export function useSwap() {
       // Pre-simulate without signature verification (Phantom recommendation)
       const simResult = await connection.simulateTransaction(simTx, { sigVerify: false })
       if (simResult.value.err) {
-         console.error("[DBC] Simulation failed:", simResult.value.err, simResult.value.logs)
-         throw buildSimError("DBC", simResult.value.logs)
+         console.error(`[${SWAP_LEG.DBC}] Simulation failed:`, simResult.value.err, simResult.value.logs)
+         throw buildSimError(SWAP_LEG.DBC, simResult.value.logs)
       }
 
       const sig = await wallet.sendTransaction!(tx, connection)
@@ -384,7 +395,7 @@ export function useSwap() {
     * @dev Build a structured error message from a failed simulation.
     * Embeds program logs so friendlySwapError can detect ATA-rent failures.
     */
-   function buildSimError(tag: "Jupiter" | "DBC", logs: string[] | null): Error {
+   function buildSimError(tag: SwapLeg, logs: string[] | null): Error {
       const joined = (logs ?? []).join(" | ")
       return new Error(`${tag} simulation failed: ${joined}`)
    }
@@ -402,8 +413,8 @@ export function useSwap() {
       // Pre-simulate without signature verification (Phantom recommendation)
       const simResult = await connection.simulateTransaction(tx, { sigVerify: false })
       if (simResult.value.err) {
-         console.error("[Jupiter] Simulation failed:", simResult.value.err, simResult.value.logs)
-         throw buildSimError("Jupiter", simResult.value.logs)
+         console.error(`[${SWAP_LEG.JUPITER}] Simulation failed:`, simResult.value.err, simResult.value.logs)
+         throw buildSimError(SWAP_LEG.JUPITER, simResult.value.logs)
       }
 
       const signed = await wallet.signTransaction!(tx)
@@ -429,7 +440,7 @@ export function useSwap() {
          if (!programId) throw new Error("Invalid transaction: missing program account")
          const programStr = programId.toBase58()
          if (!JUPITER_ALLOWED_PROGRAMS.has(programStr)) {
-            console.error("[Jupiter] Unknown program in transaction:", programStr)
+            console.error(`[${SWAP_LEG.JUPITER}] Unknown program in transaction:`, programStr)
             throw new Error("Transaction contains unknown program")
          }
       }

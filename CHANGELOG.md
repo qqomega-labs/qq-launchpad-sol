@@ -9,9 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Swap errors**: detect insufficient SOL for ATA creation in Jupiter/DBC simulation logs
-  and surface a specific message ("Not enough SOL to create the token account") instead of
-  the generic "Transaction simulation failed".
+- **Swap errors** (`lib/errors.ts`, `use-swap.ts`): detect insufficient SOL for ATA creation
+  in Jupiter/DBC simulation logs and surface a specific message
+  ("Not enough SOL to create the token account") instead of the generic
+  "Transaction simulation failed"; new `buildSimError()` helper embeds simulation logs
+  into thrown `Error.message` so `friendlySwapError()` can pattern-match on them
+- **Centralized swap leg labels** (`use-swap.ts`): introduced `SWAP_LEG` constant and
+  `SwapLeg` type to replace scattered `"Jupiter"` / `"DBC"` string literals across
+  console logs, error tags, and `buildSimError()` signature; prevents typos on maintenance
+
+### Tests
+
+- **`friendly-swap-error.test.ts`**: added coverage for the new `INSUFFICIENT_SOL_FOR_ATA`
+  branch (positive case with ATA program ID in logs) and a non-regression test ensuring
+  plain `insufficient lamports` still maps to `INSUFFICIENT_BALANCE`
 
 ## [0.1.2] - 2026-04-04 (QQAlpha)
 
