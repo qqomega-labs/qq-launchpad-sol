@@ -21,6 +21,14 @@ import { SOL_MINT, QQ_MINT, QUICK_AMOUNTS, getToken } from "@/config/tokens"
 const QUOTE_STALE_MS = 30_000
 
 /**
+ * @dev Lamports to reserve when computing MAX/HALF for SOL input.
+ * Covers: base tx fee (~5k) + ATA rent for USDC and QQ (~4M if both missing)
+ * + Jupiter priority fee headroom on congested mainnet (~1-3M).
+ * 0.01 SOL is the conservative worst-case buffer.
+ */
+const SOL_FEE_RESERVE = 0.01
+
+/**
  * @dev Main swap panel with buy/sell tabs, token selection, quote fetching, and swap execution.
  * SOL <-> QQ goes direct via Meteora DBC. Other tokens route via Jupiter API.
  */
@@ -149,15 +157,15 @@ export function SwapPanel() {
 
    const handleHalf = () => {
       if (inputBalance == null || inputBalance <= 0) return
-      // Leave a small SOL reserve for fees when paying with SOL
-      const half = inputMint === SOL_MINT ? Math.max(0, (inputBalance - 0.005) / 2) : inputBalance / 2
+      // Leave a SOL reserve for fees + ATA rent + priority fee headroom
+      const half = inputMint === SOL_MINT ? Math.max(0, (inputBalance - SOL_FEE_RESERVE) / 2) : inputBalance / 2
       setInputAmount(half > 0 ? String(parseFloat(half.toFixed(inputDecimals))) : "")
    }
 
    const handleMax = () => {
       if (inputBalance == null || inputBalance <= 0) return
-      // Reserve 0.005 SOL for fees when paying with SOL
-      const max = inputMint === SOL_MINT ? Math.max(0, inputBalance - 0.005) : inputBalance
+      // Reserve SOL for tx fee + ATA rent + Jupiter priority fee headroom
+      const max = inputMint === SOL_MINT ? Math.max(0, inputBalance - SOL_FEE_RESERVE) : inputBalance
       setInputAmount(max > 0 ? String(parseFloat(max.toFixed(inputDecimals))) : "")
    }
 

@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Centralized swap leg labels** (`use-swap.ts`): introduced `SWAP_LEG` constant and
   `SwapLeg` type to replace scattered `"Jupiter"` / `"DBC"` string literals across
   console logs, error tags, and `buildSimError()` signature; prevents typos on maintenance
+- **MAX/HALF SOL reserve** (`swap-panel.tsx`): bumped fee reserve from `0.005` to
+  `0.01 SOL` and centralized as `SOL_FEE_RESERVE` module constant; covers worst-case
+  ATA rent (USDC + QQ) plus Jupiter priority fees on congested mainnet, preventing
+  the `MAX` button from producing inputs that fail pre-simulation; the reserved
+  amount stays on the user's wallet after the swap
 
 ### Tests
 
