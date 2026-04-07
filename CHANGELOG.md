@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-04-07 (QQAlpha)
+
+### Changed
+
+- **Swap errors**: detect insufficient SOL for ATA creation in Jupiter/DBC simulation logs
+  and surface a specific message ("Not enough SOL to create the token account") instead of
+  the generic "Transaction simulation failed".
+
 ## [0.1.2] - 2026-04-04 (QQAlpha)
 
 ### Added

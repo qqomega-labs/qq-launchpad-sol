@@ -12,11 +12,14 @@ export const SWAP_ERROR = {
    TIMEOUT: "Network timeout, please retry",
    SIMULATION_FAILED: "Transaction simulation failed",
    ACCOUNT_NOT_FOUND: "Token account not found",
+   INSUFFICIENT_SOL_FOR_ATA:
+      "Not enough SOL to create the token account (~0.002 SOL needed for rent). Top up and retry.",
 } as const
 
 export function friendlySwapError(msg: string, fallback: string): string {
    const lower = msg.toLowerCase()
    if (lower.includes("user rejected")) return SWAP_ERROR.CANCELLED
+   if (lower.includes("insufficient lamports") && lower.includes("atokengp")) return SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA // Associated Token Account
    if (lower.includes("insufficient")) return SWAP_ERROR.INSUFFICIENT_BALANCE
    if (lower.includes("blockhash")) return SWAP_ERROR.EXPIRED
    if (lower.includes("slippage") || lower.includes("exceeds desired")) return SWAP_ERROR.SLIPPAGE
