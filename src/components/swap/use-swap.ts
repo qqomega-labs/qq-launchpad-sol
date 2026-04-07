@@ -4,7 +4,7 @@ import { TransactionMessage, VersionedTransaction } from "@solana/web3.js"
 import { Buffer } from "buffer"
 import BN from "bn.js"
 import { POOL_ADDRESS } from "@/config/const"
-import { friendlySwapError } from "@/lib/errors"
+import { friendlySwapError, simulationFailureMessageFromLogs } from "@/lib/errors"
 import { isDirectPath, isQQ, QQ_MINT, USDC_MINT } from "@/config/tokens"
 import { fetchSplBalance } from "@/lib/solana"
 import { fetchJupiterQuote, fetchJupiterSwapTx } from "@/lib/jupiter"
@@ -219,7 +219,8 @@ export function useSwap() {
       const simResult = await connection.simulateTransaction(simTx, { sigVerify: false })
       if (simResult.value.err) {
          console.error("[DBC] Simulation failed:", simResult.value.err, simResult.value.logs)
-         throw new Error("simulation failed")
+         const rentMsg = simulationFailureMessageFromLogs(simResult.value.logs ?? undefined)
+         throw new Error(rentMsg ?? "simulation failed")
       }
 
       const sig = await wallet.sendTransaction!(tx, connection)
@@ -394,7 +395,8 @@ export function useSwap() {
       const simResult = await connection.simulateTransaction(tx, { sigVerify: false })
       if (simResult.value.err) {
          console.error("[Jupiter] Simulation failed:", simResult.value.err, simResult.value.logs)
-         throw new Error("simulation failed")
+         const rentMsg = simulationFailureMessageFromLogs(simResult.value.logs ?? undefined)
+         throw new Error(rentMsg ?? "simulation failed")
       }
 
       const signed = await wallet.signTransaction!(tx)

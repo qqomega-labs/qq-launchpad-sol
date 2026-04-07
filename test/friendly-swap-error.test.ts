@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest"
-import { friendlySwapError, SWAP_ERROR } from "@/lib/errors"
+import { friendlySwapError, simulationFailureMessageFromLogs, SWAP_ERROR } from "@/lib/errors"
 import { HELIUS_RPC_BASE } from "@/config/const"
 
 /**
@@ -48,6 +48,18 @@ describe("friendlySwapError", () => {
       it("maps insufficient token balance", () => {
          expect(friendlySwapError("Error: insufficient funds for transfer", "fail")).toBe(
             SWAP_ERROR.INSUFFICIENT_BALANCE
+         )
+      })
+
+      it("maps insufficient SOL for rent (explicit)", () => {
+         expect(friendlySwapError("insufficient funds for rent", "fail")).toBe(
+            SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA_RENT
+         )
+      })
+
+      it("maps insufficient lamports for rent", () => {
+         expect(friendlySwapError("insufficient lamports for rent, need 2039280", "fail")).toBe(
+            SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA_RENT
          )
       })
 
@@ -144,6 +156,12 @@ describe("friendlySwapError", () => {
          expect(result).not.toContain("SECRET")
       })
 
+      it("prefers ATA rent message when simulation text also mentions simulation failed", () => {
+         const raw =
+            "Transaction simulation failed: Error processing Instruction 1: insufficient funds for rent"
+         expect(friendlySwapError(raw, "fail")).toBe(SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA_RENT)
+      })
+
       it("returns the specific fallback string passed, not a hardcoded one", () => {
          vi.spyOn(console, "error").mockImplementation(() => {})
          expect(friendlySwapError("unknown", "Quote failed")).toBe("Quote failed")
@@ -154,5 +172,28 @@ describe("friendlySwapError", () => {
          vi.spyOn(console, "error").mockImplementation(() => {})
          expect(friendlySwapError("", "Transaction failed")).toBe("Transaction failed")
       })
+   })
+})
+
+describe("simulationFailureMessageFromLogs", () => {
+   it("returns null for empty or missing logs", () => {
+      expect(simulationFailureMessageFromLogs(null)).toBeNull()
+      expect(simulationFailureMessageFromLogs(undefined)).toBeNull()
+      expect(simulationFailureMessageFromLogs([])).toBeNull()
+   })
+
+   it("detects insufficient funds for rent in logs", () => {
+      expect(
+         simulationFailureMessageFromLogs(["Program log: insufficient funds for rent"])
+      ).toBe("insufficient funds for rent")
+   })
+
+   it("detects ATA + insufficient lamports in combined logs", () => {
+      const logs = [
+         "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL invoke [1]",
+         "Program log: Transfer: insufficient lamports 1000, need 2039280",
+         "Program log: Error: Associated Token Account",
+      ]
+      expect(simulationFailureMessageFromLogs(logs)).toBe("insufficient lamports for rent")
    })
 })
