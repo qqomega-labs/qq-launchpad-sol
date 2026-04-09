@@ -1,5 +1,17 @@
 # QQ Launchpad Sol
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Build in Public](https://img.shields.io/badge/Build-in%20Public-brightgreen.svg)](https://github.com/qqomegalabs)
+[![Tests](https://github.com/qqomega-labs/qq-launchpad-sol/actions/workflows/test.yml/badge.svg)](https://github.com/qqomega-labs/qq-launchpad-sol/actions/workflows/test.yml)
+[![Version](https://img.shields.io/github/package-json/v/qqomega-labs/qq-launchpad-sol?color=blue)](package.json)
+[![React](https://img.shields.io/github/package-json/dependency-version/qqomega-labs/qq-launchpad-sol/react?logo=react&logoColor=white&color=61dafb)](https://react.dev)
+[![TypeScript](https://img.shields.io/github/package-json/dependency-version/qqomega-labs/qq-launchpad-sol/dev/typescript?logo=typescript&logoColor=white&color=3178c6)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/github/package-json/dependency-version/qqomega-labs/qq-launchpad-sol/dev/vite?logo=vite&logoColor=white&color=646cff)](https://vite.dev)
+[![Tailwind CSS](https://img.shields.io/github/package-json/dependency-version/qqomega-labs/qq-launchpad-sol/dev/tailwindcss?logo=tailwindcss&logoColor=white&color=38bdf8)](https://tailwindcss.com)
+[![Vitest](https://img.shields.io/github/package-json/dependency-version/qqomega-labs/qq-launchpad-sol/dev/vitest?logo=vitest&logoColor=white&color=6e9f18)](https://vitest.dev)
+[![Solana web3.js](https://img.shields.io/github/package-json/dependency-version/qqomega-labs/qq-launchpad-sol/@solana/web3.js?logo=solana&logoColor=white&color=9945ff)](https://solana.com)
+[![pnpm](https://img.shields.io/badge/pnpm-package%20manager-f69220.svg?logo=pnpm&logoColor=white)](https://pnpm.io)
+
 Solana launchpad for the QQ Omega token.
 Users connect a wallet, buy/sell QQ through a Meteora Dynamic Bonding Curve (DBC), and track price action via TradingView-style charts.
 
@@ -61,7 +73,7 @@ Defined in `src/config/const.ts`:
 
 ## Testing
 
-Vitest 4 with jsdom. **12 test files, 251 tests**, all pure-function unit tests (no mocks, no flaky renders).
+Vitest 4 with jsdom. All pure-function unit tests (no mocks, no flaky renders).
 
 | Test file               | What it covers                                                                    |
 | ----------------------- | --------------------------------------------------------------------------------- |
@@ -77,8 +89,6 @@ Vitest 4 with jsdom. **12 test files, 251 tests**, all pure-function unit tests 
 | `swap-input-validation` | Input regex (blocks script injection, scientific notation, negative amounts)      |
 | `tokenomics`            | Supply allocation math, remaining seats formula                                   |
 | `fetch-spl-balance`     | On-chain SPL token balance lookup (actual vs estimated USDC)                      |
-
-Every security fix from the [2026-04-04 audit](CHANGELOG.md) has matching test coverage.
 
 ## Build Optimizations
 

@@ -1,7 +1,7 @@
 {
   "name": "qq-launchpad-sol",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Solana launchpad for the QQ Omega token with Meteora Dynamic Bonding Curve",
   "type": "module",
   "license": "MIT",
