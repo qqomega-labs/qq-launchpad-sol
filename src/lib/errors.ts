@@ -9,7 +9,7 @@ export const SWAP_ERROR = {
    INSUFFICIENT_BALANCE: "Insufficient balance",
    /** @dev SOL needed to create or fund an SPL associated token account (rent), not swap size */
    INSUFFICIENT_SOL_FOR_ATA_RENT:
-      "Not enough SOL for token account rent — keep about 0.002 SOL in your wallet and try again",
+      "Not enough SOL for token account rent: keep about 0.002 SOL in your wallet and try again",
    EXPIRED: "Transaction expired, please retry",
    SLIPPAGE: "Slippage exceeded, try a higher tolerance",
    TIMEOUT: "Network timeout, please retry",

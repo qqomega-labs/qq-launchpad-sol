@@ -52,9 +52,7 @@ describe("friendlySwapError", () => {
       })
 
       it("maps insufficient SOL for rent (explicit)", () => {
-         expect(friendlySwapError("insufficient funds for rent", "fail")).toBe(
-            SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA_RENT
-         )
+         expect(friendlySwapError("insufficient funds for rent", "fail")).toBe(SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA_RENT)
       })
 
       it("maps insufficient lamports for rent", () => {
@@ -157,8 +155,7 @@ describe("friendlySwapError", () => {
       })
 
       it("prefers ATA rent message when simulation text also mentions simulation failed", () => {
-         const raw =
-            "Transaction simulation failed: Error processing Instruction 1: insufficient funds for rent"
+         const raw = "Transaction simulation failed: Error processing Instruction 1: insufficient funds for rent"
          expect(friendlySwapError(raw, "fail")).toBe(SWAP_ERROR.INSUFFICIENT_SOL_FOR_ATA_RENT)
       })
 
@@ -183,9 +180,9 @@ describe("simulationFailureMessageFromLogs", () => {
    })
 
    it("detects insufficient funds for rent in logs", () => {
-      expect(
-         simulationFailureMessageFromLogs(["Program log: insufficient funds for rent"])
-      ).toBe("insufficient funds for rent")
+      expect(simulationFailureMessageFromLogs(["Program log: insufficient funds for rent"])).toBe(
+         "insufficient funds for rent"
+      )
    })
 
    it("detects ATA + insufficient lamports in combined logs", () => {

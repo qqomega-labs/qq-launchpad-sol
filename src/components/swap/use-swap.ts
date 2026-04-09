@@ -25,6 +25,15 @@ const JUPITER_ALLOWED_PROGRAMS = new Set([
    "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb", // SPL Token 2022
 ])
 
+/**
+ * @dev Swap leg labels used in console logs and thrown error messages.
+ * Centralized to avoid typos and to keep prefixes consistent across the file.
+ */
+const SWAP_LEG = {
+   JUPITER: "Jupiter",
+   DBC: "DBC",
+} as const
+
 export interface SwapQuote {
    outputAmount: BN
    minimumAmountOut: BN
@@ -218,7 +227,7 @@ export function useSwap() {
       // Pre-simulate without signature verification (Phantom recommendation)
       const simResult = await connection.simulateTransaction(simTx, { sigVerify: false })
       if (simResult.value.err) {
-         console.error("[DBC] Simulation failed:", simResult.value.err, simResult.value.logs)
+         console.error(`[${SWAP_LEG.DBC}] Simulation failed:`, simResult.value.err, simResult.value.logs)
          const rentMsg = simulationFailureMessageFromLogs(simResult.value.logs ?? undefined)
          throw new Error(rentMsg ?? "simulation failed")
       }
@@ -394,7 +403,7 @@ export function useSwap() {
       // Pre-simulate without signature verification (Phantom recommendation)
       const simResult = await connection.simulateTransaction(tx, { sigVerify: false })
       if (simResult.value.err) {
-         console.error("[Jupiter] Simulation failed:", simResult.value.err, simResult.value.logs)
+         console.error(`[${SWAP_LEG.JUPITER}] Simulation failed:`, simResult.value.err, simResult.value.logs)
          const rentMsg = simulationFailureMessageFromLogs(simResult.value.logs ?? undefined)
          throw new Error(rentMsg ?? "simulation failed")
       }
@@ -422,7 +431,7 @@ export function useSwap() {
          if (!programId) throw new Error("Invalid transaction: missing program account")
          const programStr = programId.toBase58()
          if (!JUPITER_ALLOWED_PROGRAMS.has(programStr)) {
-            console.error("[Jupiter] Unknown program in transaction:", programStr)
+            console.error(`[${SWAP_LEG.JUPITER}] Unknown program in transaction:`, programStr)
             throw new Error("Transaction contains unknown program")
          }
       }

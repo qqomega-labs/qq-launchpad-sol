@@ -61,22 +61,22 @@ Defined in `src/config/const.ts`:
 
 ## Testing
 
-Vitest 4 with jsdom. **12 test files, 245 tests**, all pure-function unit tests (no mocks, no flaky renders).
+Vitest 4 with jsdom. **12 test files, 251 tests**, all pure-function unit tests (no mocks, no flaky renders).
 
-| Test file               | What it covers                                                               |
-| ----------------------- | ---------------------------------------------------------------------------- |
-| `parse-token-amount`    | Float-to-BN precision (prevents 0.1 \* 1e9 bugs on-chain)                    |
-| `friendly-swap-error`   | SDK error sanitization (blocks RPC URL / key leakage in UI)                  |
-| `is-valid-trade`        | WebSocket type guard (rejects malformed / injected messages)                 |
-| `slippage-validation`   | localStorage tamper protection (caps at 10%, prevents sandwich attacks)      |
-| `swap-input-validation` | Input regex (blocks script injection, scientific notation, negative amounts) |
-| `token-routing`         | Mint constants, DBC direct vs hybrid routing, decimal registry               |
-| `tokenomics`            | Supply allocation math, remaining seats formula                              |
-| `csp`                   | CSP meta tag validation (no `unsafe-eval`, wallet domains, `base-uri`)       |
-| `utils`                 | `formatPrice` boundaries, `truncateAddress`, lamport conversion              |
-| `sphere-scoring`        | Timeframe weight sums, composite scoring, ranking, data integrity            |
-| `jupiter-tx-validation` | Program allowlist validation (rejects unknown programs before signing)       |
-| `fetch-spl-balance`     | On-chain SPL token balance lookup (actual vs estimated USDC)                 |
+| Test file               | What it covers                                                                    |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| `csp`                   | CSP meta tag validation (no `unsafe-eval`, wallet domains, `base-uri`)            |
+| `token-routing`         | Mint constants, DBC direct vs hybrid routing, decimal registry                    |
+| `sphere-scoring`        | Timeframe weight sums, composite scoring, ranking, data integrity                 |
+| `utils`                 | `formatPrice` boundaries, `truncateAddress`, lamport conversion                   |
+| `slippage-validation`   | localStorage tamper protection (caps at 10%, prevents sandwich attacks)           |
+| `is-valid-trade`        | WebSocket type guard (rejects malformed / injected messages)                      |
+| `parse-token-amount`    | Float-to-BN precision (prevents 0.1 \* 1e9 bugs on-chain)                         |
+| `jupiter-tx-validation` | Program allowlist validation (rejects unknown programs before signing)            |
+| `friendly-swap-error`   | SDK error sanitization (RPC URL / key leakage) + ATA rent detection from sim logs |
+| `swap-input-validation` | Input regex (blocks script injection, scientific notation, negative amounts)      |
+| `tokenomics`            | Supply allocation math, remaining seats formula                                   |
+| `fetch-spl-balance`     | On-chain SPL token balance lookup (actual vs estimated USDC)                      |
 
 Every security fix from the [2026-04-04 audit](CHANGELOG.md) has matching test coverage.
 
@@ -98,4 +98,5 @@ Path alias `@/` maps to `src/` for clean imports.
 
 ## License
 
-Copyright © 2026 QQ Omega Labs. All rights reserved. See [LICENSE](LICENSE) for details.
+Copyright © 2026 QQ Omega Labs. All rights reserved.
+See [LICENSE](LICENSE) for details.
