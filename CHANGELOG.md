@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.1.3] - 2026-04-09 (QQAlpha)
+
+### Added
+
+- **CI test workflow** (`.github/workflows/test.yml`): GitHub Actions job
+  that runs `pnpm test` on every push and pull request against `main` and
+  `dev`, using Node 22 and pnpm 10 with frozen lockfile; powers the new
+  test status badge in the README
+
+### Changed
+
+- **README badges** (`README.md`): switched from static shields.io badges
+  to dynamic `github/package-json/dependency-version` endpoints for React,
+  TypeScript, Vite, Tailwind CSS, Vitest, and `@solana/web3.js`, so the
+  displayed versions auto-track `package.json`; added app version badge
+  (`github/package-json/v`) and replaced the hardcoded test count badge
+  with the live GitHub Actions `test.yml` status badge
+
 ## [Unreleased] - 2026-04-07 (QQAlpha)
 
 ### Fixed
@@ -28,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to replace scattered `"Jupiter"` / `"DBC"` string literals across console logs;
   prevents typos on maintenance
 
-## [0.1.2] - 2026-04-04 (QQAlpha)
+## [v0.1.2] - 2026-04-04 (QQAlpha)
 
 ### Added
 
@@ -72,7 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `chromium-edge-launcher`; not used at runtime in the web app, no action required
   until upstream updates
 
-## [0.1.1] - 2026-04-03 (QQAlpha)
+## [v0.1.1] - 2026-04-03 (QQAlpha)
 
 ### Changed
 
@@ -92,7 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from being committed
 - **`.claude/` gitignored**: prevents AI config from being tracked
 
-## [0.1.0] - 2026-04-03 (QQAlpha)
+## [v0.1.0] - 2026-04-03 (QQAlpha)
 
 ### Added
 
